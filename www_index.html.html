@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111214">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Patente B">
+<title>Patente B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#111214; --card:#1E1F22; --card2:#26272B; --line:#33353A;
+  --text:#F2F2F2; --muted:#9A9CA3;
+  --accent:#F59E0B; --blue:#4FA9EE;
+  --green:#4A9A27; --green-d:#33701A; --red:#C0392B; --red-d:#8E2A20;
+  --dock-pad:14px;
+}
+@media (hover:none) and (pointer:coarse){ :root{ --dock-pad:64px; } }
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{font-family:'Vazirmatn','Segoe UI',Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+button,input,select{font-family:inherit}
+.hidden{display:none !important}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* شاشەی نارنجی */
+.splash{position:fixed;inset:0;z-index:100;background:#FF6A00;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center}
+.avatar{width:176px;height:176px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.avatar svg{width:104px;height:104px}
+.splash h1{margin:6px 0 0;font-size:1.7rem;font-weight:800}
+.splash p{margin:0;opacity:.9}
+.bar{width:min(240px,60vw);height:8px;border-radius:99px;background:rgba(255,255,255,.28);overflow:hidden;margin-top:34px}
+.bar i{display:block;height:100%;width:40%;border-radius:99px;background:rgba(255,255,255,.85);animation:slide 1.3s ease-in-out infinite}
+@keyframes slide{0%{transform:translateX(-120%)}100%{transform:translateX(260%)}}
+@media (prefers-reduced-motion:reduce){.bar i{animation:none;width:60%}}
+#splash-status{font-size:.95rem;opacity:.85;min-height:26px}
+.splash .btn{background:#fff;color:#C24E00}
+
+/* سەرەوە */
+.flagline{height:5px;background:linear-gradient(90deg,#009246 0 33.3%,#fff 33.3% 66.6%,var(--red) 66.6%)}
+header{background:#16181c;padding:18px 20px 16px;border-bottom:1px solid var(--line)}
+.brand{max-width:560px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.brand>div:nth-child(2){flex:1;min-width:0}
+.toolbar{max-width:560px;margin:14px auto 0;display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:flex-start}
+.plate{flex:none;width:52px;height:52px;border-radius:12px;background:#fff;color:#0B4F9E;display:grid;place-items:center;font-weight:800;font-size:1.7rem;direction:ltr}
+.brand h1{margin:0;font-size:1.15rem;font-weight:800;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand p{margin:2px 0 0;font-size:.82rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.flags{display:flex;gap:6px;direction:ltr;flex-wrap:wrap;align-items:center}
+.flags .fl{width:40px;height:27px;border-radius:5px;border:1.5px solid #3a3c42;object-fit:cover;flex:none;display:block}
+.flags svg{width:40px;height:27px;border-radius:4px;box-shadow:0 0 0 1px rgba(255,255,255,.15)}
+
+/* زمانەکان: دوگمە + شیتی خوارەوە */
+.lbtn{flex:none;display:flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:var(--card);color:var(--text);padding:7px 12px;border-radius:999px;font-size:.88rem;font-weight:700;cursor:pointer}
+.lbtn svg{width:18px;height:18px}
+.sheet-bg{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:560px;background:#fff;color:#111;border-radius:22px 22px 0 0;padding:10px 0 calc(16px + env(safe-area-inset-bottom));max-height:80vh;overflow-y:auto}
+.sheet .grab{width:44px;height:5px;border-radius:99px;background:#ccc;margin:0 auto 10px}
+.sheet h3{margin:6px 22px 12px;font-size:1.25rem;font-weight:800}
+.sheet button.item{display:flex;width:100%;justify-content:space-between;align-items:center;border:0;background:transparent;padding:15px 22px;font-size:1.1rem;font-weight:600;color:#111;cursor:pointer;text-align:start}
+.sheet button.item.on{background:#E6F7F3;color:#0B6B55}
+.sheet button.item .tick{color:#0B6B55;font-weight:800}
+.wrap{max-width:560px;margin:0 auto;padding:18px 16px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}
+.topbar h1{margin:0;font-size:1.5rem}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:18px}
+label{display:block;font-weight:600;font-size:.9rem;margin:12px 0 6px;color:var(--muted)}
+input[type=text],input[type=password],input[type=email],input[type=number],select{width:100%;font-size:1rem;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--card2);color:var(--text)}
+select{margin-bottom:12px}
+.btn{border:0;background:var(--accent);color:#111;padding:12px 20px;border-radius:12px;font-size:1rem;font-weight:800;cursor:pointer}
+.btn.block{width:100%;margin-top:16px}
+.btn.ghost{background:transparent;color:var(--text);border:1.5px solid var(--line);font-weight:600}
+.btn.small{padding:7px 14px;font-size:.88rem;border-radius:10px}
+.btn.danger{background:var(--red);color:#fff}
+.btn:disabled{opacity:.55}
+.msg{margin-top:12px;padding:10px 12px;border-radius:10px;font-size:.92rem;display:none}
+.msg.show{display:block}
+.msg.err{background:#3a1a18;color:#ffb4a8}
+.msg.ok{background:#16301a;color:#a9e6b4}
+.note{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--card2);color:var(--muted);font-size:.9rem}
+.row{display:flex;gap:10px;align-items:center}
+.row.between{justify-content:space-between}
+.status{margin-top:18px;color:var(--muted);font-size:.9rem;text-align:center}
+
+/* Instagram */
+.insta{margin-top:18px;border:1.5px solid var(--line);border-radius:18px;padding:16px;text-align:center;background:linear-gradient(160deg,#1E1F22,#22181f)}
+.insta p{margin:0 0 10px;font-weight:600}
+.insta a{display:inline-block;text-decoration:none;color:#fff;font-weight:800;padding:10px 20px;border-radius:12px;background:linear-gradient(90deg,#F58529,#DD2A7B,#8134AF);direction:ltr}
+
+/* سەرەکی */
+.hello{font-size:2rem;font-weight:800;margin:8px 0 16px;line-height:1.3}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tile{position:relative;min-height:158px;border:0;border-radius:24px;padding:16px;text-align:start;color:#fff;cursor:pointer;display:flex;flex-direction:column;justify-content:flex-end}
+.tile.t1{background:linear-gradient(160deg,#E8A13A,#C98A30)}
+.tile.t2{background:linear-gradient(160deg,#52ABEF,#3F8FD0)}
+.tile .ico{position:absolute;top:14px;inset-inline-start:14px;width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.22);display:grid;place-items:center}
+.tile .ico svg{width:26px;height:26px}
+.tile .badge{position:absolute;top:16px;inset-inline-end:14px;background:rgba(0,0,0,.22);border-radius:99px;padding:1px 12px;font-weight:800;font-size:.9rem}
+.tile b{font-size:1.25rem;display:block;line-height:1.3}
+.tile span{font-size:.88rem;opacity:.9}
+
+/* تاقیکردنەوە */
+.bubwrap{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.bubs{flex:1;display:flex;gap:8px;overflow-x:auto;padding:8px;border-radius:99px;background:#2a2314;scrollbar-width:none;direction:ltr}
+.bubs::-webkit-scrollbar{display:none}
+.bub{flex:none;width:40px;height:40px;border-radius:50%;border:2px solid #5a4620;background:transparent;color:#E6D3A8;font-weight:800;cursor:pointer}
+.bub.done{background:#3d3015}
+.bub.cur{background:var(--accent);border-color:var(--accent);color:#111}
+.navrow{display:flex;gap:10px;align-items:center;margin-bottom:12px;direction:ltr}
+.arrow{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:#2a2314;color:var(--accent);font-size:1.3rem;cursor:pointer}
+.pill{flex:1;display:flex;border:1.5px solid var(--line);border-radius:14px;background:var(--card);overflow:hidden}
+.pill span{flex:1;text-align:center;padding:9px 4px;font-weight:700;font-size:.92rem;white-space:nowrap}
+.pill span+span{border-inline-start:1.5px solid var(--line)}
+.pill .timer{color:var(--accent);direction:ltr}
+.qcard{background:var(--card);border:1.5px solid var(--line);border-radius:20px;overflow:hidden}
+.signbox{background:#F4F4F1;padding:16px;display:grid;place-items:center}
+.signbox:empty{display:none}
+.sign-img{max-width:210px;max-height:210px;display:block}
+.qmeta{padding:12px 18px 0;color:var(--muted);font-size:.82rem;direction:ltr;text-align:left}
+.qtext{direction:ltr;text-align:left;padding:4px 18px 16px;font-size:1.22rem;font-weight:600;line-height:1.55}
+.tr{margin:0 12px 12px;background:#182233;border-radius:12px;border-inline-start:5px solid var(--accent);padding:12px 14px}
+.tr-label{font-size:.8rem;font-weight:600;color:var(--accent);margin-bottom:2px}
+.tr-body{font-size:1.1rem;font-weight:600;line-height:1.85;color:#E8EEF8}
+.tr-body.loading{color:var(--muted);font-weight:400}
+.verdict{display:inline-block;margin:0 18px 16px;padding:4px 16px;border-radius:10px;font-weight:800;color:#fff;direction:ltr}
+.verdict.v{background:var(--green)} .verdict.f{background:var(--red)}
+.dock{position:sticky;bottom:0;z-index:10;background:linear-gradient(to top,var(--bg) 78%,rgba(17,18,20,0));padding:18px 0 calc(var(--dock-pad) + env(safe-area-inset-bottom));margin-top:10px}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ans{border:0;border-radius:18px;padding:16px 8px;color:#fff;cursor:pointer;font-weight:800;font-size:1.35rem;letter-spacing:.04em}
+.ans.v{background:var(--green);box-shadow:0 6px 0 var(--green-d)}
+.ans.f{background:var(--red);box-shadow:0 6px 0 var(--red-d)}
+.ans:active{transform:translateY(3px);box-shadow:0 3px 0 rgba(0,0,0,.35)}
+.ans.sel{outline:3px solid #fff;outline-offset:2px}
+.ans small{display:block;font-weight:600;font-size:.82rem;opacity:.9;letter-spacing:0}
+
+/* ئەنجام */
+.score{text-align:center;background:var(--card);border:2px solid var(--line);border-radius:20px;padding:26px 16px;margin-bottom:16px}
+.score .big{font-size:3.2rem;font-weight:800;line-height:1.1;direction:ltr}
+.score.pass{border-color:var(--green)} .score.pass .big{color:#6fd24a}
+.score.fail{border-color:var(--red)} .score.fail .big{color:#ff6a58}
+.review-item{background:var(--card);border:1.5px solid var(--line);border-radius:16px;margin-bottom:12px;overflow:hidden}
+.review-item.bad{border-color:#6b2b26}
+.review-head{padding:10px 16px;font-weight:800;font-size:.95rem}
+.review-head.ok{color:#6fd24a} .review-head.no{color:#ff7a69}
+.review-item .sign-img{max-width:100px;margin:0 16px 8px;background:#F4F4F1;border-radius:8px;padding:4px}
+.review-q{direction:ltr;text-align:left;padding:0 16px 10px;font-weight:600}
+.review-ans{padding:0 16px 12px;font-size:.9rem;color:var(--muted)}
+.review-ans b{color:var(--text);direction:ltr;unicode-bidi:isolate}
+
+/* ئەدمین */
+.ulist{display:grid;gap:10px;margin-top:14px}
+.uitem{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px}
+.uitem .top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.uitem b{font-size:1.05rem;word-break:break-all}
+.tag{font-size:.78rem;font-weight:700;padding:2px 10px;border-radius:99px;white-space:nowrap}
+.tag.new{background:#16301a;color:#a9e6b4}
+.tag.used{background:#2b2b30;color:#c9cad1}
+.tag.lock{background:#3a1a18;color:#ffb4a8}
+.uitem .meta{font-size:.8rem;color:var(--muted);margin-bottom:10px}
+.cred{margin-top:12px;padding:12px;border-radius:12px;background:#16301a;color:#d4f5da;direction:ltr;text-align:left;white-space:pre-line;font-weight:600}
+
+/* فشردەکردنی شاشەی چوونەژوورەوە تاکو هەمووی لە یەک شاشەدا دیار بێت */
+header{padding:10px 16px 8px;position:relative}
+.plate{width:40px;height:40px;font-size:1.3rem;border-radius:10px}
+.brand{gap:10px}
+.brand h1{font-size:1rem}
+.brand p{font-size:.75rem;margin-top:0}
+.toolbar{margin-top:8px;gap:8px}
+.lbtn{padding:5px 10px;font-size:.8rem}
+.flags svg{width:32px;height:22px}
+.wrap{padding:10px 14px}
+.topbar{margin-bottom:8px}
+.topbar h1{font-size:1.25rem}
+.btn.small{padding:5px 12px;font-size:.8rem}
+.card{padding:12px}
+label{margin:8px 0 4px;font-size:.8rem}
+input[type=text],input[type=password],input[type=email],input[type=number],select{padding:9px 12px;font-size:.95rem}
+.btn{padding:9px 16px;font-size:.95rem}
+.btn.block{margin-top:10px}
+.note{margin-top:8px;padding:8px 10px;font-size:.8rem;line-height:1.5}
+.card .note{margin:0 0 4px;padding:6px 10px}
+.insta{margin-top:10px;padding:10px}
+.insta p{font-size:.85rem;margin-bottom:6px}
+.insta a{padding:7px 16px;font-size:.9rem}
+
+.qlisten{padding:0 18px 14px}
+.speak{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--accent);background:transparent;color:var(--accent);padding:8px 16px;border-radius:999px;font-size:.95rem;font-weight:800;cursor:pointer}
+.speak:active{transform:scale(.97)}
+
+/* حاڵەتی تاقیکردنەوە و خوێندن: هیچ هێدەرێک نییە، هەموو شتەکان لە یەک شاشەدا */
+body.inquiz{--dock-pad:30px}
+body.inquiz header,body.inquiz .flagline{display:none}
+body.inquiz .wrap{padding:6px 10px;max-width:600px}
+body.inquiz .bubwrap{margin-bottom:6px;gap:8px}
+body.inquiz .bubs{padding:4px;gap:6px}
+body.inquiz .bub{width:30px;height:30px;font-size:.8rem;border-width:1.5px}
+body.inquiz .bubwrap .btn{padding:6px 12px;font-size:.85rem;border-radius:10px}
+body.inquiz .navrow{margin-bottom:6px;gap:8px}
+body.inquiz .arrow{width:34px;height:34px;font-size:1.1rem}
+body.inquiz .pill span{padding:5px 4px;font-size:.8rem}
+body.inquiz .qcard{border-radius:14px}
+body.inquiz .signbox{padding:6px}
+body.inquiz .sign-img{max-width:150px;max-height:110px}
+body.inquiz .qmeta{padding:6px 12px 0;font-size:.72rem}
+body.inquiz .qtext{padding:2px 12px 6px;font-size:1.02rem;line-height:1.4}
+body.inquiz .tr{margin:0 8px 8px;padding:7px 10px;border-radius:10px}
+body.inquiz .tr-label{font-size:.7rem}
+body.inquiz .tr-body{font-size:.95rem;line-height:1.5}
+body.inquiz .qlisten{padding:0 12px 8px}
+body.inquiz .speak{padding:4px 12px;font-size:.8rem}
+body.inquiz .verdict{margin:0 12px 8px;font-size:.85rem;padding:2px 12px}
+body.inquiz .dock{padding:8px 0 calc(var(--dock-pad) + env(safe-area-inset-bottom));margin-top:6px}
+body.inquiz .answers{gap:10px}
+body.inquiz .ans{padding:9px 6px;font-size:1.1rem;border-radius:14px}
+body.inquiz .ans small{font-size:.7rem}
+body.inquiz .ans:active{transform:translateY(2px)}
+body.inquiz #exam-screen .dock > div:last-child{margin-top:8px !important}
+body.inquiz .dock .btn.ghost.small{padding:4px 12px;font-size:.78rem}
+body.inquiz #topic-filter{margin-bottom:6px;padding:7px 10px;font-size:.88rem}
+body.inquiz #study-screen .row{margin-bottom:6px !important}
+body.inquiz #jump-input{padding:6px 10px;font-size:.88rem}
+body.inquiz #study-screen .row .btn{padding:6px 14px;font-size:.88rem}
+body.inquiz #study-screen .dock .btn{padding:7px 14px;font-size:.88rem}
+body.inquiz #study-screen .dock .btn.ghost{padding:7px 12px}
+
+/* نوسخەی ئەپ ستۆر: ئەدمین، ڕێنمایی Add to Home Screen و بۆکسی ئینستاگرام نیشان نادرێن */
+body.store button[onclick="showAdminLogin()"],
+body.store #back-admin,
+body.store .insta,
+body.store [data-i18n="loginNote"]{display:none !important}
+.igtop{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));inset-inline-start:12px;z-index:5;font-size:.78rem;font-weight:800;color:#fff;text-decoration:none;padding:5px 12px;border-radius:999px;background:linear-gradient(90deg,#F58529,#DD2A7B,#8134AF);direction:ltr}
+.logout{display:none;position:absolute;top:calc(10px + env(safe-area-inset-top,0px));inset-inline-end:12px;z-index:5;border:1.5px solid var(--line);background:var(--card);color:var(--text);padding:5px 12px;border-radius:999px;font-size:.8rem;font-weight:700;cursor:pointer}
+body.loggedin .logout{display:inline-block}
+</style>
+</head>
+<body class="store">
+
+<!-- ============ شاشەی نارنجی ============ -->
+<div id="splash" class="splash">
+  <div class="avatar">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><rect x="10" y="10" width="80" height="80" rx="18" fill="#0B4F9E"/><rect x="10" y="78" width="26" height="12" fill="#009246"/><rect x="36" y="78" width="28" height="12" fill="#fff"/><rect x="64" y="78" width="26" height="12" fill="#C8102E"/><text x="50" y="66" text-anchor="middle" font-size="56" font-weight="800" fill="#fff" font-family="Vazirmatn,Arial,sans-serif">B</text></svg>
+  </div>
+  <h1>Patente B</h1>
+  <p data-i18n="brandSub"></p>
+  <div class="bar"><i></i></div>
+  <div id="splash-status"></div>
+  <button class="btn hidden" id="splash-retry" data-i18n="retryLoad" onclick="boot()"></button>
+</div>
+
+<!-- ============ سەرەوە و زمانەکان (هەمیشە دیارە) ============ -->
+<div class="flagline"></div>
+<header>
+  <button id="logout-btn" class="logout" data-i18n="signOut" onclick="logout()"></button>
+  <div class="brand">
+    <div class="plate">B</div>
+    <div>
+      <h1 data-i18n="appTitle"></h1>
+      <p data-i18n="brandSub"></p>
+    </div>
+  </div>
+  <div class="toolbar"><button class="lbtn" id="lang-open" onclick="openLang()" aria-haspopup="dialog">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c3 3.3 3 15.7 0 19M12 2.5c-3 3.3-3 15.7 0 19"/></svg>
+      <span id="lang-cur"></span>
+    </button><div class="flags" aria-label="Flags"><svg viewBox="0 0 60 30" aria-label="Italia" class="fl"><rect width="20" height="30" fill="#009246"/><rect x="20" width="20" height="30" fill="#FFFFFF"/><rect x="40" width="20" height="30" fill="#CE2B37"/></svg><img class="fl" src="data:image/jpeg;base64,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" alt="Kurdistan" title="Kurdistan"><img class="fl" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwQDAwQEBAQFBQQFBwsHBwYGBw4KCggLEA4RERAOEA8SFBoWEhMYEw8QFh8XGBsbHR0dERYgIh8cIhocHRz/2wBDAQUFBQcGBw0HBw0cEhASHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBz/wAARCABrAKADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDwmiiivNPzEKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoor234a/CSDx1PpcV3pc9nb6XdS2GuXAnKlpJP8Aj32g5+YMcMBxjb61UYuTsjahQnXlyw3/AK/4c8Sor6g039nbRLm60ywvW+yXGnGxl1WX7YSL+K5yqmEY+TDgg5zk8DtnzSz+GMSfGS/8MrEdS0HSrxzd3CTBI4rUc75ZQcKFGN3IOQQOap02joqZfWhy36ux5VRXu/h34P6f4w8TW/h3Ts21nqrHWIdUz5gg04PJEkY3AEuXC88ZyM9Km0bw78Pr/RzPd6bNFbaN4g07Tb+5LEGWJomSVjg8BpVZjjnGKXIwjgKj3aX/AADwKivsPQvgt8LfGet6notla6lZan4c1Ce0vLbzMvPE+4RyHk/KrEYYdlG4HNeW+G/hN4Z1bxZ/wiV3qTQ6vp76rb3kyzAxSeSgaCYf3R8x3L/0zPvTdNoueWVo21Tvotev9fkzw6ivUfiL8O9L8Cv4Ev1vY7nTtb0+2u7qJJNzq3y+awA52Nk4PqCO1e2z/s7eA7aXw9qUF3Jc6HqWtJHEzTkC7tp4gY41YHqsg68EjdntQqbZNPLa05SirXVr69z5Bor3m++BGm6V4Y8f3lxrdtLcaKFuLC4gkLxlFmlieKQAcOSqj0BI7ZrwaplFx3Oevh50Lc/X/hgoooqTAKKKKACiiigAooooAP519ffD/wCIXgbxD4phht7zUdNS+ii1C9Zoz5a6gJ7dtmQCAp8j7x4wx5FfINfQ3wmuvFHii3uvD2k27aH4e0i3aS6h08bLi+uhG7xrK5+dyxjbKjAwMYrWm2melllSUanKtb+V/wDK3meq+LPEWj2r+KNY0Twt4lm1fw6G0KeZPntPKSZZFkY5JOw8gAZAPPHNeceKdI8a6P8AFTxVplj4evtW8LapPLqkmmxkRxXUUvyiQsASdrvkA5wVzjivQ/B/xA8SHUPE2sL4Rey0CG9vLm21LUFkhlnMxAjgSE43SO6xjPOBx1rD8efFrxzP8R9c8H6N4hWz1Cza3TT4oLaMrczOI1kicsCePMZhjptOegrWVmrns13TlBTlJ76WS8++9/xsReA9D8d2Hhzw1pQstEgR72b7He+cZJitpO04sWP91pY2IbJwAeOlZifEjQrzTNWutO8BaFD4RlvA2r6Pe6gqX13ell2Mg7KrHgAY+/0qLStJ8QfD/TPAeiavcyXHjDVPFEGrW2nK2+SzgwVlL+nmbiSOnB9DXqPhTR/hjovxN17w9DoF3feMGupbua8vNO86K2Eh8xSpOVSMbgN3GT3oSewqUJyUYp8uy1t20W3rddtzkPiVq3i/4f8AjDwr4va80M21zqz293Fp9vscMwCtBM/WULGpAY45GcdK0ddsr3wn8f8Aw9pcun6W2heIL65uItQitQtzIZY5FkgeTuFaQ8ejL6U/4/8AhzRNTsH1fxH8R2uLrTFL2Gj23kIGlJGAEBLEk4yTnAFRSeLbKX43a54U1qUAW+qWWsaRKx5iudkQliHtIjNx6g9zQ9y6i5aji3b3ota373v62PNNaXw5L4X+Fd14ujuZdG0+TUdCvWtmxJH5Un7tvcKCDjuB+Fem/DtV8X2niqwnRNE8N2WrWmr+Gm2GOFFE7KjIG58uRkHHTLtivPNQsNTufC72mn6bDe6pF4/nbT7S5jDxzCSNiMqeCuUyc8YHPFbN5Pqz+AfianiCKaPxTYaRDbatK2drSrdu0BUj5ceWRjbxgLiktH/XY56T5ZttaW7b2jazfyvb5jzZvB8R/jp4Xlc/ZJtGvLu3i/hUkrPwPrITXyqOlfdOr6bouseLdU8QafMqa5a+HZLLV4CeZkmsvNilHuNhQ/Qfj8Kr90fSs6qscGaU+Tl9ZW9L3/C9haKKKyPJCiiigAooooAKKKKAJbaRIrmGSRN8aOrMn94A8ivoLQ/iz4E03xl4pRBr1p4d16WG/j1CAqt3Z3qF23qo42fvCuOeByCDXzxRVRk47HRQxM6Gsbf1/wAOfU/iP9oTw1Yy291p+o654q1q3ObS51mJIbOxc8ecIY1XzHAJxkZ9CK5jwl8bPB/gXxLDqdl4cu9Z1G6uDJqfiDVGX7VJuPzmCIErHyePmyRwa+f6Kr2ktzolmddyUtLry/zv9+59C+Ivi34O8LyatqvgeTWNX8ZayGV9e1rl7GNuqxDA+bHAOOPU9Kp+Gf2hLGfw9daJ458Py6sbmzGnvq9lN5V69uDkI7H7+COuR75yc+DUUe0ZLzGvzc0bJdraf157nXDXfC8ehz2Q8OzSahFdSy2l99pCOY2xsE3B3lccBdo5Oa9HsviH4U0S3vfHNxeTeIPihqgLwxyWpitdKkI27xnhioA2kZ6Dp1rwqipUmjKGLnDVJfdt5+vqe46J8V9CsvAbXEs+qReOrCxl0+yWP/UM0ny/a93VZVjJTOewx1rPs/jnrXiqy0zwx431ES+FFdft8scLfabqNBlVZ1OWOQMdMnG49a8eop87L+vVtFfTb19T3S38VeDvh/ofiK/03xFe+J/Gmv2j2azGB4YbKKQYYsW++4XA4yBjA45PhdFFJyuY1q7q2VkkuwUUUVJiFFFFABRRRQAUUUUAFFFFABRXc/D7TvAGqma38Zavq+kTbsw3VpEssJX0ZdpYHPcZH0r0Nvht8EW5X4sXSj0Ngx/9kq1Bs6qeEnUjzRlH5tL8zwOiveT8Nfgr2+LdwPrpzn/2Woz8NPgz2+Ls3/gsf/CjkZf1Cp/NH/wKP+Z4VRXuZ+Gvwb/6K9L/AOCqT/CmH4bfB3t8Xpf/AAUyUcjD6hU7x/8AAo/5nh9FfUOn/Az4a+IPBls+k+NZriUai8X9qxaXM7SHYv7gxjpjIYN/tYrjPiX8AIPA/gceKtM8SHVrVLsWs0clk1sVySMgMSTg8HjvTdOSVyp5bXhDn0aSvo0eI0UUVmcAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAGnp/iPWdJtmttP1a/s7dn8xo7e4eNS2MbiFI5xxU194u8Qappv9m32t6jdaf5nnfZ57l5E34xuwT1xWNRTuV7SVrX0CiiikSFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAf/2Q==" alt="Saudi Arabia" title="Saudi Arabia"><img class="fl" src="data:image/jpeg;base64,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" alt="Türkiye" title="Türkiye"><img class="fl" src="data:image/jpeg;base64,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" alt="Iran" title="Iran"><img class="fl" src="data:image/jpeg;base64,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" alt="Shqipëria" title="Shqipëria"><img class="fl" src="data:image/jpeg;base64,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" alt="Pakistan" title="Pakistan"><img class="fl" src="data:image/jpeg;base64,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" alt="India" title="India"><img class="fl" src="data:image/jpeg;base64,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" alt="Bangladesh" title="Bangladesh"><img class="fl" src="data:image/jpeg;base64,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" alt="Afghanistan" title="Afghanistan"><img class="fl" src="data:image/jpeg;base64,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" alt="Maroc" title="Maroc"><img class="fl" src="data:image/jpeg;base64,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" alt="Tunisie" title="Tunisie"><img class="fl" src="data:image/jpeg;base64,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" alt="Algérie" title="Algérie"><img class="fl" src="data:image/jpeg;base64,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" alt="United Kingdom" title="United Kingdom"></div></div>
+</header>
+
+<main>
+
+<!-- ============ چوونەژوورەوە ============ -->
+<div id="login" class="hidden">
+  <div class="wrap">
+    <div class="topbar">
+      <h1 data-i18n="login"></h1>
+      <button class="btn ghost small" data-i18n="adminBtn" onclick="showAdminLogin()"></button>
+    </div>
+    <div class="card">
+      
+      <label for="l-name" data-i18n="name"></label>
+      <input type="text" id="l-name" autocomplete="off" autocapitalize="none" spellcheck="false">
+      <label for="l-pass" data-i18n="pass"></label>
+      <input type="password" id="l-pass" autocomplete="off">
+      <div class="msg err" id="l-err"></div>
+      <button class="btn block" id="l-btn" data-i18n="loginBtn" onclick="doLogin()"></button>
+    </div>
+    <div class="note" data-i18n="loginNote"></div>
+    <div id="store-privacy" style="text-align:center;margin:10px 0"><a href="PRIVACY_URL" target="_blank" rel="noopener" style="color:#9A9CA3;font-size:.8rem">Privacy Policy</a></div>
+    <div class="support" style="text-align:center;margin:12px 0;padding:12px 14px;border-radius:14px;background:var(--card2);color:var(--text);font-size:.9rem;font-weight:600">
+      <div data-i18n="supportNote"></div>
+      <a href="https://www.instagram.com/nozhdar_07?mdxt=ODM1cWwza2FkdHN4&utm_source=qr" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;color:#fff;font-weight:800;padding:7px 18px;border-radius:12px;background:linear-gradient(90deg,#F58529,#DD2A7B,#8134AF);text-decoration:none;direction:ltr">@nozhdar_07</a>
+    </div>
+    
+</div>
+
+<!-- ============ چوونەژوورەوەی ئەدمین ============ -->
+<div id="admin-login" class="hidden">
+  <div class="wrap">
+    <div class="topbar">
+      <h1 data-i18n="admin"></h1>
+      <button class="btn ghost small" data-i18n="back" onclick="showLogin('')"></button>
+    </div>
+    <div class="card">
+      <label for="adm-email" data-i18n="adminEmail"></label>
+      <input type="email" id="adm-email" autocomplete="off" autocapitalize="none">
+      <label for="adm-pass" data-i18n="pass"></label>
+      <input type="password" id="adm-pass" autocomplete="off">
+      <div class="msg err" id="adm-err"></div>
+      <button class="btn block" id="adm-btn" data-i18n="loginBtn" onclick="adminSignIn()"></button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ پانێڵی ئەدمین ============ -->
+<div id="admin-panel" class="hidden">
+  <div class="wrap">
+    <div class="topbar">
+      <h1 data-i18n="users"></h1>
+      <div class="row">
+        <button class="btn ghost small" data-i18n="preview" onclick="adminPreviewApp()"></button>
+        <button class="btn ghost small" data-i18n="signOut" onclick="adminSignOut()"></button>
+      </div>
+    </div>
+    <div class="card">
+      <label for="n-name" data-i18n="newName"></label>
+      <input type="text" id="n-name" autocomplete="off" autocapitalize="none">
+      <label for="n-pass" data-i18n="pass"></label>
+      <div class="row">
+        <input type="text" id="n-pass" autocomplete="off" autocapitalize="none" spellcheck="false" style="flex:1">
+        <button class="btn ghost small" data-i18n="genPass" onclick="genPass()"></button>
+      </div>
+      <div class="msg" id="n-msg"></div>
+      <button class="btn block" data-i18n="create" onclick="createUser()"></button>
+      <div class="cred hidden" id="n-cred"></div>
+      <button class="btn ghost small hidden" id="n-copy" style="margin-top:10px" data-i18n="copy" onclick="copyCred()"></button>
+    </div>
+    <div class="ulist" id="ulist"></div>
+  </div>
+</div>
+
+<!-- ============ ئەپی کویز ============ -->
+<div id="app" class="hidden">
+  <div class="wrap">
+
+    <div id="loading-box" class="status"></div>
+
+    <section id="home-screen" class="hidden">
+      <div class="hello" id="hello"></div>
+      <div class="tiles">
+        <button class="tile t1" onclick="startExam()">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11l2 2 4-4M9 17h6"/></svg></div>
+          <b data-i18n="quiz"></b><span data-i18n="quizSub"></span>
+        </button>
+        <button class="tile t2" onclick="startStudy()">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-13C17 4 14 4.5 12 6zM12 6v13"/></svg></div>
+          <div class="badge" id="count-badge"></div>
+          <b data-i18n="study"></b><span data-i18n="studySub"></span>
+        </button>
+      </div>
+      <p class="status" id="db-status-text"></p>
+      <div class="stack" style="text-align:center"><button class="btn ghost small hidden" id="back-admin" data-i18n="back" onclick="backToAdmin()"></button></div>
+      <div style="text-align:center;margin-top:12px"><button class="btn ghost small" style="color:#ff7a69;border-color:#6b2b26" onclick="deleteMyAccount()" data-i18n="deleteMe"></button></div>
+      <div class="insta">
+        <p data-i18n="instaText"></p>
+        <a href="https://www.instagram.com/nozhdar_07?mdxt=ODM1cWwza2FkdHN4&utm_source=qr" target="_blank" rel="noopener">@nozhdar_07</a>
+      </div>
+    </section>
+
+    <section id="exam-screen" class="hidden">
+      <div class="bubwrap">
+        <div class="bubs" id="bubbles"></div>
+        <button class="btn" data-i18n="exam" onclick="submitExam()"></button>
+      </div>
+      <div class="navrow">
+        <button class="arrow" onclick="stepExam(-1)" aria-label="‹">‹</button>
+        <div class="pill"><span id="exam-pos"></span><span class="timer" id="timer">20:00</span><span id="exam-done"></span></div>
+        <button class="arrow" onclick="stepExam(1)" aria-label="›">›</button>
+      </div>
+      <div class="qcard">
+        <div class="signbox" id="exam-sign"></div>
+        <div class="qmeta" id="exam-meta"></div>
+        <div class="qtext" id="exam-q-text"></div>
+        <div class="qlisten"><button class="speak" onclick="speak($('exam-q-text').textContent)">🔊 <span data-i18n="listen"></span></button></div>
+        <div class="tr hidden" id="exam-tr"><div class="tr-label"></div><div class="tr-body"></div></div>
+      </div>
+      <div class="dock">
+        <div class="answers">
+          <button class="ans v" id="btn-v" onclick="answerExam(true)"><span>VERO</span><small data-i18n="veroSub"></small></button>
+          <button class="ans f" id="btn-f" onclick="answerExam(false)"><span>FALSO</span><small data-i18n="falsoSub"></small></button>
+        </div>
+        <div style="margin-top:14px;text-align:center"><button class="btn ghost small" data-i18n="cancel" onclick="cancelExam()"></button></div>
+      </div>
+    </section>
+
+    <section id="result-screen" class="hidden">
+      <div class="score" id="score-card"><div class="big" id="score-big"></div><div id="score-text" style="font-weight:800;margin-top:6px"></div></div>
+      <div id="review-list"></div>
+      <button class="btn block" data-i18n="backHome" onclick="goHome()"></button>
+    </section>
+
+    <section id="study-screen" class="hidden">
+      <select id="topic-filter" onchange="filterByTopic()" aria-label="topic"></select>
+      <div class="row" style="margin-bottom:14px">
+        <input type="number" id="jump-input" data-i18n-ph="jump" inputmode="numeric" style="flex:1">
+        <button class="btn" data-i18n="go" onclick="jumpToQ()"></button>
+      </div>
+      <div class="qcard">
+        <div class="signbox" id="study-sign"></div>
+        <div class="qmeta" id="study-meta"></div>
+        <div class="qtext" id="study-q-text"></div>
+        <div class="qlisten"><button class="speak" onclick="speak($('study-q-text').textContent)">🔊 <span data-i18n="listen"></span></button></div>
+        <div class="tr hidden" id="study-tr"><div class="tr-label"></div><div class="tr-body"></div></div>
+        <span class="verdict" id="study-ans-val"></span>
+      </div>
+      <div class="dock">
+        <div class="row between">
+          <button class="btn" data-i18n="prev" onclick="prevStudyQ()"></button>
+          <button class="btn ghost" data-i18n="home" onclick="goHome()"></button>
+          <button class="btn" data-i18n="next" onclick="nextStudyQ()"></button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+</main>
+
+<div class="sheet-bg hidden" id="lang-sheet" onclick="if(event.target===this)closeLang()">
+  <div class="sheet" role="dialog" aria-modal="true">
+    <div class="grab"></div>
+    <h3 id="lang-title"></h3>
+    <div id="lang-list"></div>
+  </div>
+</div>
+
+<script>
+/* =====================================================
+   Supabase
+   ===================================================== */
+const SUPABASE_URL = "https://bndzoafsywztyjfpghcj.supabase.co";
+const SUPABASE_KEY = "sb_publishable_vwrka4R9y-LPbwwf5grlDQ_xG2Wkznh";
+/* ===================================================== */
+
+const BASE = SUPABASE_URL.replace(/\/+$/, '');
+const configured = () => !!(BASE && SUPABASE_KEY);
+const $ = id => document.getElementById(id);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+function lsSet(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+function lsDel(k){ try { localStorage.removeItem(k); } catch(e){} }
+
+/* ================= زمانەکانی ڕووکار ================= */
+const LANGS = {
+  ckb:      { label:'سۆرانی',   tl:'ckb', dir:'rtl', code:'ckb' },
+  badini:   { label:'بادینی',   tl:'ku',  dir:'rtl', code:'ku', arabic:true },
+  kurmanci: { label:'Kurmancî', tl:'ku',  dir:'ltr', code:'ku' },
+  tr:       { label:'Türkçe',   tl:'tr',  dir:'ltr', code:'tr' },
+  ar:       { label:'العربية',  tl:'ar',  dir:'rtl', code:'ar' },
+  fa:       { label:'فارسی',    tl:'fa',  dir:'rtl', code:'fa' },
+  sq:       { label:'Shqip',    tl:'sq',  dir:'ltr', code:'sq' },
+  ur:       { label:'اردو',     tl:'ur',  dir:'rtl', code:'ur' },
+  hi:       { label:'हिन्दी',    tl:'hi',  dir:'ltr', code:'hi' },
+  bn:       { label:'বাংলা',    tl:'bn',  dir:'ltr', code:'bn' },
+  ps:       { label:'پښتو',     tl:'ps',  dir:'rtl', code:'ps' },
+  ma:       { label:'الدارجة المغربية', tl:'ar', dir:'rtl', code:'ar', dialect:'ar' },
+  tn:       { label:'التونسية', tl:'ar',  dir:'rtl', code:'ar', dialect:'ar' },
+  dz:       { label:'الجزائرية', tl:'ar', dir:'rtl', code:'ar', dialect:'ar' },
+  en:       { label:'English',  tl:'en',  dir:'ltr', code:'en' },
+  it:       { label:'Italiano', tl:null,  dir:'ltr', code:'it', none:true }
+};
+
+const DICT = {
+ckb: {
+  supportNote:"ئەگەر کێشەیەکت هەیە، زووترین کات نامە بۆ ئینستاگرامەکەمان بنێرە",
+  deleteMe:"سڕینەوەی هەژمارەکەم", deleteMeConfirm:"دڵنیایت لە سڕینەوەی هەژمارەکەت؟ ئەمە ناگەڕێتەوە.",
+  appTitle:"مۆڵەتی شۆفێری Patente B",
+  listen:"گوێ بگرە",
+  langTitle:"زمان",
+  changeLang:"گۆڕینی زمان",
+  brandSub:"بانکی فەرمی پرسیار و تابلۆکان", checking:"پشکنین...", login:"چوونەژوورەوە", name:"ناو", pass:"وشەی نهێنی", loginBtn:"چوونەژوورەوە", adminBtn:"ئەدمین",
+  availableIn:"ئەم ماڵپەڕە بەم زمانانە بەردەستە: سۆرانی، بادینی، کورمانجی، تورکی، عەرەبی و فارسی",
+  loginNote:"یەکەم جار: ماڵپەڕەکە بخە سەر شاشەی سەرەکی (Add to Home Screen), پاشان لەو ئەپەوە ناو و وشەی نهێنی بنووسە. ناو و وشەی نهێنییەکە تەنها یەک جار کار دەکات.",
+  instaText:"بۆ کڕین یان هەر کێشەیەک، نامە بۆ ئینستاگرامەکەم بنێرە", admin:"ئەدمین", adminEmail:"ئیمەیڵی ئەدمین", back:"گەڕانەوە",
+  users:"بەکارهێنەرەکان", preview:"کویز", signOut:"دەرچوون", newName:"ناوی کەسەکە", genPass:"دروستکردن", create:"زیادکردن", copy:"کۆپی", copied:"کۆپیکرا ✅",
+  lock:"قفڵکردن", unlock:"کردنەوە", del:"سڕینەوە", confirmDel:"دڵنیایت لە سڕینەوەی «{0}»؟", st_new:"نوێ", st_used:"بەکارهاتوو", st_locked:"قفڵکراو",
+  created:"دروستکرا", seen:"دوایین بینین", home:"سەرەکی", hello:"سڵاو {0}", quiz:"تاقیکردنەوە", quizSub:"٣٠ پرسیار · ٢٠ خولەک", study:"خوێندن", studySub:"هەموو پرسیارەکان",
+  exam:"ڕادەستکردن", qOf:"پرسیار {0} لە ٣٠", answersN:"{0} وەڵام", veroSub:"ڕاست", falsoSub:"هەڵە", cancel:"هەڵوەشاندنەوە", confirmCancel:"تاقیکردنەوەکە هەڵبوەشێنمەوە؟",
+  leftQ:"{0} پرسیار هێشتا وەڵام نەدراونەتەوە. ڕادەستی بکەم؟", passed:"✅ دەرچووی", failed:"❌ دەرنەچووی", errorsL:"هەڵەکان: {0}", yourA:"وەڵامی تۆ", rightA:"وەڵامی ڕاست",
+  right:"✅ دروست", wrong:"❌ هەڵە", prev:"پێشوو", next:"دواتر", backHome:"گەڕانەوە بۆ سەرەکی", jump:"ژمارەی پرسیار", go:"بڕۆ",
+  transFail:"⚠️ وەرگێڕان سەرکەوتوو نەبوو.", retry:"دووبارە", loading:"⏳ پرسیارەکان دادەبەزن...", loadErr:"❌ پرسیارەکان نەهاتن. ئینتەرنێتەکەت بپشکنە.",
+  retryLoad:"دووبارە هەوڵبدەرەوە", subjectAll:"هەموو بابەتەکان", ready:"{0} پرسیار ئامادەیە", errCfg:"پێویستە SUPABASE_URL و SUPABASE_KEY لە سەرەوەی فایلەکە بنووسرێن.",
+  errBad:"ناو یان وشەی نهێنی هەڵەیە.", errLocked:"ئەم ئەکاونتە قفڵکراوە. پەیوەندی بە خاوەنەکەوە بکە.", errUsed:"ئەم ناو و وشەی نهێنییە پێشتر بەکارهاتووە. پەیوەندی بە خاوەنەکەوە بکە.",
+  errGone:"ئەکاونتەکەت نەماوە. پەیوەندی بە خاوەنەکەوە بکە.", errNet:"پەیوەندی بە ئینتەرنێتەوە نییە", errEnter:"ناو و وشەی نهێنی بنووسە.",
+  errNameShort:"ناو لانیکەم ٢ پیت و وشەی نهێنی لانیکەم ٦ پیت.", errExists:"ئەم ناوە پێشتر هەیە.", errAdminNo:"ئەم ئیمەیڵە ئەدمین نییە.", errAdminLogin:"ئیمەیڵ یان وشەی نهێنی هەڵەیە.",
+  passOk:"دروستکرا ✅", kin:"پێشبینینی ئەدمین", tAll:"هەموو", ocopied:"کۆپیکرا"
+},
+badini: {
+  supportNote:"ئەگەر پرسیارەک تە هەی، ب زوویی نامەیەک بۆ ئینستاگرامێ مە بشینە",
+  deleteMe:"هەژمارا منێ ژێ ببە", deleteMeConfirm:"ئەرێ تو پشتڕاستی؟ ئەڤ ناگەڕیتە.",
+  appTitle:"مۆڵەتا شۆفێریێ Patente B",
+  listen:"گوهداری بکە",
+  langTitle:"زمان",
+  changeLang:"گوهارتنا زمانی",
+  brandSub:"بانکا فەرمی یا پرسیار و تابلۆیان", checking:"کونترۆل دکەت...", login:"تێکەتن", name:"ناڤ", pass:"شیفرە", loginBtn:"تێکەتن", adminBtn:"بەرپرس",
+  availableIn:"ئەڤ ماڵپەڕە ب ڤان زمانان بەردەستە: سۆرانی، بادینی، کورمانجی، تورکی، عەرەبی و فارسی",
+  loginNote:"جارا ئێکێ: ئەڤ ماڵپەڕە بکە سەر شاشەیا سەرەکی (Add to Home Screen), پاشی ب ڤی ئەپی ناڤ و شیفرێ بنڤîse. ئەڤ ناڤ و شیفرە تنێ جارەکێ کار دکەت.",
+  instaText:"بۆ کڕین یان هەر کێشەیەکێ، نامەیەکێ بۆ ئینستاگرامێ من بشینە", admin:"بەرپرس", adminEmail:"ئیمەیلێ بەرپرس", back:"ڤەگەڕە",
+  users:"بکارهێنەر", preview:"کویز", signOut:"دەرکەتن", newName:"ناڤێ کەسی", genPass:"چێکرن", create:"زێدەکرن", copy:"کۆپی", copied:"کۆپی کر ✅",
+  lock:"قفلکرن", unlock:"ڤەکرن", del:"ژێبرن", confirmDel:"ئەرێ تو پشتڕاستی کو «{0}» ژێ ببەی؟", st_new:"نوی", st_used:"هاتیە بکارئینان", st_locked:"قفلکری",
+  created:"هاتە چێکرن", seen:"دوماهیا دیتنێ", home:"سەرەکی", hello:"سلاڤ {0}", quiz:"تاقیکرن", quizSub:"٣٠ پرسیار · ٢٠ خولەک", study:"خواندن", studySub:"هەمی پرسیار",
+  exam:"سپارتن", qOf:"پرسیار {0} ژ ٣٠", answersN:"{0} وەلام", veroSub:"راست", falsoSub:"خەلەت", cancel:"بەتاڵکرن", confirmCancel:"ئەرێ تاقیکرنێ بەتاڵ بکەم؟",
+  leftQ:"{0} پرسیار هێشتا وەلام نەهاتینە دان. بسپێرم؟", passed:"✅ قەبوول بوویی", failed:"❌ قەبوول نەبوویی", errorsL:"خەلەت: {0}", yourA:"وەلامێ تە", rightA:"وەلامێ راست",
+  right:"✅ راست", wrong:"❌ خەلەت", prev:"پێشتر", next:"پاشتر", backHome:"ڤەگەڕە بۆ سەرەکی", jump:"ژمارا پرسیاری", go:"بچە",
+  transFail:"⚠️ وەرگێڕان سەرنەکەفت.", retry:"دووبارە", loading:"⏳ پرسیار دهێنە داگرتن...", loadErr:"❌ پرسیار نەهاتن. ئینتەرنێتا خۆ کونترۆل بکە.",
+  retryLoad:"دووبارە هەوڵ بدە", subjectAll:"هەمی بابەت", ready:"{0} پرسیار ئامادەیە", errCfg:"پێدڤییە SUPABASE_URL و SUPABASE_KEY لە سەرەوەی فایلەکە بهێنە نڤîsîn.",
+  errBad:"ناڤ یان شیفرە خەلەتە.", errLocked:"ئەڤ هەژمارە قفلکری یە. پەیوەندی ب خاوەنی بکە.", errUsed:"ئەڤ ناڤ و شیفرە بەری نوکە هاتیە بکارئینان. پەیوەندی ب خاوەنی بکە.",
+  errGone:"هەژمارا تە نەماوە. پەیوەندی ب خاوەنی بکە.", errNet:"پەیوەندی ب ئینتەرنێتێ نینە", errEnter:"ناڤ و شیفرێ بنڤîse.",
+  errNameShort:"ناڤ لانی کەم ٢ پیت و شیفرە لانی کەم ٦ پیت.", errExists:"ئەڤ ناڤە بەری نوکە هەیە.", errAdminNo:"ئەڤ ئیمەیلە بەرپرس نینە.", errAdminLogin:"ئیمەیل یان شیفرە خەلەتە.",
+  passOk:"هاتە چێکرن ✅", kin:"پێشبینینا بەرپرس", tAll:"هەمی", ocopied:"کۆپی کر"
+},
+kurmanci: {
+  supportNote:"Ger pirsgirêkek te hebe, bi lezê peyamek ji Instagrama me re bişîne",
+  deleteMe:"Hesabê min jê bibe", deleteMeConfirm:"Tu bawerî? Ev nayê vegerandin.",
+  appTitle:"Destûra şofêrîyê Patente B",
+  listen:"Guh bide",
+  langTitle:"Ziman",
+  changeLang:"Guhertina zimanê",
+  brandSub:"Banka fermî ya pirs û tabloyan", checking:"Tê kontrolkirin...", login:"Têketin", name:"Nav", pass:"Şîfre", loginBtn:"Têkeve", adminBtn:"Rêvebir",
+  availableIn:"Ev malper bi van zimanan heye: Soranî, Badînî, Kurmancî, Tirkî, Erebî û Farisî",
+  loginNote:"Cara yekem: vê malperê bike ser ekrana sereke (Add to Home Screen), paşê ji wê appê nav û şîfreyê binivîse. Ev nav û şîfre tenê carekê dixebite.",
+  instaText:"Ji bo kirîn an her pirsgirêkê, peyamek ji Instagrama min re bişîne", admin:"Rêvebir", adminEmail:"E-mailê rêvebir", back:"Vegere",
+  users:"Bikarhêner", preview:"Quiz", signOut:"Derkeve", newName:"Navê kesê", genPass:"Çêke", create:"Lê zêde bike", copy:"Kopî", copied:"Hat kopîkirin ✅",
+  lock:"Asteng bike", unlock:"Vekeve", del:"Jê bibe", confirmDel:"Tu bawerî ku «{0}» jê bibî?", st_new:"Nû", st_used:"Hat bikaranîn", st_locked:"Astengkirî",
+  created:"Hat çêkirin", seen:"Dawiya dîtinê", home:"Sereke", hello:"Silav {0}", quiz:"Ceribandin", quizSub:"30 pirs · 20 deqîqe", study:"Xwendin", studySub:"Hemû pirs",
+  exam:"Bişîne", qOf:"Pirs {0} ji 30", answersN:"{0} bersiv", veroSub:"Rast", falsoSub:"Şaş", cancel:"Betal bike", confirmCancel:"Ceribandinê betal bikim?",
+  leftQ:"{0} pirs hîn bersiv nehatine dayin. Bişînim?", passed:"✅ Derbas bûyî", failed:"❌ Ne derbas bûyî", errorsL:"Şaşî: {0}", yourA:"Bersiva te", rightA:"Bersiva rast",
+  right:"✅ Rast", wrong:"❌ Şaş", prev:"Berê", next:"Paşê", backHome:"Vegere sereke", jump:"Jimara pirsê", go:"Here",
+  transFail:"⚠️ Wergerandin serneket.", retry:"Dîsa", loading:"⏳ Pirs tên daxistin...", loadErr:"❌ Pirs nehatin. Înternetê kontrol bike.",
+  retryLoad:"Dîsa biceribîne", subjectAll:"Hemû mijar", ready:"{0} pirs amade ye", errCfg:"Divê SUPABASE_URL û SUPABASE_KEY li jorê werin nivîsandin.",
+  errBad:"Nav an şîfre şaş e.", errLocked:"Ev hesab hatiye astengkirin. Bi xwediyê re têkeve pêwendiyê.", errUsed:"Ev nav û şîfre berê hatiye bikaranîn. Bi xwediyê re têkeve pêwendiyê.",
+  errGone:"Hesabê te nemaye. Bi xwediyê re têkeve pêwendiyê.", errNet:"Înternet tune ye", errEnter:"Nav û şîfreyê binivîse.",
+  errNameShort:"Nav herî kêm 2 tîp û şîfre herî kêm 6 tîp.", errExists:"Ev nav berê heye.", errAdminNo:"Ev e-mail rêvebir nîne.", errAdminLogin:"E-mail an şîfre şaş e.",
+  passOk:"Hat çêkirin ✅", kin:"Pêşdîtina rêvebir", tAll:"Hemû", ocopied:"Hat kopîkirin"
+},
+tr: {
+  supportNote:"Bir sorun yaşarsanız en kısa sürede Instagram hesabımıza mesaj gönderin",
+  deleteMe:"Hesabımı sil", deleteMeConfirm:"Hesabınızı silmek istediğinize emin misiniz? Bu geri alınamaz.",
+  appTitle:"Ehliyet Patente B",
+  listen:"Dinle",
+  langTitle:"Dil",
+  changeLang:"Dil değiştir",
+  brandSub:"Resmî soru ve tabela bankası", checking:"Kontrol ediliyor...", login:"Giriş", name:"İsim", pass:"Şifre", loginBtn:"Giriş yap", adminBtn:"Yönetici",
+  availableIn:"Bu site şu dillerde kullanılabilir: Sorani, Badînî, Kurmancî, Türkçe, Arapça ve Farsça",
+  loginNote:"İlk kez: siteyi ana ekrana ekleyin (Add to Home Screen), sonra bu uygulamadan isim ve şifrenizi girin. İsim ve şifre yalnızca bir kez çalışır.",
+  instaText:"Satın alma veya herhangi bir sorun için Instagram hesabıma mesaj gönderin", admin:"Yönetici", adminEmail:"Yönetici e-postası", back:"Geri",
+  users:"Kullanıcılar", preview:"Quiz", signOut:"Çıkış", newName:"Kişinin adı", genPass:"Oluştur", create:"Ekle", copy:"Kopyala", copied:"Kopyalandı ✅",
+  lock:"Kilitle", unlock:"Aç", del:"Sil", confirmDel:"«{0}» silinsin mi?", st_new:"Yeni", st_used:"Kullanıldı", st_locked:"Kilitli",
+  created:"Oluşturuldu", seen:"Son görülme", home:"Ana sayfa", hello:"Merhaba {0}", quiz:"Sınav", quizSub:"30 soru · 20 dk", study:"Çalışma", studySub:"Tüm sorular",
+  exam:"Teslim et", qOf:"Soru {0} / 30", answersN:"{0} yanıt", veroSub:"Doğru", falsoSub:"Yanlış", cancel:"İptal et", confirmCancel:"Sınav iptal edilsin mi?",
+  leftQ:"{0} soru hâlâ cevaplanmadı. Teslim edilsin mi?", passed:"✅ Geçtiniz", failed:"❌ Kaldınız", errorsL:"Hata: {0}", yourA:"Sizin cevabınız", rightA:"Doğru cevap",
+  right:"✅ Doğru", wrong:"❌ Yanlış", prev:"Önceki", next:"Sonraki", backHome:"Ana sayfaya dön", jump:"Soru no", go:"Git",
+  transFail:"⚠️ Çeviri başarısız.", retry:"Tekrar", loading:"⏳ Sorular yükleniyor...", loadErr:"❌ Sorular yüklenemedi. İnternetinizi kontrol edin.",
+  retryLoad:"Tekrar dene", subjectAll:"Tüm konular", ready:"{0} soru hazır", errCfg:"SUPABASE_URL ve SUPABASE_KEY dosyanın üst kısmına yazılmalı.",
+  errBad:"İsim veya şifre hatalı.", errLocked:"Bu hesap kilitlendi. Sahibiyle iletişime geçin.", errUsed:"Bu isim ve şifre daha önce kullanıldı. Sahibiyle iletişime geçin.",
+  errGone:"Hesabınız artık yok. Sahibiyle iletişime geçin.", errNet:"İnternet bağlantısı yok", errEnter:"İsim ve şifre girin.",
+  errNameShort:"İsim en az 2, şifre en az 6 karakter olmalı.", errExists:"Bu isim zaten var.", errAdminNo:"Bu e-posta yönetici değil.", errAdminLogin:"E-posta veya şifre hatalı.",
+  passOk:"Oluşturuldu ✅", kin:"Yönetici önizlemesi", tAll:"Tümü", ocopied:"Kopyalandı"
+},
+ar: {
+  supportNote:"إذا واجهت أي مشكلة، أرسل رسالة إلى حسابنا على إنستغرام في أقرب وقت",
+  deleteMe:"حذف حسابي", deleteMeConfirm:"هل أنت متأكد من حذف حسابك؟ لا يمكن التراجع عن ذلك.",
+  appTitle:"رخصة القيادة Patente B",
+  listen:"استمع",
+  langTitle:"اللغة",
+  changeLang:"تغيير اللغة",
+  brandSub:"بنك الأسئلة واللوحات الرسمي", checking:"جارٍ التحقق...", login:"تسجيل الدخول", name:"الاسم", pass:"كلمة المرور", loginBtn:"دخول", adminBtn:"المشرف",
+  availableIn:"هذا الموقع متاح بهذه اللغات: السورانية، البادينية، الكرمانجية، التركية، العربية والفارسية",
+  loginNote:"أول مرة: أضف الموقع إلى الشاشة الرئيسية (Add to Home Screen), ثم أدخل الاسم وكلمة المرور من هذا التطبيق. الاسم وكلمة المرور يعملان مرة واحدة فقط.",
+  instaText:"للشراء أو لأي مشكلة، أرسل رسالة إلى حسابي على إنستغرام", admin:"المشرف", adminEmail:"بريد المشرف", back:"رجوع",
+  users:"المستخدمون", preview:"اختبار", signOut:"خروج", newName:"اسم الشخص", genPass:"إنشاء", create:"إضافة", copy:"نسخ", copied:"تم النسخ ✅",
+  lock:"قفل", unlock:"فتح", del:"حذف", confirmDel:"هل تريد حذف «{0}»؟", st_new:"جديد", st_used:"مستخدم", st_locked:"مقفل",
+  created:"أُنشئ", seen:"آخر ظهور", home:"الرئيسية", hello:"مرحباً {0}", quiz:"امتحان", quizSub:"٣٠ سؤالاً · ٢٠ دقيقة", study:"دراسة", studySub:"كل الأسئلة",
+  exam:"تسليم", qOf:"سؤال {0} من ٣٠", answersN:"{0} إجابة", veroSub:"صحيح", falsoSub:"خطأ", cancel:"إلغاء", confirmCancel:"هل تريد إلغاء الامتحان؟",
+  leftQ:"{0} سؤال لم يُجب عنه بعد. هل تريد التسليم؟", passed:"✅ ناجح", failed:"❌ راسب", errorsL:"الأخطاء: {0}", yourA:"إجابتك", rightA:"الإجابة الصحيحة",
+  right:"✅ صحيح", wrong:"❌ خطأ", prev:"السابق", next:"التالي", backHome:"العودة للرئيسية", jump:"رقم السؤال", go:"اذهب",
+  transFail:"⚠️ فشلت الترجمة.", retry:"إعادة", loading:"⏳ جارٍ تحميل الأسئلة...", loadErr:"❌ تعذّر تحميل الأسئلة. تحقق من الإنترنت.",
+  retryLoad:"إعادة المحاولة", subjectAll:"كل المواضيع", ready:"{0} سؤال جاهز", errCfg:"يجب كتابة SUPABASE_URL و SUPABASE_KEY أعلى الملف.",
+  errBad:"الاسم أو كلمة المرور غير صحيحة.", errLocked:"هذا الحساب مقفل. تواصل مع صاحب الموقع.", errUsed:"هذا الاسم وكلمة المرور استُخدما من قبل. تواصل مع صاحب الموقع.",
+  errGone:"لم يعد حسابك موجوداً. تواصل مع صاحب الموقع.", errNet:"لا يوجد اتصال بالإنترنت", errEnter:"أدخل الاسم وكلمة المرور.",
+  errNameShort:"الاسم حرفان على الأقل وكلمة المرور ٦ أحرف على الأقل.", errExists:"هذا الاسم موجود مسبقاً.", errAdminNo:"هذا البريد ليس بريد مشرف.", errAdminLogin:"البريد أو كلمة المرور غير صحيحة.",
+  passOk:"تم الإنشاء ✅", kin:"معاينة المشرف", tAll:"الكل", ocopied:"تم النسخ"
+},
+fa: {
+  supportNote:"اگر مشکلی دارید، هر چه زودتر به اینستاگرام ما پیام بدهید",
+  deleteMe:"حذف حساب من", deleteMeConfirm:"مطمئن هستید که حساب خود را حذف کنید؟ این کار برگشت‌پذیر نیست.",
+  appTitle:"گواهینامه رانندگی Patente B",
+  listen:"گوش کن",
+  langTitle:"زبان",
+  changeLang:"تغییر زبان",
+  brandSub:"بانک رسمی سؤال و تابلو", checking:"در حال بررسی...", login:"ورود", name:"نام", pass:"رمز عبور", loginBtn:"ورود", adminBtn:"مدیر",
+  availableIn:"این سایت به این زبان‌ها در دسترس است: سورانی، بادینی، کرمانجی، ترکی، عربی و فارسی",
+  loginNote:"بار اول: سایت را به صفحه اصلی اضافه کنید (Add to Home Screen), سپس از همین برنامه نام و رمز عبور را وارد کنید. نام و رمز فقط یک بار کار می‌کند.",
+  instaText:"برای خرید یا هر مشکلی، پیام بدهید به اینستاگرام من", admin:"مدیر", adminEmail:"ایمیل مدیر", back:"بازگشت",
+  users:"کاربران", preview:"آزمون", signOut:"خروج", newName:"نام شخص", genPass:"ساختن", create:"افزودن", copy:"کپی", copied:"کپی شد ✅",
+  lock:"قفل", unlock:"باز کردن", del:"حذف", confirmDel:"«{0}» حذف شود؟", st_new:"جدید", st_used:"استفاده شده", st_locked:"قفل‌شده",
+  created:"ساخته شد", seen:"آخرین بازدید", home:"خانه", hello:"سلام {0}", quiz:"آزمون", quizSub:"۳۰ سؤال · ۲۰ دقیقه", study:"مطالعه", studySub:"همه سؤال‌ها",
+  exam:"ارسال", qOf:"سؤال {0} از ۳۰", answersN:"{0} پاسخ", veroSub:"درست", falsoSub:"غلط", cancel:"لغو", confirmCancel:"آزمون لغو شود؟",
+  leftQ:"{0} سؤال هنوز پاسخ داده نشده. ارسال شود؟", passed:"✅ قبول شدید", failed:"❌ قبول نشدید", errorsL:"خطاها: {0}", yourA:"پاسخ شما", rightA:"پاسخ درست",
+  right:"✅ درست", wrong:"❌ غلط", prev:"قبلی", next:"بعدی", backHome:"بازگشت به خانه", jump:"شماره سؤال", go:"برو",
+  transFail:"⚠️ ترجمه انجام نشد.", retry:"دوباره", loading:"⏳ در حال بارگذاری سؤال‌ها...", loadErr:"❌ سؤال‌ها بارگذاری نشد. اینترنت را بررسی کنید.",
+  retryLoad:"تلاش دوباره", subjectAll:"همه موضوع‌ها", ready:"{0} سؤال آماده است", errCfg:"باید SUPABASE_URL و SUPABASE_KEY در بالای فایل نوشته شوند.",
+  errBad:"نام یا رمز عبور اشتباه است.", errLocked:"این حساب قفل شده. با صاحب سایت تماس بگیرید.", errUsed:"این نام و رمز قبلاً استفاده شده. با صاحب سایت تماس بگیرید.",
+  errGone:"حساب شما دیگر وجود ندارد. با صاحب سایت تماس بگیرید.", errNet:"اتصال اینترنت وجود ندارد", errEnter:"نام و رمز عبور را وارد کنید.",
+  errNameShort:"نام حداقل ۲ حرف و رمز حداقل ۶ حرف.", errExists:"این نام قبلاً وجود دارد.", errAdminNo:"این ایمیل مدیر نیست.", errAdminLogin:"ایمیل یا رمز عبور اشتباه است.",
+  passOk:"ساخته شد ✅", kin:"پیش‌نمایش مدیر", tAll:"همه", ocopied:"کپی شد"
+},
+it: {
+  supportNote:"Se hai un problema, scrivi al nostro Instagram il prima possibile",
+  deleteMe:"Elimina il mio account", deleteMeConfirm:"Sei sicuro di voler eliminare il tuo account? Non si può annullare.",
+  appTitle:"Patente B",
+  listen:"Ascolta",
+  langTitle:"Lingua",
+  changeLang:"Cambia lingua",
+  brandSub:"Banca ufficiale di quiz e segnali", checking:"Verifica in corso...", login:"Accedi", name:"Nome", pass:"Password", loginBtn:"Accedi", adminBtn:"Admin",
+  availableIn:"Questo sito è disponibile in: sorani, badini, kurmanci, turco, arabo e persiano",
+  loginNote:"Prima volta: aggiungi il sito alla schermata Home (Add to Home Screen), poi inserisci nome e password da questa app. Nome e password funzionano una sola volta.",
+  instaText:"Per acquisti o qualsiasi problema, scrivi al mio Instagram", admin:"Admin", adminEmail:"Email admin", back:"Indietro",
+  users:"Utenti", preview:"Quiz", signOut:"Esci", newName:"Nome della persona", genPass:"Genera", create:"Aggiungi", copy:"Copia", copied:"Copiato ✅",
+  lock:"Blocca", unlock:"Sblocca", del:"Elimina", confirmDel:"Eliminare «{0}»?", st_new:"Nuovo", st_used:"Usato", st_locked:"Bloccato",
+  created:"Creato", seen:"Ultimo accesso", home:"Home", hello:"Ciao {0}", quiz:"Esame", quizSub:"30 domande · 20 min", study:"Studio", studySub:"Tutte le domande",
+  exam:"Consegna", qOf:"Domanda {0} di 30", answersN:"{0} risposte", veroSub:"Vero", falsoSub:"Falso", cancel:"Annulla", confirmCancel:"Annullare la simulazione?",
+  leftQ:"{0} domande senza risposta. Consegnare comunque?", passed:"✅ Promosso", failed:"❌ Bocciato", errorsL:"Errori: {0}", yourA:"La tua risposta", rightA:"Risposta corretta",
+  right:"✅ Corretta", wrong:"❌ Errata", prev:"Precedente", next:"Successiva", backHome:"Torna alla home", jump:"N° domanda", go:"Vai",
+  transFail:"⚠️ Traduzione non riuscita.", retry:"Riprova", loading:"⏳ Caricamento domande...", loadErr:"❌ Impossibile caricare le domande. Controlla la connessione.",
+  retryLoad:"Riprova", subjectAll:"Tutti gli argomenti", ready:"{0} domande pronte", errCfg:"Scrivi SUPABASE_URL e SUPABASE_KEY in cima al file.",
+  errBad:"Nome o password errati.", errLocked:"Account bloccato. Contatta il proprietario.", errUsed:"Questo nome e password sono già stati usati. Contatta il proprietario.",
+  errGone:"Il tuo account non esiste più. Contatta il proprietario.", errNet:"Nessuna connessione", errEnter:"Inserisci nome e password.",
+  errNameShort:"Nome di almeno 2 caratteri e password di almeno 6.", errExists:"Questo nome esiste già.", errAdminNo:"Questa email non è admin.", errAdminLogin:"Email o password errati.",
+  passOk:"Creato ✅", kin:"Anteprima admin", tAll:"Tutti", ocopied:"Copiato"
+}
+};
+
+DICT.en = {
+ "supportNote": "If you have a problem, message us on Instagram as soon as possible",
+ "deleteMe": "Delete my account", "deleteMeConfirm": "Are you sure you want to delete your account? This cannot be undone.",
+ "appTitle": "Driving Licence Patente B",
+ "brandSub": "Official bank of questions and signs",
+ "checking": "Checking...",
+ "login": "Log in",
+ "name": "Name",
+ "pass": "Password",
+ "loginBtn": "Log in",
+ "adminBtn": "Admin",
+ "availableIn": "Available in several languages. Choose yours with the language button at the top.",
+ "loginNote": "First time: add this site to your Home Screen (Add to Home Screen), then enter your name and password from that app. Name and password work only once.",
+ "instaText": "For purchases or any problem, send a message to my Instagram",
+ "admin": "Admin",
+ "adminEmail": "Admin email",
+ "back": "Back",
+ "users": "Users",
+ "preview": "Quiz",
+ "signOut": "Log out",
+ "newName": "Person's name",
+ "genPass": "Generate",
+ "create": "Add",
+ "copy": "Copy",
+ "copied": "Copied ✅",
+ "lock": "Lock",
+ "unlock": "Unlock",
+ "del": "Delete",
+ "confirmDel": "Delete «{0}»?",
+ "st_new": "New",
+ "st_used": "Used",
+ "st_locked": "Locked",
+ "created": "Created",
+ "seen": "Last seen",
+ "home": "Home",
+ "hello": "Hello {0}",
+ "quiz": "Exam",
+ "quizSub": "30 questions · 20 min",
+ "study": "Study",
+ "studySub": "All questions",
+ "exam": "Submit",
+ "qOf": "Question {0} of 30",
+ "answersN": "{0} answers",
+ "veroSub": "True",
+ "falsoSub": "False",
+ "cancel": "Cancel",
+ "confirmCancel": "Cancel the exam?",
+ "leftQ": "{0} questions are still unanswered. Submit anyway?",
+ "passed": "✅ Passed",
+ "failed": "❌ Failed",
+ "errorsL": "Errors: {0}",
+ "yourA": "Your answer",
+ "rightA": "Correct answer",
+ "right": "✅ Correct",
+ "wrong": "❌ Wrong",
+ "prev": "Previous",
+ "next": "Next",
+ "backHome": "Back to home",
+ "jump": "Question no.",
+ "go": "Go",
+ "transFail": "⚠️ Translation failed.",
+ "retry": "Retry",
+ "loading": "⏳ Loading questions...",
+ "loadErr": "❌ Could not load questions. Check your connection.",
+ "retryLoad": "Try again",
+ "subjectAll": "All topics",
+ "ready": "{0} questions ready",
+ "errCfg": "SUPABASE_URL and SUPABASE_KEY must be written at the top of the file.",
+ "errBad": "Wrong name or password.",
+ "errLocked": "This account is locked. Contact the owner.",
+ "errUsed": "This name and password were already used. Contact the owner.",
+ "errGone": "Your account no longer exists. Contact the owner.",
+ "errNet": "No internet connection",
+ "errEnter": "Enter name and password.",
+ "errNameShort": "Name at least 2 characters and password at least 6.",
+ "errExists": "This name already exists.",
+ "errAdminNo": "This email is not an admin.",
+ "errAdminLogin": "Wrong email or password.",
+ "passOk": "Created ✅",
+ "kin": "Admin preview",
+ "tAll": "All",
+ "ocopied": "Copied",
+ "langTitle": "Language",
+ "changeLang": "Change language",
+ "listen": "Listen",
+ "vero": "VERO",
+ "falso": "FALSO"
+};
+
+// لە زمانی دارجەی مەغریبی، تونسی و جەزائیری، ڕووکار بە عەرەبیی ستانداردە (Google ئەو دارجانە نەناسێت)
+DICT.sq = {"supportNote": "Nëse ke një problem, na dërgo mesazh në Instagram sa më shpejt", "deleteMe": "Fshi llogarinë time", "deleteMeConfirm": "Je i sigurt që dëshiron ta fshish llogarinë? Nuk kthehet.", "brandSub": "Banka zyrtare e pyetjeve dhe shenjave", "checking": "Duke kontrolluar...", "login": "Hyrje", "name": "Emri", "pass": "Fjalëkalimi", "loginBtn": "Hyr", "adminBtn": "Admin", "loginNote": "Herën e parë: shtoje këtë faqe në ekranin kryesor (Add to Home Screen), pastaj shkruaj emrin dhe fjalëkalimin nga ajo aplikacion. Emri dhe fjalëkalimi funksionojnë vetëm një herë.", "instaText": "Për blerje ose për çdo problem, dërgo një mesazh në Instagram-in tim", "admin": "Admin", "adminEmail": "Email-i i adminit", "back": "Kthehu", "users": "Përdoruesit", "preview": "Kuiz", "signOut": "Dil", "newName": "Emri i personit", "genPass": "Gjenero", "create": "Shto", "copy": "Kopjo", "copied": "U kopjua ✅", "lock": "Blloko", "unlock": "Zhblloko", "del": "Fshi", "confirmDel": "Të fshihet «{0}»?", "st_new": "E re", "st_used": "E përdorur", "st_locked": "E bllokuar", "created": "Krijuar", "seen": "Hera e fundit", "home": "Kryefaqja", "hello": "Përshëndetje {0}", "quiz": "Provim", "quizSub": "30 pyetje · 20 min", "study": "Studim", "studySub": "Të gjitha pyetjet", "exam": "Dorëzo", "qOf": "Pyetja {0} nga 30", "answersN": "{0} përgjigje", "veroSub": "E vërtetë", "falsoSub": "E gabuar", "cancel": "Anulo", "confirmCancel": "Të anulohet provimi?", "leftQ": "{0} pyetje ende pa përgjigje. Të dorëzohet?", "passed": "✅ Kaluat", "failed": "❌ Nuk kaluat", "errorsL": "Gabime: {0}", "yourA": "Përgjigja juaj", "rightA": "Përgjigja e saktë", "right": "✅ E saktë", "wrong": "❌ E gabuar", "prev": "Para", "next": "Pas", "backHome": "Kthehu te kryefaqja", "jump": "Nr. i pyetjes", "go": "Shko", "transFail": "⚠️ Përkthimi dështoi.", "retry": "Provo përsëri", "loading": "⏳ Duke ngarkuar pyetjet...", "loadErr": "❌ Pyetjet nuk u ngarkuan. Kontrollo lidhjen.", "retryLoad": "Provo përsëri", "subjectAll": "Të gjitha temat", "ready": "{0} pyetje gati", "errCfg": "SUPABASE_URL dhe SUPABASE_KEY duhet të shkruhen në krye të skedarit.", "errBad": "Emri ose fjalëkalimi i gabuar.", "errLocked": "Kjo llogari është e bllokuar. Kontakto pronarin.", "errUsed": "Ky emër dhe fjalëkalim janë përdorur më parë. Kontakto pronarin.", "errGone": "Llogaria juaj nuk ekziston më. Kontakto pronarin.", "errNet": "Nuk ka lidhje interneti", "errEnter": "Shkruaj emrin dhe fjalëkalimin.", "errNameShort": "Emri të paktën 2 karaktere dhe fjalëkalimi të paktën 6.", "errExists": "Ky emër ekziston tashmë.", "errAdminNo": "Ky email nuk është admin.", "errAdminLogin": "Email ose fjalëkalim i gabuar.", "passOk": "U krijua ✅", "kin": "Pamja e adminit", "tAll": "Të gjitha", "ocopied": "U kopjua", "langTitle": "Gjuha", "changeLang": "Ndrysho gjuhën", "listen": "Dëgjo", "appTitle": "Patenta e shoferit Patente B"};
+DICT.ur = {"supportNote": "اگر کوئی مسئلہ ہو تو جلد از جلد ہمارے انسٹاگرام پر پیغام بھیجیں", "deleteMe": "میرا اکاؤنٹ حذف کریں", "deleteMeConfirm": "کیا آپ واقعی اپنا اکاؤنٹ حذف کرنا چاہتے ہیں؟ یہ واپس نہیں ہوگا۔", "brandSub": "سرکاری سوالات اور نشانات کا بینک", "checking": "جانچ ہو رہی ہے...", "login": "لاگ ان", "name": "نام", "pass": "پاس ورڈ", "loginBtn": "لاگ ان", "adminBtn": "ایڈمن", "loginNote": "پہلی بار: اس سائٹ کو ہوم اسکرین پر شامل کریں (Add to Home Screen), پھر اس ایپ سے نام اور پاس ورڈ لکھیں۔ نام اور پاس ورڈ صرف ایک بار کام کرتے ہیں۔", "instaText": "خریداری یا کسی بھی مسئلے کے لیے میرے انسٹاگرام پر پیغام بھیجیں", "admin": "ایڈمن", "adminEmail": "ایڈمن ای میل", "back": "واپس", "users": "صارفین", "preview": "کوئز", "signOut": "لاگ آؤٹ", "newName": "شخص کا نام", "genPass": "بنائیں", "create": "شامل کریں", "copy": "کاپی", "copied": "کاپی ہو گیا ✅", "lock": "لاک کریں", "unlock": "ان لاک کریں", "del": "حذف کریں", "confirmDel": "«{0}» حذف کریں؟", "st_new": "نیا", "st_used": "استعمال شدہ", "st_locked": "لاک شدہ", "created": "بنایا گیا", "seen": "آخری بار دیکھا", "home": "ہوم", "hello": "خوش آمدید {0}", "quiz": "امتحان", "quizSub": "30 سوالات · 20 منٹ", "study": "مطالعہ", "studySub": "تمام سوالات", "exam": "جمع کریں", "qOf": "سوال {0} از 30", "answersN": "{0} جوابات", "veroSub": "درست", "falsoSub": "غلط", "cancel": "منسوخ کریں", "confirmCancel": "امتحان منسوخ کریں؟", "leftQ": "{0} سوالات کا جواب نہیں دیا گیا۔ پھر بھی جمع کریں؟", "passed": "✅ کامیاب", "failed": "❌ ناکام", "errorsL": "غلطیاں: {0}", "yourA": "آپ کا جواب", "rightA": "درست جواب", "right": "✅ درست", "wrong": "❌ غلط", "prev": "پچھلا", "next": "اگلا", "backHome": "ہوم پر واپس", "jump": "سوال نمبر", "go": "جائیں", "transFail": "⚠️ ترجمہ ناکام ہوا۔", "retry": "دوبارہ", "loading": "⏳ سوالات لوڈ ہو رہے ہیں...", "loadErr": "❌ سوالات لوڈ نہیں ہو سکے۔ انٹرنیٹ چیک کریں۔", "retryLoad": "دوبارہ کوشش کریں", "subjectAll": "تمام موضوعات", "ready": "{0} سوالات تیار ہیں", "errCfg": "SUPABASE_URL اور SUPABASE_KEY فائل کے اوپر لکھنے ضروری ہیں۔", "errBad": "نام یا پاس ورڈ غلط ہے۔", "errLocked": "یہ اکاؤنٹ لاک ہے۔ مالک سے رابطہ کریں۔", "errUsed": "یہ نام اور پاس ورڈ پہلے استعمال ہو چکے ہیں۔ مالک سے رابطہ کریں۔", "errGone": "آپ کا اکاؤنٹ اب موجود نہیں۔ مالک سے رابطہ کریں۔", "errNet": "انٹرنیٹ کنکشن نہیں ہے", "errEnter": "نام اور پاس ورڈ لکھیں۔", "errNameShort": "نام کم از کم 2 حروف اور پاس ورڈ کم از کم 6 حروف کا ہو۔", "errExists": "یہ نام پہلے سے موجود ہے۔", "errAdminNo": "یہ ای میل ایڈمن کا نہیں ہے۔", "errAdminLogin": "ای میل یا پاس ورڈ غلط ہے۔", "passOk": "بن گیا ✅", "kin": "ایڈمن پیش نظارہ", "tAll": "تمام", "ocopied": "کاپی ہو گیا", "langTitle": "زبان", "changeLang": "زبان تبدیل کریں", "listen": "سنیں", "appTitle": "ڈرائیونگ لائسنس Patente B"};
+DICT.hi = {"supportNote": "यदि आपको कोई समस्या है, तो जल्द से जल्द हमारे इंस्टाग्राम पर संदेश भेजें", "deleteMe": "मेरा खाता हटाएं", "deleteMeConfirm": "क्या आप वाकई अपना खाता हटाना चाहते हैं? यह वापस नहीं होगा।", "brandSub": "प्रश्नों और संकेतों का आधिकारिक बैंक", "checking": "जाँच हो रही है...", "login": "लॉग इन", "name": "नाम", "pass": "पासवर्ड", "loginBtn": "लॉग इन", "adminBtn": "एडमिन", "loginNote": "पहली बार: इस साइट को होम स्क्रीन पर जोड़ें (Add to Home Screen), फिर उस ऐप से नाम और पासवर्ड दर्ज करें। नाम और पासवर्ड केवल एक बार काम करते हैं।", "instaText": "खरीदारी या किसी भी समस्या के लिए मेरे इंस्टाग्राम पर संदेश भेजें", "admin": "एडमिन", "adminEmail": "एडमिन ईमेल", "back": "वापस", "users": "उपयोगकर्ता", "preview": "क्विज़", "signOut": "लॉग आउट", "newName": "व्यक्ति का नाम", "genPass": "बनाएं", "create": "जोड़ें", "copy": "कॉपी", "copied": "कॉपी हो गया ✅", "lock": "लॉक करें", "unlock": "अनलॉक करें", "del": "हटाएं", "confirmDel": "«{0}» हटाएं?", "st_new": "नया", "st_used": "इस्तेमाल किया", "st_locked": "लॉक", "created": "बनाया गया", "seen": "अंतिम बार देखा", "home": "होम", "hello": "नमस्ते {0}", "quiz": "परीक्षा", "quizSub": "30 प्रश्न · 20 मिनट", "study": "अध्ययन", "studySub": "सभी प्रश्न", "exam": "जमा करें", "qOf": "प्रश्न {0} / 30", "answersN": "{0} उत्तर", "veroSub": "सही", "falsoSub": "गलत", "cancel": "रद्द करें", "confirmCancel": "परीक्षा रद्द करें?", "leftQ": "{0} प्रश्नों के उत्तर नहीं दिए गए। फिर भी जमा करें?", "passed": "✅ उत्तीर्ण", "failed": "❌ अनुत्तीर्ण", "errorsL": "गलतियाँ: {0}", "yourA": "आपका उत्तर", "rightA": "सही उत्तर", "right": "✅ सही", "wrong": "❌ गलत", "prev": "पिछला", "next": "अगला", "backHome": "होम पर वापस", "jump": "प्रश्न संख्या", "go": "जाएं", "transFail": "⚠️ अनुवाद विफल रहा।", "retry": "फिर से", "loading": "⏳ प्रश्न लोड हो रहे हैं...", "loadErr": "❌ प्रश्न लोड नहीं हो सके। इंटरनेट जाँचें।", "retryLoad": "फिर कोशिश करें", "subjectAll": "सभी विषय", "ready": "{0} प्रश्न तैयार", "errCfg": "SUPABASE_URL और SUPABASE_KEY फ़ाइल के ऊपर लिखे होने चाहिए।", "errBad": "नाम या पासवर्ड गलत है।", "errLocked": "यह खाता लॉक है। मालिक से संपर्क करें।", "errUsed": "यह नाम और पासवर्ड पहले ही इस्तेमाल हो चुके हैं। मालिक से संपर्क करें।", "errGone": "आपका खाता अब मौजूद नहीं है। मालिक से संपर्क करें।", "errNet": "इंटरनेट कनेक्शन नहीं है", "errEnter": "नाम और पासवर्ड लिखें।", "errNameShort": "नाम कम से कम 2 अक्षर और पासवर्ड कम से कम 6 अक्षर का हो।", "errExists": "यह नाम पहले से मौजूद है।", "errAdminNo": "यह ईमेल एडमिन का नहीं है।", "errAdminLogin": "ईमेल या पासवर्ड गलत है।", "passOk": "बन गया ✅", "kin": "एडमिन पूर्वावलोकन", "tAll": "सभी", "ocopied": "कॉपी हो गया", "langTitle": "भाषा", "changeLang": "भाषा बदलें", "listen": "सुनें", "appTitle": "ड्राइविंग लाइसेंस Patente B"};
+DICT.bn = {"supportNote": "কোনো সমস্যা হলে যত দ্রুত সম্ভব আমাদের ইনস্টাগ্রামে বার্তা পাঠান", "deleteMe": "আমার অ্যাকাউন্ট মুছুন", "deleteMeConfirm": "আপনি কি নিশ্চিত যে আপনার অ্যাকাউন্ট মুছতে চান? এটি ফেরানো যাবে না।", "brandSub": "প্রশ্ন ও চিহ্নের সরকারি ব্যাংক", "checking": "যাচাই করা হচ্ছে...", "login": "লগ ইন", "name": "নাম", "pass": "পাসওয়ার্ড", "loginBtn": "লগ ইন", "adminBtn": "অ্যাডমিন", "loginNote": "প্রথমবার: এই সাইটটি হোম স্ক্রিনে যুক্ত করুন (Add to Home Screen), তারপর ওই অ্যাপ থেকে নাম ও পাসওয়ার্ড লিখুন। নাম ও পাসওয়ার্ড শুধু একবার কাজ করে।", "instaText": "কেনাকাটা বা যেকোনো সমস্যার জন্য আমার ইনস্টাগ্রামে বার্তা পাঠান", "admin": "অ্যাডমিন", "adminEmail": "অ্যাডমিন ইমেইল", "back": "ফিরে যান", "users": "ব্যবহারকারী", "preview": "কুইজ", "signOut": "লগ আউট", "newName": "ব্যক্তির নাম", "genPass": "তৈরি করুন", "create": "যোগ করুন", "copy": "কপি", "copied": "কপি হয়েছে ✅", "lock": "লক করুন", "unlock": "আনলক করুন", "del": "মুছুন", "confirmDel": "«{0}» মুছবেন?", "st_new": "নতুন", "st_used": "ব্যবহৃত", "st_locked": "লক করা", "created": "তৈরি হয়েছে", "seen": "সর্বশেষ দেখা", "home": "হোম", "hello": "স্বাগতম {0}", "quiz": "পরীক্ষা", "quizSub": "৩০ প্রশ্ন · ২০ মিনিট", "study": "পড়া", "studySub": "সব প্রশ্ন", "exam": "জমা দিন", "qOf": "প্রশ্ন {0} / ৩০", "answersN": "{0} উত্তর", "veroSub": "সত্য", "falsoSub": "মিথ্যা", "cancel": "বাতিল", "confirmCancel": "পরীক্ষা বাতিল করবেন?", "leftQ": "{0} প্রশ্নের উত্তর দেওয়া হয়নি। তবুও জমা দেবেন?", "passed": "✅ উত্তীর্ণ", "failed": "❌ অনুত্তীর্ণ", "errorsL": "ভুল: {0}", "yourA": "আপনার উত্তর", "rightA": "সঠিক উত্তর", "right": "✅ সঠিক", "wrong": "❌ ভুল", "prev": "আগের", "next": "পরের", "backHome": "হোমে ফিরুন", "jump": "প্রশ্ন নম্বর", "go": "যান", "transFail": "⚠️ অনুবাদ ব্যর্থ হয়েছে।", "retry": "আবার", "loading": "⏳ প্রশ্ন লোড হচ্ছে...", "loadErr": "❌ প্রশ্ন লোড করা যায়নি। ইন্টারনেট দেখুন।", "retryLoad": "আবার চেষ্টা করুন", "subjectAll": "সব বিষয়", "ready": "{0} প্রশ্ন প্রস্তুত", "errCfg": "SUPABASE_URL ও SUPABASE_KEY ফাইলের উপরে লিখতে হবে।", "errBad": "নাম বা পাসওয়ার্ড ভুল।", "errLocked": "এই অ্যাকাউন্ট লক করা আছে। মালিকের সঙ্গে যোগাযোগ করুন।", "errUsed": "এই নাম ও পাসওয়ার্ড আগে ব্যবহৃত হয়েছে। মালিকের সঙ্গে যোগাযোগ করুন।", "errGone": "আপনার অ্যাকাউন্ট আর নেই। মালিকের সঙ্গে যোগাযোগ করুন।", "errNet": "ইন্টারনেট সংযোগ নেই", "errEnter": "নাম ও পাসওয়ার্ড লিখুন।", "errNameShort": "নাম কমপক্ষে ২ অক্ষর ও পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।", "errExists": "এই নাম আগে থেকেই আছে।", "errAdminNo": "এই ইমেইল অ্যাডমিনের নয়।", "errAdminLogin": "ইমেইল বা পাসওয়ার্ড ভুল।", "passOk": "তৈরি হয়েছে ✅", "kin": "অ্যাডমিন প্রিভিউ", "tAll": "সব", "ocopied": "কপি হয়েছে", "langTitle": "ভাষা", "changeLang": "ভাষা পরিবর্তন করুন", "listen": "শুনুন", "appTitle": "ড্রাইভিং লাইসেন্স Patente B"};
+DICT.ps = {"supportNote": "که ستونزه لرئ، ژر تر زموږ انسټاګرام ته پیغام ولیږئ", "deleteMe": "زما حساب ړنگ کړئ", "deleteMeConfirm": "ایا ډاډه یاست چې حساب ړنگ کړئ؟ دا بیرته نه راګرځي.", "brandSub": "د پوښتنو او نښانو رسمي بانک", "checking": "کتنه کیږي...", "login": "ننوتل", "name": "نوم", "pass": "پټنوم", "loginBtn": "ننوتل", "adminBtn": "اډمین", "loginNote": "لومړی ځل: دا سایټ د کور پاڼې ته اضافه کړئ (Add to Home Screen), بیا په هماغه اپ کې نوم او پټنوم ولیکئ. نوم او پټنوم یوازې یو ځل کار کوي.", "instaText": "د پیرود یا هر ستونزې لپاره زما انسټاګرام ته پیغام ولیږئ", "admin": "اډمین", "adminEmail": "د اډمین بریښنالیک", "back": "شاته", "users": "کاروونکي", "preview": "کوئز", "signOut": "وتل", "newName": "د شخص نوم", "genPass": "جوړول", "create": "اضافه کول", "copy": "کاپي", "copied": "کاپي شو ✅", "lock": "بندول", "unlock": "خلاصول", "del": "ړنگول", "confirmDel": "«{0}» ړنگ شي؟", "st_new": "نوی", "st_used": "کارول شوی", "st_locked": "بند شوی", "created": "جوړ شو", "seen": "وروستی ځل ولیدل شو", "home": "کور", "hello": "ښه راغلاست {0}", "quiz": "ازموینه", "quizSub": "30 پوښتنې · 20 دقیقې", "study": "زده کړه", "studySub": "ټولې پوښتنې", "exam": "سپارل", "qOf": "پوښتنه {0} له 30", "answersN": "{0} ځوابونه", "veroSub": "سمه", "falsoSub": "غلطه", "cancel": "لغوه کول", "confirmCancel": "ازموینه لغوه شي؟", "leftQ": "{0} پوښتنو ته ځواب نه دی ورکړ شوی. بیا هم وسپارل شي؟", "passed": "✅ بریالی شوی", "failed": "❌ ناکام شوی", "errorsL": "غلطۍ: {0}", "yourA": "ستاسو ځواب", "rightA": "سم ځواب", "right": "✅ سم", "wrong": "❌ غلط", "prev": "پخوانۍ", "next": "راتلونکې", "backHome": "کور ته بیرته", "jump": "د پوښتنې شمېره", "go": "لاړ شه", "transFail": "⚠️ ژباړه ناکامه شوه.", "retry": "بیا", "loading": "⏳ پوښتنې پورته کیږي...", "loadErr": "❌ پوښتنې پورته نشوې. انټرنیټ وګورئ.", "retryLoad": "بیا هڅه وکړئ", "subjectAll": "ټول موضوعات", "ready": "{0} پوښتنې چمتو دي", "errCfg": "SUPABASE_URL او SUPABASE_KEY باید د فایل پورته ولیکل شي.", "errBad": "نوم یا پټنوم غلط دی.", "errLocked": "دا حساب بند دی. د مالک سره اړیکه ونیسئ.", "errUsed": "دا نوم او پټنوم مخکې کارول شوي. د مالک سره اړیکه ونیسئ.", "errGone": "ستاسو حساب نور شتون نلري. د مالک سره اړیکه ونیسئ.", "errNet": "د انټرنیټ اړیکه نشته", "errEnter": "نوم او پټنوم ولیکئ.", "errNameShort": "نوم لږترلږه 2 توري او پټنوم لږترلږه 6 توري.", "errExists": "دا نوم مخکې شتون لري.", "errAdminNo": "دا بریښنالیک د اډمین نه دی.", "errAdminLogin": "بریښنالیک یا پټنوم غلط دی.", "passOk": "جوړ شو ✅", "kin": "د اډمین ښودنه", "tAll": "ټول", "ocopied": "کاپي شو", "langTitle": "ژبه", "changeLang": "ژبه بدله کړئ", "listen": "واورئ", "appTitle": "د موټر چلولو جواز Patente B"};
+DICT.ma = DICT.ar; DICT.tn = DICT.ar; DICT.dz = DICT.ar;
+
+function t(k, ...args){
+  const d = DICT[currentLang] || DICT.en;
+  let s = d[k] != null ? d[k] : (DICT.en[k] != null ? DICT.en[k] : (DICT.ckb[k] != null ? DICT.ckb[k] : k));
+  args.forEach((v, i) => { s = s.split('{' + i + '}').join(v); });
+  return s;
+}
+
+let currentLang = 'en';
+{ const s = lsGet('pb_lang'); if (s && LANGS[s]) currentLang = s; }
+
+function applyI18n(){
+  const L = LANGS[currentLang];
+  document.documentElement.lang = L.code;
+  document.documentElement.dir = L.dir;
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  $('hello').textContent = adminPreview ? t('kin') : t('hello', userName);
+  buildLangBar();
+}
+
+function buildLangBar(){
+  $('lang-cur').textContent = t('langTitle');
+  $('lang-title').textContent = t('langTitle');
+  const list = $('lang-list'); list.innerHTML = '';
+  Object.keys(LANGS).forEach(k => {
+    const b = document.createElement('button');
+    b.className = 'item' + (k === currentLang ? ' on' : '');
+    b.innerHTML = `<span></span>${k === currentLang ? '<span class="tick">✓</span>' : ''}`;
+    b.firstChild.textContent = LANGS[k].label;
+    b.onclick = () => setLang(k);
+    list.appendChild(b);
+  });
+}
+function openLang(){ buildLangBar(); $('lang-sheet').classList.remove('hidden'); }
+function closeLang(){ $('lang-sheet').classList.add('hidden'); }
+
+function setLang(lang){
+  currentLang = lang; lsSet('pb_lang', lang);
+  closeLang();
+  applyI18n();
+  refreshView();
+}
+
+/* هەموو شاشەی دیارەکان دووبارە بەپێی زمانی نوێ ڕێکدەخاتەوە */
+function refreshView(){
+  if (!isHidden('admin-panel')) loadUsers();
+  if (!isHidden('exam-screen')) renderExam();
+  if (!isHidden('study-screen')) loadStudyQuestion();
+  if (!isHidden('result-screen')) buildResult();
+  if (!isHidden('home-screen')) updateHome();
+  if (!isHidden('loading-box')) setLoadingText();
+}
+
+/* ================= وەرگێڕان ================= */
+const cache = {}, tokens = {}, pending = {};
+
+function latinToArabicKurdish(text){
+  const map = {'ê':'ێ','î':'ی','û':'وو','ç':'چ','ş':'ش','b':'ب','c':'ج','d':'د','f':'ف','g':'گ','h':'ه','j':'ژ','k':'ک','l':'ل','m':'م','n':'ن','p':'پ','q':'ق','r':'ر','s':'س','t':'ت','v':'ڤ','w':'و','x':'خ','y':'ی','z':'ز','a':'ا','e':'ە','i':'','o':'ۆ','u':'و'};
+  const vowels = 'aeiouêîû';
+  return text.split(/(\s+)/).map(word => {
+    if (/^\s*$/.test(word)) return word;
+    const lower = word.toLowerCase(); let out = '';
+    for (let i = 0; i < lower.length; i++){
+      const ch = lower[i];
+      if (i === 0 && vowels.includes(ch)){ out += 'ئ' + (map[ch] || ''); continue; }
+      if (map[ch] !== undefined) out += map[ch];
+      else if (ch === '?') out += '؟';
+      else if (ch === ',') out += '،';
+      else out += ch;
+    }
+    return out;
+  }).join('');
+}
+
+async function fetchJSON(url, ms){
+  const c = new AbortController(); const tm = setTimeout(() => c.abort(), ms || 8000);
+  try {
+    const r = await fetch(url, { signal: c.signal, referrerPolicy:'no-referrer' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return await r.json();
+  } finally { clearTimeout(tm); }
+}
+const PROVIDERS = [
+  { name:'google', run: async (text, tl) => {
+      const d = await fetchJSON(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=it&tl=${tl}&dt=t&q=${encodeURIComponent(text)}`);
+      return d[0].map(p => p[0]).join('');
+  }},
+  { name:'google2', run: async (text, tl) => {
+      const d = await fetchJSON(`https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=it&tl=${tl}&q=${encodeURIComponent(text)}`);
+      if (d && d.sentences) return d.sentences.map(x => x.trans).join('');
+      if (Array.isArray(d)){ const f = d[0]; return Array.isArray(f) ? f[0] : f; }
+      throw new Error('bad format');
+  }},
+  { name:'mymemory', run: async (text, tl) => {
+      const d = await fetchJSON(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=it|${tl}`);
+      const r = d && d.responseData && d.responseData.translatedText;
+      if (!r || /MYMEMORY WARNING|INVALID/i.test(r)) throw new Error('mymemory');
+      return r;
+  }}
+];
+function translateText(text, lang){
+  const key = lang + '|' + text;
+  if (cache[key]) return Promise.resolve(cache[key]);
+  if (pending[key]) return pending[key];
+  const L = LANGS[lang];
+  pending[key] = (async () => {
+    const errs = [];
+    for (const p of PROVIDERS){
+      try {
+        let out = await p.run(text, L.tl);
+        if (!out || !out.trim()) throw new Error('empty');
+        if (L.arabic) out = latinToArabicKurdish(out);
+        cache[key] = out; return out;
+      } catch(e){ errs.push(p.name + ': ' + (e && e.message ? e.message : e)); }
+    }
+    throw new Error(errs.join(' | '));
+  })();
+  pending[key].finally(() => { delete pending[key]; }).catch(() => {});
+  return pending[key];
+}
+async function showTranslation(boxId, text){
+  const box = $(boxId); const L = LANGS[currentLang];
+  if (L.none){ box.classList.add('hidden'); return; }
+  const label = box.querySelector('.tr-label'), body = box.querySelector('.tr-body');
+  box.classList.remove('hidden');
+  label.textContent = L.label; body.dir = L.dir; body.style.textAlign = L.dir === 'ltr' ? 'left' : 'right';
+  body.classList.add('loading'); body.textContent = '...';
+  const token = tokens[boxId] = (tokens[boxId] || 0) + 1;
+  try {
+    const r = await translateText(text, currentLang);
+    if (tokens[boxId] !== token) return;
+    body.classList.remove('loading'); body.textContent = r;
+  } catch(e){
+    if (tokens[boxId] !== token) return;
+    body.classList.remove('loading');
+    body.textContent = t('transFail') + ' ';
+    const rb = document.createElement('button');
+    rb.className = 'btn small'; rb.textContent = t('retry'); rb.onclick = () => showTranslation(boxId, text);
+    body.appendChild(rb);
+    const sm = document.createElement('div');
+    sm.style.cssText = 'direction:ltr;text-align:left;font-size:.7rem;font-weight:400;color:#9A9CA3;margin-top:6px;word-break:break-all';
+    sm.textContent = String(e && e.message || e);
+    body.appendChild(sm);
+  }
+}
+/* گوێگرتن: دەنگی ئیتاڵی، هەمیشە بە ئیتاڵی هەرچی زمانی ڕووکار بێت */
+let itVoice = null;
+function pickItVoice(){
+  if (!('speechSynthesis' in window)) return null;
+  const vs = speechSynthesis.getVoices();
+  return vs.find(v => /^it[-_]IT/i.test(v.lang)) || vs.find(v => /^it/i.test(v.lang)) || null;
+}
+if ('speechSynthesis' in window){
+  speechSynthesis.onvoiceschanged = () => { itVoice = pickItVoice(); };
+  itVoice = pickItVoice();
+}
+function speak(text){
+  if (!('speechSynthesis' in window) || !text) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'it-IT';
+  u.rate = 0.9;
+  if (!itVoice) itVoice = pickItVoice();
+  if (itVoice) u.voice = itVoice;
+  speechSynthesis.speak(u);
+}
+
+function prefetch(text){ if (!LANGS[currentLang].none) translateText(text, currentLang).catch(() => {}); }
+
+/* ================= ڕێکخستنی شاشەکان ================= */
+const SCREENS = ['splash','login','admin-login','admin-panel','app'];
+function showOnly(id){ SCREENS.forEach(s => $(s).classList.toggle('hidden', s !== id)); document.body.classList.remove('inquiz'); document.body.classList.toggle('loggedin', id === 'app' && !adminPreview); window.scrollTo(0,0); }
+function logout(){ clearInterval(timerInterval); sessionTok = null; showLogin(''); }
+function isHidden(id){ return $(id).classList.contains('hidden'); }
+function setMsg(id, text, kind){
+  const el = $(id); el.textContent = text || '';
+  el.classList.toggle('show', !!text);
+  if (kind){ el.classList.remove('err','ok'); el.classList.add(kind); }
+}
+
+async function rpc(fn, args, jwt){
+  const headers = { 'Content-Type':'application/json', 'apikey': SUPABASE_KEY };
+  if (jwt) headers['Authorization'] = 'Bearer ' + jwt;
+  const r = await fetch(`${BASE}/rest/v1/rpc/${fn}`, { method:'POST', headers, body: JSON.stringify(args || {}) });
+  if (!r.ok){
+    let m = ''; try { m = (await r.json()).message || ''; } catch(e){}
+    throw new Error(m || ('HTTP ' + r.status));
+  }
+  return r.json();
+}
+
+/* ================= دەستپێکردن ================= */
+let userName = '', adminJwt = null, adminPreview = false, checkTimer = null, checksBound = false, timerInterval;
+const LS_TOKEN = 'pb_token';
+let sessionTok = null; // کۆد تەنها لە بیرگەی ئەم جارەی کردنەوەیە، دوای داخستن ون دەبێت
+
+function setLoadingText(){ $('loading-box').innerHTML = t('loading'); }
+
+async function boot(){
+  showOnly('splash');
+  $('splash-retry').classList.add('hidden');
+  $('splash-status').textContent = t('checking');
+  const t0 = Date.now();
+  let target = 'login', reason = '';
+  lsDel(LS_TOKEN); // کۆدی کۆنی پاشەکەوتکراو بسڕەوە
+  if (!configured()){ reason = 'config'; }
+  await sleep(Math.max(0, 1100 - (Date.now() - t0)));
+  if (target === 'app') enterApp();
+  else if (target === 'neterr'){
+    $('splash-status').textContent = t('errNet');
+    $('splash-retry').classList.remove('hidden');
+  } else showLogin(reason);
+}
+
+function showLogin(reason){
+  stopChecks(); adminPreview = false;
+  showOnly('login');
+  applyI18n();
+  const m = { config: t('errCfg'), locked: t('errLocked'), gone: t('errGone') };
+  setMsg('l-err', m[reason] || '', 'err');
+}
+
+async function doLogin(){
+  const name = $('l-name').value.trim(), pass = $('l-pass').value;
+  if (!configured()){ setMsg('l-err', t('errCfg'), 'err'); return; }
+  if (!name || !pass){ setMsg('l-err', t('errEnter'), 'err'); return; }
+  const btn = $('l-btn'); btn.disabled = true; setMsg('l-err', '');
+  try {
+    const res = await rpc('user_login', { p_name: name, p_pass: pass });
+    if (res.ok){
+      sessionTok = res.token;
+      userName = res.name; $('l-pass').value = '';
+      enterApp();
+    } else {
+      const m = { bad: t('errBad'), locked: t('errLocked'), used: t('errUsed') };
+      setMsg('l-err', m[res.reason] || t('errBad'), 'err');
+    }
+  } catch(e){ setMsg('l-err', t('errNet') + ': ' + e.message, 'err'); }
+  finally { btn.disabled = false; }
+}
+
+function startChecks(){
+  stopChecks();
+  checkTimer = setInterval(recheck, 60000);
+  if (!checksBound){
+    checksBound = true;
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) recheck(); });
+  }
+}
+function stopChecks(){ if (checkTimer){ clearInterval(checkTimer); checkTimer = null; } }
+async function recheck(){
+  if (adminPreview || isHidden('app')) return;
+  if (!sessionTok) return kickOut('gone');
+  try {
+    const res = await rpc('user_check', { p_token: sessionTok });
+    if (!res.ok) kickOut(res.reason === 'locked' ? 'locked' : 'gone');
+  } catch(e){ /* بێ ئینتەرنێت، دواتر دووبارە دەپشکنرێت */ }
+}
+function kickOut(reason){ clearInterval(timerInterval); sessionTok = null; showLogin(reason); }
+
+/* ================= ئەدمین ================= */
+function showAdminLogin(){ showOnly('admin-login'); applyI18n(); setMsg('adm-err',''); }
+
+async function adminSignIn(){
+  if (!configured()){ setMsg('adm-err', t('errCfg'), 'err'); return; }
+  const email = $('adm-email').value.trim(), pass = $('adm-pass').value;
+  if (!email || !pass){ setMsg('adm-err', t('errEnter'), 'err'); return; }
+  const btn = $('adm-btn'); btn.disabled = true; setMsg('adm-err', '');
+  try {
+    const r = await fetch(`${BASE}/auth/v1/token?grant_type=password`, {
+      method:'POST', headers:{ 'Content-Type':'application/json', 'apikey': SUPABASE_KEY },
+      body: JSON.stringify({ email, password: pass })
+    });
+    const d = await r.json();
+    if (!r.ok || !d.access_token) throw new Error(t('errAdminLogin'));
+    adminJwt = d.access_token; $('adm-pass').value = '';
+    showOnly('admin-panel'); applyI18n(); loadUsers();
+  } catch(e){ setMsg('adm-err', e.message, 'err'); }
+  finally { btn.disabled = false; }
+}
+
+function adminSignOut(){ adminJwt = null; adminPreview = false; showLogin(''); }
+function adminPreviewApp(){ adminPreview = true; enterApp(); }
+function backToAdmin(){ clearInterval(timerInterval); adminPreview = false; showOnly('admin-panel'); applyI18n(); loadUsers(); }
+
+function fmtDate(s){ if (!s) return '—'; try { return new Date(s).toLocaleString('en-GB', { dateStyle:'short', timeStyle:'short' }); } catch(e){ return s; } }
+
+async function loadUsers(){
+  const box = $('ulist');
+  box.innerHTML = '<div class="status">⏳</div>';
+  try {
+    const list = await rpc('admin_list', {}, adminJwt);
+    box.innerHTML = '';
+    if (!list.length){ box.innerHTML = '<div class="status">—</div>'; return; }
+    list.forEach(u => {
+      const d = document.createElement('div');
+      d.className = 'uitem';
+      const tagCls = u.locked ? 'lock' : (u.used ? 'used' : 'new');
+      const tagTxt = u.locked ? t('st_locked') : (u.used ? t('st_used') : t('st_new'));
+      d.innerHTML = `<div class="top"><b></b><span class="tag ${tagCls}">${tagTxt}</span></div>
+        <div class="meta">${t('created')}: ${fmtDate(u.created_at)} · ${t('seen')}: ${fmtDate(u.last_seen)}</div>
+        <div class="row"></div>`;
+      d.querySelector('b').textContent = u.name;
+      const row = d.querySelector('.row');
+      const lock = document.createElement('button');
+      lock.className = 'btn ghost small';
+      lock.textContent = u.locked ? t('unlock') : t('lock');
+      lock.onclick = () => adminAct('admin_set_lock', { p_id: u.id, p_locked: !u.locked });
+      const del = document.createElement('button');
+      del.className = 'btn danger small';
+      del.textContent = t('del');
+      del.onclick = () => { if (confirm(t('confirmDel', u.name))) adminAct('admin_delete', { p_id: u.id }); };
+      row.appendChild(lock); row.appendChild(del);
+      box.appendChild(d);
+    });
+  } catch(e){
+    box.innerHTML = '';
+    const msg = /forbidden/i.test(e.message) ? t('errAdminNo') : e.message;
+    const el = document.createElement('div'); el.className = 'msg err show'; el.textContent = msg; box.appendChild(el);
+  }
+}
+async function adminAct(fn, args){
+  try { await rpc(fn, args, adminJwt); loadUsers(); }
+  catch(e){ alert(e.message); }
+}
+
+function genPass(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+  const a = new Uint32Array(8); crypto.getRandomValues(a);
+  $('n-pass').value = Array.from(a, x => chars[x % chars.length]).join('');
+}
+let lastCred = '';
+async function createUser(){
+  const name = $('n-name').value.trim(), pass = $('n-pass').value;
+  $('n-cred').classList.add('hidden'); $('n-copy').classList.add('hidden');
+  if (name.length < 2 || pass.length < 6){ setMsg('n-msg', t('errNameShort'), 'err'); return; }
+  try {
+    const res = await rpc('admin_create', { p_name: name, p_pass: pass }, adminJwt);
+    if (!res.ok){ setMsg('n-msg', res.reason === 'exists' ? t('errExists') : t('errNameShort'), 'err'); return; }
+    setMsg('n-msg', t('passOk'), 'ok');
+    lastCred = `${t('name')}: ${name}\n${t('pass')}: ${pass}`;
+    $('n-cred').textContent = lastCred;
+    $('n-cred').classList.remove('hidden'); $('n-copy').classList.remove('hidden');
+    $('n-name').value = ''; $('n-pass').value = '';
+    loadUsers();
+  } catch(e){ setMsg('n-msg', e.message, 'err'); }
+}
+async function copyCred(){
+  try { await navigator.clipboard.writeText(lastCred); $('n-copy').textContent = t('copied'); setTimeout(() => { $('n-copy').textContent = t('copy'); }, 1500); }
+  catch(e){ alert(lastCred); }
+}
+
+/* ================= ئەپی کویز ================= */
+async function enterApp(){
+  showOnly('app');
+  $('back-admin').classList.toggle('hidden', !adminPreview);
+  applyI18n();
+  if (!adminPreview) startChecks(); else stopChecks();
+  if (!allQuestions.length) await loadDatabase(); else goHome();
+}
+
+let allQuestions = [], filteredQuestions = [];
+const REPO_BASE = "https://raw.githubusercontent.com/Ed0ardo/QuizPatenteB/main";
+const JSON_URL = `${REPO_BASE}/quizPatenteB2023.json`;
+
+function show(id){
+  ['loading-box','home-screen','exam-screen','result-screen','study-screen'].forEach(s => $(s).classList.toggle('hidden', s !== id));
+  document.body.classList.toggle('inquiz', id === 'exam-screen' || id === 'study-screen');
+  window.scrollTo(0,0);
+}
+
+async function loadDatabase(){
+  show('loading-box'); setLoadingText();
+  try {
+    const data = await (await fetch(JSON_URL)).json();
+    allQuestions = [];
+    for (const topic in data){
+      for (const sub in data[topic]){
+        data[topic][sub].forEach(item => {
+          let imgUrl = null;
+          if (item.img) imgUrl = `${REPO_BASE}/${item.img.replace(/^\//, '')}`;
+          allQuestions.push({ topic, subtopic: sub, it: item.q, answer: item.a, sign: imgUrl });
+        });
+      }
+    }
+    filteredQuestions = [...allQuestions];
+    populateTopics(Object.keys(data));
+    $('count-badge').textContent = allQuestions.length;
+    goHome();
+  } catch(err){
+    $('loading-box').innerHTML = t('loadErr') + '<br><br><button class="btn" onclick="loadDatabase()">' + t('retryLoad') + '</button>';
+  }
+}
+function updateHome(){
+  $('hello').textContent = adminPreview ? t('kin') : t('hello', userName);
+  $('db-status-text').textContent = t('ready', allQuestions.length);
+}
+function goHome(){
+  clearInterval(timerInterval);
+  show('home-screen');
+  updateHome();
+}
+function prettyTopic(tp){ return tp.replace(/-/g, ' '); }
+function populateTopics(topics){
+  const sel = $('topic-filter');
+  sel.innerHTML = `<option value="ALL">${t('subjectAll')} (${allQuestions.length})</option>`;
+  topics.forEach(tp => {
+    const c = allQuestions.filter(q => q.topic === tp).length;
+    const o = document.createElement('option'); o.value = tp; o.textContent = `${prettyTopic(tp)} (${c})`; sel.appendChild(o);
+  });
+}
+function filterByTopic(){
+  const v = $('topic-filter').value;
+  filteredQuestions = v === 'ALL' ? [...allQuestions] : allQuestions.filter(q => q.topic === v);
+  studyIndex = 0; loadStudyQuestion();
+}
+function signHtml(q){ return q.sign ? `<img src="${q.sign}" class="sign-img" alt="" onerror="this.style.display='none'">` : ''; }
+function shuffle(a){ const b = [...a]; for (let i = b.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; }
+
+/* ================= تاقیکردنەوە ================= */
+let examQuestions = [], answers = [], cur = 0, timeLeft = 1200;
+
+function startExam(){
+  show('exam-screen');
+  examQuestions = shuffle(allQuestions).slice(0, 30);
+  answers = Array(30).fill(null); cur = 0;
+  $('bubbles').innerHTML = '';
+  startTimer(); renderExam();
+}
+function startTimer(){
+  timeLeft = 1200; clearInterval(timerInterval);
+  const tick = () => {
+    const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+    $('timer').textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+    if (timeLeft <= 0){ clearInterval(timerInterval); finishExam(); return; }
+    timeLeft--;
+  };
+  tick(); timerInterval = setInterval(tick, 1000);
+}
+function renderExam(){
+  const q = examQuestions[cur];
+  if (!q) return;
+  const bub = $('bubbles');
+  if (bub.children.length !== 30){
+    bub.innerHTML = '';
+    for (let i = 0; i < 30; i++){
+      const b = document.createElement('button');
+      b.className = 'bub'; b.textContent = i + 1;
+      b.onclick = () => { cur = i; renderExam(); };
+      bub.appendChild(b);
+    }
+  }
+  [...bub.children].forEach((b, i) => { b.classList.toggle('cur', i === cur); b.classList.toggle('done', answers[i] !== null && i !== cur); });
+  const curEl = bub.children[cur];
+  bub.scrollLeft = curEl.offsetLeft - bub.clientWidth / 2 + curEl.offsetWidth / 2;
+
+  $('exam-pos').textContent = t('qOf', cur + 1);
+  $('exam-done').textContent = t('answersN', answers.filter(a => a !== null).length);
+  $('exam-sign').innerHTML = signHtml(q);
+  $('exam-meta').textContent = prettyTopic(q.topic);
+  $('exam-q-text').textContent = q.it;
+  $('btn-v').classList.toggle('sel', answers[cur] === true);
+  $('btn-f').classList.toggle('sel', answers[cur] === false);
+  showTranslation('exam-tr', q.it);
+  if (examQuestions[cur + 1]) prefetch(examQuestions[cur + 1].it);
+}
+function stepExam(d){ cur = Math.min(29, Math.max(0, cur + d)); renderExam(); }
+function answerExam(v){ answers[cur] = v; if (cur < 29) cur++; renderExam(); }
+function cancelExam(){ if (confirm(t('confirmCancel'))) goHome(); }
+function submitExam(){
+  const left = answers.filter(a => a === null).length;
+  if (left > 0 && !confirm(t('leftQ', left))) return;
+  finishExam();
+}
+function finishExam(){
+  clearInterval(timerInterval);
+  buildResult();
+  show('result-screen');
+}
+function buildResult(){
+  let correct = 0;
+  examQuestions.forEach((q, i) => { if (answers[i] === q.answer) correct++; });
+  const errors = 30 - correct;
+  const passed = errors <= 3;
+  $('score-card').className = 'score ' + (passed ? 'pass' : 'fail');
+  $('score-big').textContent = `${correct} / 30`;
+  $('score-text').textContent = (passed ? t('passed') : t('failed')) + ' — ' + t('errorsL', errors);
+  const list = $('review-list'); list.innerHTML = '';
+  examQuestions.forEach((q, i) => {
+    const ok = answers[i] === q.answer;
+    const yours = answers[i] === null ? '—' : (answers[i] ? t('vero') : t('falso'));
+    const d = document.createElement('div');
+    d.className = 'review-item' + (ok ? '' : ' bad');
+    d.innerHTML = `<div class="review-head ${ok ? 'ok' : 'no'}">${i + 1}: ${ok ? t('right') : t('wrong')}</div>
+      ${signHtml(q)}<div class="review-q"></div>
+      ${ok ? '' : `<div class="tr hidden" id="rv-tr-${i}"><div class="tr-label"></div><div class="tr-body"></div></div>`}
+      <div class="review-ans">${t('yourA')}: <b>${yours}</b> · ${t('rightA')}: <b>${q.answer ? t('vero') : t('falso')}</b></div>`;
+    d.querySelector('.review-q').textContent = q.it;
+    list.appendChild(d);
+  });
+  examQuestions.forEach((q, i) => { if (answers[i] !== q.answer && $(`rv-tr-${i}`)) showTranslation(`rv-tr-${i}`, q.it); });
+  window.scrollTo(0,0);
+}
+
+/* سڕینەوەی هەژماری خۆی بەکارهێنەر (پێویستە بۆ App Store) */
+async function deleteMyAccount(){
+  if (!sessionTok) return;
+  if (!confirm(t('deleteMeConfirm'))) return;
+  try {
+    const res = await rpc('user_delete', { p_token: sessionTok });
+    if (res.ok){ sessionTok = null; alert(t('passOk')); showLogin(''); }
+  } catch(e){ alert(t('errNet')); }
+}
+
+/* ================= خوێندن ================= */
+let studyIndex = 0;
+function startStudy(){ show('study-screen'); studyIndex = 0; loadStudyQuestion(); }
+function loadStudyQuestion(){
+  const q = filteredQuestions[studyIndex]; if (!q) return;
+  $('study-sign').innerHTML = signHtml(q);
+  $('study-meta').textContent = `${studyIndex + 1} / ${filteredQuestions.length} · ${prettyTopic(q.topic)}`;
+  $('study-q-text').textContent = q.it;
+  showTranslation('study-tr', q.it);
+  const a = $('study-ans-val');
+  a.textContent = q.answer ? 'VERO ✓' : 'FALSO ✗';
+  a.className = 'verdict ' + (q.answer ? 'v' : 'f');
+  if (filteredQuestions[studyIndex + 1]) prefetch(filteredQuestions[studyIndex + 1].it);
+}
+function nextStudyQ(){ if (studyIndex < filteredQuestions.length - 1){ studyIndex++; loadStudyQuestion(); window.scrollTo(0,0); } }
+function prevStudyQ(){ if (studyIndex > 0){ studyIndex--; loadStudyQuestion(); window.scrollTo(0,0); } }
+function jumpToQ(){
+  const n = parseInt($('jump-input').value);
+  if (n >= 1 && n <= filteredQuestions.length){ studyIndex = n - 1; loadStudyQuestion(); window.scrollTo(0,0); }
+}
+
+/* ================= دەستپێکردن ================= */
+$('l-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+$('adm-pass').addEventListener('keydown', e => { if (e.key === 'Enter') adminSignIn(); });
+applyI18n();
+boot();
+</script>
+</body>
+</html>

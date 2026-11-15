@@ -1,0 +1,51 @@
+# Codemagic: بنیاتنانی ئەپی ئایفۆن و ئەندرۆید بە ئۆنلاین
+# ئەگەر یەکەمجار شکستی هێنا، ئەو هەڵەیە بۆ بنێرە.
+workflows:
+  ios-app-store:
+    name: iOS App Store build
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      xcode: latest
+      cocoapods: default
+      node: 20
+      vars:
+        APP_ID: com.nozhdar.patenteb
+    scripts:
+      - name: Install npm packages
+        script: npm install
+      - name: Create iOS project
+        script: |
+          npx cap add ios
+          npx cap sync ios
+      - name: Build and sign IPA
+        script: |
+          xcode-project use-profiles
+          xcode-project build-ipa --workspace "ios/App/App.xcworkspace" --scheme "App"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+
+  android-play-store:
+    name: Android Play Store build
+    instance_type: linux_x2
+    max_build_duration: 60
+    environment:
+      java: 17
+      node: 20
+    scripts:
+      - name: Install npm packages
+        script: npm install
+      - name: Create Android project
+        script: |
+          npx cap add android
+          npx cap sync android
+      - name: Build AAB
+        script: |
+          cd android
+          ./gradlew bundleRelease
+    artifacts:
+      - android/app/build/outputs/bundle/release/*.aab

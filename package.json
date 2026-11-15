@@ -1,0 +1,17 @@
+{
+  "name": "patente-b-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Patente B quiz app (Capacitor wrapper)",
+  "scripts": {
+    "sync": "npx cap sync"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/ios": "^6.1.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2"
+  }
+}
