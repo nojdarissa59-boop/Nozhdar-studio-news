@@ -1,36 +1,11 @@
-name: Auto Fetch & Translate News
-
-on:
-  schedule:
-    - cron: '0 * * * *'
-  workflow_dispatch:
-
-permissions:
-  contents: write
-
-jobs:
-  update-news:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install rss-parser
-
-      - name: Fetch and translate news
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: node scripts/fetch-news.js
-
       - name: Commit and push updated news
         run: |
           git config --local user.email "action@github.com"
-          git config --local user.name "News Bot"
+          git config --local user.name "GitHub Action"
           git add public/data/news.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update translated news" && git push)
+          if git diff --staged --quiet; then
+            echo "No changes to public/data/news.json"
+          else
+            git commit -m "Update translated news JSON"
+            git push
+          fi
