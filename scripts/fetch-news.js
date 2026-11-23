@@ -3,7 +3,7 @@ const path = require('path');
 const Parser = require('rss-parser');
 
 const parser = new Parser({
-  timeout: 15000,
+  timeout: 12000,
   headers: {
     'User-Agent':
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
@@ -16,8 +16,8 @@ const FEEDS = [
     name: 'Alto Adige / Südtirol',
     urls: [
       'https://www.altoadige.it/rss',
-      'https://www.rainews.it/tgr/tagesschau/rss.xml',
-      'https://www.rainews.it/tgr/bolzano/rss.xml'
+      'https://www.rainews.it/tgr/bolzano/rss.xml',
+      'https://www.rainews.it/tgr/tagesschau/rss.xml'
     ],
     defaultCategory: 'alto-adige'
   },
@@ -43,7 +43,42 @@ const IMMIGRATION_KEYWORDS = [
   'migranti',
   'accoglienza',
   'visto',
-  'rinnovo'
+  'rinnovo',
+  'soggiorno',
+  'lavoro'
+];
+
+const FALLBACK_NEWS = [
+  {
+    id: 'fallback-alto-adige-1',
+    category: 'alto-adige',
+    source: 'Alto Adige / Südtirol',
+    link: 'https://www.altoadige.it',
+    pubDate: new Date().toISOString(),
+    title: {
+      ku: 'زانیاری و هەواڵە ناوخۆییەکانی ئەلتۆ ئادیجێ و باشووری تیرۆل',
+      it: 'Aggiornamenti locali dall’Alto Adige e Südtirol'
+    },
+    summary: {
+      ku: 'نوێترین ئاگادارییەکانی هاتوچۆ، خزمەتگوزارییە گشتییەکان و کاروباری ڕۆژانەی دانیشتووانی ناوچەکە.',
+      it: 'Ultime comunicazioni su mobilità, servizi pubblici e vita quotidiana sul territorio.'
+    }
+  },
+  {
+    id: 'fallback-refugees-1',
+    category: 'refugees',
+    source: 'ANSA / Cronaca Italia',
+    link: 'https://www.ansa.it',
+    pubDate: new Date().toISOString(),
+    title: {
+      ku: 'نوێترین ڕێنماییەکانی مۆڵەتی مانەوە و کاروباری کۆچبەران لە ئیتاڵیا',
+      it: 'Aggiornamenti su permesso di soggiorno e pratiche immigrazione in Italia'
+    },
+    summary: {
+      ku: 'زانیاری گشتی سەبارەت بە ڕێکارەکانی کوێستوورا، نوێکردنەوەی بەڵگەنامەکان و ماف و ئەرکە یاساییەکان.',
+      it: 'Informazioni generali su procedure in Questura, rinnovo documenti e normative vigenti.'
+    }
+  }
 ];
 
 async function translateText(text) {
@@ -51,7 +86,7 @@ async function translateText(text) {
   const cleanText = (text || '').replace(/\s+/g, ' ').trim();
   if (!apiKey || !cleanText) return { ku: cleanText, it: cleanText };
 
-  const prompt = `Translate this Italian news text into natural Kurdish Sorani (ku). Return ONLY the Kurdish translation with no extra explanation:\n\n"${cleanText}"`;
+  const prompt = `Translate this Italian news text into natural Kurdish Sorani (ku). Return ONLY the Kurdish translation with no extra notes:\n\n"${cleanText}"`;
 
   try {
     const res = await fetch(
@@ -66,7 +101,6 @@ async function translateText(text) {
     );
 
     if (!res.ok) {
-      console.error(`Gemini HTTP error ${res.status}`);
       return { ku: cleanText, it: cleanText };
     }
 
@@ -76,7 +110,6 @@ async function translateText(text) {
 
     return { ku: kuTranslation, it: cleanText };
   } catch (err) {
-    console.error('Translation error:', err.message);
     return { ku: cleanText, it: cleanText };
   }
 }
@@ -86,11 +119,10 @@ async function fetchFirstWorkingFeed(urls, sourceName) {
     try {
       const feed = await parser.parseURL(url);
       if (feed && Array.isArray(feed.items) && feed.items.length > 0) {
-        console.log(`Fetched ${feed.items.length} items from ${sourceName} (${url})`);
         return feed.items;
       }
     } catch (error) {
-      console.error(`Failed URL ${url} for ${sourceName}: ${error.message}`);
+      console.error(`Feed error (${sourceName} - ${url}): ${error.message}`);
     }
   }
   return [];
@@ -101,12 +133,11 @@ async function run() {
 
   for (const feedSource of FEEDS) {
     const items = await fetchFirstWorkingFeed(feedSource.urls, feedSource.name);
-    const candidates = items.slice(0, 15);
-
-    let addedForSource = 0;
+    const candidates = items.slice(0, 12);
+    let added = 0;
 
     for (const item of candidates) {
-      if (addedForSource >= 6) break;
+      if (added >= 5) break;
 
       const title = (item.title || '').trim();
       const rawSummary = (item.contentSnippet || item.content || item.summary || '').trim();
@@ -123,7 +154,7 @@ async function run() {
 
       const category = isImmigration ? 'refugees' : 'alto-adige';
       const translatedTitle = await translateText(title);
-      const translatedSummary = await translateText(rawSummary.slice(0, 260));
+      const translatedSummary = await translateText(rawSummary.slice(0, 240));
 
       allNews.push({
         id: item.guid || item.link || `${category}-${Date.now()}-${allNews.length}`,
@@ -135,16 +166,17 @@ async function run() {
         summary: translatedSummary
       });
 
-      addedForSource++;
+      added++;
     }
   }
 
-  allNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+  const finalNews = allNews.length > 0 ? allNews : FALLBACK_NEWS;
+  finalNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
 
   const outputPath = path.join(process.cwd(), 'public', 'data', 'news.json');
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-  fs.writeFileSync(outputPath, JSON.stringify(allNews, null, 2), 'utf-8');
-  console.log(`Saved ${allNews.length} news items to public/data/news.json.`);
+  fs.writeFileSync(outputPath, JSON.stringify(finalNews, null, 2), 'utf-8');
+  console.log(`Saved ${finalNews.length} news items.`);
 }
 
 run();
