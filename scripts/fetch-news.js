@@ -30,6 +30,37 @@ const SUPPORTED_LANGS = [
   'ps'
 ];
 
+const LANG_GROUPS = [
+  {
+    name: 'kurdish',
+    langs: ['ku', 'bad', 'kmr'],
+    desc: `- ku: Central Kurdish (Sorani, Arabic script)
+- bad: Badini Kurdish (Arabic script)
+- kmr: Kurmanji Kurdish (Latin script)`
+  },
+  {
+    name: 'arabic',
+    langs: ['ar', 'ma', 'tn', 'dz'],
+    desc: `- ar: Standard Arabic
+- ma: Moroccan Arabic (Darija, Arabic script)
+- tn: Tunisian Arabic (Arabic script)
+- dz: Algerian Arabic (Arabic script)`
+  },
+  {
+    name: 'others',
+    langs: ['en', 'it', 'tr', 'fa', 'sq', 'ur', 'hi', 'bn', 'ps'],
+    desc: `- en: English
+- it: Italian
+- tr: Turkish
+- fa: Persian (Farsi)
+- sq: Albanian
+- ur: Urdu
+- hi: Hindi
+- bn: Bengali
+- ps: Pashto`
+  }
+];
+
 const FEEDS = [
   {
     name: 'Alto Adige / Südtirol',
@@ -71,13 +102,7 @@ function buildFallbackMap(cleanText, kuText = '') {
   const base = kuText || cleanText;
   const map = {};
   for (const lang of SUPPORTED_LANGS) {
-    if (lang === 'it') {
-      map[lang] = cleanText;
-    } else if (lang === 'ku') {
-      map[lang] = base;
-    } else {
-      map[lang] = base;
-    }
+    map[lang] = lang === 'it' ? cleanText : base;
   }
   return map;
 }
@@ -136,91 +161,89 @@ function parseJsonObject(raw) {
   }
 }
 
-async function translateText(text) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  const cleanText = (text || '').replace(/\s+/g, ' ').trim();
-  if (!cleanText) {
-    return buildFallbackMap('');
-  }
-  if (!apiKey) {
-    return buildFallbackMap(cleanText);
-  }
+async function translateGroup(apiKey, cleanText, group) {
+  const keysTemplate = JSON.stringify(
+    Object.fromEntries(group.langs.map((k) => [k, '']))
+  );
 
-  const prompt = `Translate the following Italian news text into ALL of these languages/dialects:
-- ku: Central Kurdish (Sorani, Arabic script)
-- bad: Badini Kurdish (Arabic script)
-- kmr: Kurmanji Kurdish (Latin script)
-- it: Italian (keep clean and natural)
-- en: English
-- ar: Standard Arabic
-- ma: Moroccan Arabic (Darija, Arabic script)
-- tn: Tunisian Arabic (Arabic script)
-- dz: Algerian Arabic (Arabic script)
-- tr: Turkish
-- fa: Persian (Farsi)
-- sq: Albanian
-- ur: Urdu
-- hi: Hindi
-- bn: Bengali
-- ps: Pashto
+  const prompt = `Translate this Italian news text into:
+${group.desc}
 
 Return ONLY a valid JSON object with exact keys:
-{"ku":"","bad":"","kmr":"","it":"","en":"","ar":"","ma":"","tn":"","dz":"","tr":"","fa":"","sq":"","ur":"","hi":"","bn":"","ps":""}
-Do not include markdown or extra explanations.
+${keysTemplate}
 
 Text:
 "${cleanText}"`;
 
-  try {
-    const res = await fetch(
-      `[https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$](https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$){apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.2,
-            responseMimeType: 'application/json'
-          }
-        })
-      }
-    );
-
-    if (!res.ok) {
-      return buildFallbackMap(cleanText);
+  const res = await fetch(
+    `[https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$](https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$){apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.2,
+          responseMimeType: 'application/json'
+        }
+      })
     }
+  );
 
-    const data = await res.json();
-    const rawContent = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
-    const parsed = parseJsonObject(rawContent);
+  if (!res.ok) {
+    const errBody = await res.text().catch(() => '');
+    throw new Error(`HTTP ${res.status} (${group.name}): ${errBody.slice(0, 180)}`);
+  }
 
-    if (!parsed || typeof parsed !== 'object') {
-      return buildFallbackMap(cleanText);
+  const data = await res.json();
+  const rawContent = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+  const parsed = parseJsonObject(rawContent);
+  if (!parsed || typeof parsed !== 'object') {
+    throw new Error(`Invalid JSON for group (${group.name}): ${rawContent.slice(0, 140)}`);
+  }
+
+  const out = {};
+  for (const lang of group.langs) {
+    if (typeof parsed[lang] === 'string' && parsed[lang].trim()) {
+      out[lang] = parsed[lang].trim();
     }
+  }
+  return out;
+}
 
-    const fallbackKu =
-      (typeof parsed.ku === 'string' && parsed.ku.trim()) ||
-      (typeof parsed.en === 'string' && parsed.en.trim()) ||
-      cleanText;
-
-    const result = {};
-    for (const lang of SUPPORTED_LANGS) {
-      const val = typeof parsed[lang] === 'string' ? parsed[lang].trim() : '';
-      if (val) {
-        result[lang] = val;
-      } else if (lang === 'it') {
-        result[lang] = cleanText;
-      } else {
-        result[lang] = fallbackKu;
-      }
-    }
-
-    return result;
-  } catch (err) {
-    console.error(`Translation error: ${err.message}`);
+async function translateText(text) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  const cleanText = (text || '').replace(/\s+/g, ' ').trim();
+  if (!cleanText) return buildFallbackMap('');
+  if (!apiKey) {
+    console.error('Missing GEMINI_API_KEY in environment.');
     return buildFallbackMap(cleanText);
   }
+
+  const collected = {};
+  for (const group of LANG_GROUPS) {
+    try {
+      const part = await translateGroup(apiKey, cleanText, group);
+      Object.assign(collected, part);
+    } catch (err) {
+      console.error(`Group translation error (${group.name}): ${err.message}`);
+    }
+  }
+
+  const fallbackKu =
+    collected.ku || collected.en || cleanText;
+
+  const result = {};
+  for (const lang of SUPPORTED_LANGS) {
+    if (collected[lang]) {
+      result[lang] = collected[lang];
+    } else if (lang === 'it') {
+      result[lang] = cleanText;
+    } else {
+      result[lang] = fallbackKu;
+    }
+  }
+  return result;
 }
 
 async function fetchFirstWorkingFeed(urls, sourceName) {
@@ -246,7 +269,7 @@ async function run() {
     let added = 0;
 
     for (const item of candidates) {
-      if (added >= 5) break;
+      if (added >= 4) break;
 
       const title = (item.title || '').trim();
       const rawSummary = (item.contentSnippet || item.content || item.summary || '').trim();
@@ -263,7 +286,7 @@ async function run() {
 
       const category = isImmigration ? 'refugees' : 'alto-adige';
       const translatedTitle = await translateText(title);
-      const translatedSummary = await translateText(rawSummary.slice(0, 240));
+      const translatedSummary = await translateText(rawSummary.slice(0, 220));
 
       allNews.push({
         id: item.guid || item.link || `${category}-${Date.now()}-${allNews.length}`,
