@@ -25,6 +25,7 @@ const GEMINI_MODELS = (process.env.GEMINI_MODELS || process.env.GEMINI_MODEL || 
   .filter(Boolean);
 const modelPath = (model) => '/v1beta/models/' + model;
 const MAX_NEW_TRANSLATIONS = Number(process.env.MAX_NEW_TRANSLATIONS || 5);
+const MAX_REPAIRS = Number(process.env.MAX_REPAIRS || 3);
 const RUN_BUDGET_MS = Number(process.env.RUN_BUDGET_MS || 10 * 60000);
 
 const REQUEST_TIMEOUT_MS = 90000;
@@ -536,11 +537,12 @@ function finalizeTexts(titles, summaries, title, summary) {
   return { title: outTitle, summary: outSummary, untranslated };
 }
 
-// One request for all languages; a second request only for languages still missing.
-async function translateItem(apiKey, models, title, summary, stats) {
+// One request for all requested languages; a second request only for those still missing.
+// Returns the raw translated maps (finalizeTexts adds fallbacks for new items).
+async function translateItem(apiKey, models, title, summary, stats, langs = ALL_LANGS) {
   const titles = {};
   const summaries = {};
-  let pending = ALL_LANGS;
+  let pending = langs;
 
   for (let round = 1; round <= 2 && pending.length; round++) {
     const group = { name: round === 1 ? 'all' : 'missing', langs: pending, desc: descFor(pending) };
@@ -559,9 +561,30 @@ async function translateItem(apiKey, models, title, summary, stats) {
         break;
       }
     }
-    pending = ALL_LANGS.filter((l) => !titles[l]);
+    pending = langs.filter((l) => !titles[l]);
   }
-  return finalizeTexts(titles, summaries, title, summary);
+  return { titles, summaries };
+}
+
+// Old runs tagged unrelated stories as "refugees" (too-generic keywords). Drop them.
+function isStaleImmigrationItem(item) {
+  if (!item || item.category !== 'refugees' || !item.title || typeof item.title !== 'object') return false;
+  const text = (item.title.it || '') + ' ' + ((item.summary && item.summary.it) || '');
+  return !IMMIGRATION_REGEX.test(text);
+}
+
+// Finds languages whose text is just a copy of Italian or of Sorani (old fallback bug).
+function detectUntranslated(item) {
+  if (!item || !item.title || typeof item.title !== 'object') return [];
+  const it = item.title.it;
+  const ku = item.title.ku;
+  const bad = [];
+  for (const lang of SUPPORTED_LANGS) {
+    if (lang === 'it') continue;
+    const t = item.title[lang];
+    if (!t || t === it || (lang !== 'ku' && t === ku)) bad.push(lang);
+  }
+  return bad;
 }
 
 /* ------------------------------------------------------------------ */
@@ -688,8 +711,8 @@ async function run() {
   const fresh = [];
   for (const c of candidates) {
     const cached = cache.get(c.id);
-    if (cached && !(cached.untranslated && cached.untranslated.length)) {
-      fresh.push(cached); // already fully translated in a previous run
+    if (cached) {
+      fresh.push(cached); // wrong/missing languages are repaired below
       continue;
     }
 
@@ -706,7 +729,8 @@ async function run() {
       continue;
     }
 
-    const texts = await translateItem(apiKey, active, c.title, c.summary, stats);
+    const raw = await translateItem(apiKey, active, c.title, c.summary, stats);
+    const texts = finalizeTexts(raw.titles, raw.summaries, c.title, c.summary);
     if (texts.untranslated.length >= SUPPORTED_LANGS.length - 1) {
       console.warn('Skipping untranslated item: ' + c.title.slice(0, 60));
       stats.skipped++;
@@ -734,11 +758,45 @@ async function run() {
       !String(n.id).startsWith('fallback-') &&
       !freshIds.has(n.id) &&
       !(n.link && freshLinks.has(n.link)) &&
-      isRecent(n.pubDate)
+      isRecent(n.pubDate) &&
+      !isStaleImmigrationItem(n)
   );
 
-  let finalNews = fresh
-    .concat(kept)
+  // Repair stored items whose languages are copies of Italian/Sorani (from older runs).
+  const stored = fresh.concat(kept);
+  let repairs = 0;
+  for (const item of stored) {
+    if (repairs >= MAX_REPAIRS || stats.fatal || Date.now() > deadline) break;
+    const bad = Array.from(new Set(detectUntranslated(item).concat(item.untranslated || []))).filter(
+      (l) => l !== 'it' && SUPPORTED_LANGS.includes(l)
+    );
+    if (!bad.length || !item.title || !item.title.it) continue;
+
+    const active = await ensureGemini();
+    if (!active.length) {
+      stats.fatal = true;
+      break;
+    }
+    repairs++;
+    stats.needed++;
+    const srcSummary = (item.summary && item.summary.it) || '';
+    const raw = await translateItem(apiKey, active, item.title.it, srcSummary, stats, bad);
+    const stillBad = [];
+    item.summary = item.summary || {};
+    for (const lang of bad) {
+      if (raw.titles[lang]) {
+        item.title[lang] = raw.titles[lang];
+        item.summary[lang] = raw.summaries[lang] || '';
+      } else {
+        stillBad.push(lang);
+      }
+    }
+    if (stillBad.length) item.untranslated = stillBad;
+    else delete item.untranslated;
+    console.log('Repaired "' + String(item.title.it).slice(0, 50) + '": ' + (bad.length - stillBad.length) + '/' + bad.length + ' languages');
+  }
+
+  let finalNews = stored
     .sort((a, b) => Date.parse(b.pubDate) - Date.parse(a.pubDate))
     .slice(0, MAX_STORED_ITEMS);
   if (!finalNews.length) finalNews = FALLBACK_NEWS;
@@ -748,7 +806,7 @@ async function run() {
 
   console.log(
     'Saved ' + finalNews.length + ' news items (' + fresh.length + ' fresh, ' + kept.length + ' kept, ' +
-      stats.skipped + ' skipped). Gemini calls ok=' + stats.ok + ' failed=' + stats.failed
+      stats.skipped + ' skipped, ' + repairs + ' repaired). Gemini calls ok=' + stats.ok + ' failed=' + stats.failed
   );
 
   // Fail the job (so the commit step is skipped) if nothing could be translated.
