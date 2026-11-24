@@ -175,31 +175,32 @@ ${keysTemplate}
 Text:
 "${cleanText}"`;
 
-  const res = await fetch(
-    `[https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$](https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$){apiKey}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.2,
-          responseMimeType: 'application/json'
-        }
-      })
-    }
-  );
+  const endpoint =
+    '[https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=](https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=)' +
+    encodeURIComponent(apiKey);
+
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.2,
+        responseMimeType: 'application/json'
+      }
+    })
+  });
 
   if (!res.ok) {
     const errBody = await res.text().catch(() => '');
-    throw new Error(`HTTP ${res.status} (${group.name}): ${errBody.slice(0, 180)}`);
+    throw new Error('HTTP ' + res.status + ' (' + group.name + '): ' + errBody.slice(0, 180));
   }
 
   const data = await res.json();
   const rawContent = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
   const parsed = parseJsonObject(rawContent);
   if (!parsed || typeof parsed !== 'object') {
-    throw new Error(`Invalid JSON for group (${group.name}): ${rawContent.slice(0, 140)}`);
+    throw new Error('Invalid JSON for group (' + group.name + '): ' + rawContent.slice(0, 140));
   }
 
   const out = {};
@@ -226,12 +227,11 @@ async function translateText(text) {
       const part = await translateGroup(apiKey, cleanText, group);
       Object.assign(collected, part);
     } catch (err) {
-      console.error(`Group translation error (${group.name}): ${err.message}`);
+      console.error('Group translation error (' + group.name + '): ' + err.message);
     }
   }
 
-  const fallbackKu =
-    collected.ku || collected.en || cleanText;
+  const fallbackKu = collected.ku || collected.en || cleanText;
 
   const result = {};
   for (const lang of SUPPORTED_LANGS) {
@@ -254,7 +254,7 @@ async function fetchFirstWorkingFeed(urls, sourceName) {
         return feed.items;
       }
     } catch (error) {
-      console.error(`Feed error (${sourceName} - ${url}): ${error.message}`);
+      console.error('Feed error (' + sourceName + ' - ' + url + '): ' + error.message);
     }
   }
   return [];
@@ -275,7 +275,7 @@ async function run() {
       const rawSummary = (item.contentSnippet || item.content || item.summary || '').trim();
       if (!title) continue;
 
-      const combinedText = `${title} ${rawSummary}`.toLowerCase();
+      const combinedText = (title + ' ' + rawSummary).toLowerCase();
       const isImmigration = IMMIGRATION_KEYWORDS.some((kw) =>
         combinedText.includes(kw)
       );
@@ -289,7 +289,7 @@ async function run() {
       const translatedSummary = await translateText(rawSummary.slice(0, 220));
 
       allNews.push({
-        id: item.guid || item.link || `${category}-${Date.now()}-${allNews.length}`,
+        id: item.guid || item.link || (category + '-' + Date.now() + '-' + allNews.length),
         category,
         source: feedSource.name,
         link: item.link || '',
@@ -308,7 +308,7 @@ async function run() {
   const outputPath = path.join(process.cwd(), 'public', 'data', 'news.json');
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, JSON.stringify(finalNews, null, 2), 'utf-8');
-  console.log(`Saved ${finalNews.length} news items.`);
+  console.log('Saved ' + finalNews.length + ' news items.');
 }
 
 run();
