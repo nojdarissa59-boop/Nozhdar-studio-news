@@ -175,11 +175,11 @@ ${keysTemplate}
 Text:
 "${cleanText}"`;
 
-  const endpoint =
-    '[https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=](https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=)' +
-    encodeURIComponent(apiKey);
+  const baseUrl = '[https://generativelanguage.googleapis.com](https://generativelanguage.googleapis.com)';
+  const modelPath = '/v1beta/models/gemini-2.5-flash:generateContent';
+  const apiUrl = baseUrl + modelPath + '?key=' + encodeURIComponent(apiKey);
 
-  const res = await fetch(endpoint, {
+  const res = await fetch(apiUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
