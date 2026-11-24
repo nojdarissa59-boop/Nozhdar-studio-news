@@ -11,6 +11,7 @@ permissions:
 jobs:
   update-news:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repository
@@ -26,17 +27,18 @@ jobs:
 
       - name: Fetch and translate news
         env:
-  GEMINI_MODELS: gemini-3.8-flash,ناوی-مۆدێلی-دووەم
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODELS: gemini-3.8-flash
         run: node scripts/fetch-news.js
 
       - name: Commit and push updated news
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "GitHub Actions"
           git add public/data/news.json
           if git diff --staged --quiet; then
             echo "No changes to public/data/news.json"
           else
-            git commit -m "Update translated news JSON"
+            git commit -m "Update news"
             git push
           fi
