@@ -18,7 +18,7 @@ if (typeof dns.setDefaultResultOrder === 'function') {
 
 // Host built from parts so chat/markdown auto-linking can never corrupt it.
 const GEMINI_HOST = ['generativelanguage', 'googleapis', 'com'].join('.');
-const GEMINI_MODEL = (process.env.GEMINI_MODEL || 'gemini-2.5-flash').trim();
+const GEMINI_MODEL = (process.env.GEMINI_MODEL || 'gemini-3.8-flash').trim();
 const GEMINI_PATH = '/v1beta/models/' + GEMINI_MODEL;
 
 const REQUEST_TIMEOUT_MS = 90000;
@@ -307,6 +307,17 @@ async function callGemini(apiKey, payload) {
     try {
       const res = await requestJson('POST', GEMINI_PATH + ':generateContent', apiKey, payload);
       if (res.status === 200) return JSON.parse(res.text);
+      if (
+        res.status === 400 &&
+        /thinking/i.test(res.text) &&
+        payload.generationConfig &&
+        payload.generationConfig.thinkingConfig
+      ) {
+        console.warn('Model rejected thinkingConfig; retrying without it');
+        delete payload.generationConfig.thinkingConfig;
+        attempt--;
+        continue;
+      }
       failure = {
         retryable: res.status === 429 || res.status >= 500,
         message: 'HTTP ' + res.status + ': ' + res.text.slice(0, 200).replace(/\s+/g, ' '),
@@ -317,7 +328,9 @@ async function callGemini(apiKey, payload) {
     }
 
     if (!failure.retryable || attempt === MAX_ATTEMPTS) {
-      throw new Error(failure.message);
+      const e = new Error(failure.message);
+      e.fatal = !failure.retryable; // 400/401/403/404: retrying other items is pointless
+      throw e;
     }
     const delay = failure.delay || 2000 * 2 ** (attempt - 1);
     console.warn(
@@ -493,6 +506,10 @@ async function translateItem(apiKey, title, summary, stats) {
     } catch (err) {
       stats.failed++;
       console.error('Group translation error (' + group.name + '): ' + err.message);
+      if (err.fatal) {
+        stats.fatal = true;
+        break;
+      }
     }
   }
   return finalizeTexts(titles, summaries, title, summary);
@@ -609,7 +626,7 @@ async function run() {
   if (!apiKey) console.error('Missing GEMINI_API_KEY in environment.');
 
   const candidates = await collectCandidates();
-  const stats = { ok: 0, failed: 0, needed: 0 };
+  const stats = { ok: 0, failed: 0, needed: 0, fatal: false };
   let geminiReady = null;
   const ensureGemini = async () => {
     if (geminiReady === null) geminiReady = apiKey ? await preflight(apiKey) : false;
@@ -626,7 +643,7 @@ async function run() {
 
     stats.needed++;
     let texts;
-    if (await ensureGemini()) {
+    if (!stats.fatal && (await ensureGemini())) {
       texts = await translateItem(apiKey, c.title, c.summary, stats);
     } else {
       texts = finalizeTexts({}, {}, c.title, c.summary);
