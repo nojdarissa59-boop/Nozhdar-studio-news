@@ -11,6 +11,25 @@ const parser = new Parser({
   }
 });
 
+const SUPPORTED_LANGS = [
+  'ku',
+  'bad',
+  'kmr',
+  'it',
+  'en',
+  'ar',
+  'ma',
+  'tn',
+  'dz',
+  'tr',
+  'fa',
+  'sq',
+  'ur',
+  'hi',
+  'bn',
+  'ps'
+];
+
 const FEEDS = [
   {
     name: 'Alto Adige / Südtirol',
@@ -48,6 +67,21 @@ const IMMIGRATION_KEYWORDS = [
   'lavoro'
 ];
 
+function buildFallbackMap(cleanText, kuText = '') {
+  const base = kuText || cleanText;
+  const map = {};
+  for (const lang of SUPPORTED_LANGS) {
+    if (lang === 'it') {
+      map[lang] = cleanText;
+    } else if (lang === 'ku') {
+      map[lang] = base;
+    } else {
+      map[lang] = base;
+    }
+  }
+  return map;
+}
+
 const FALLBACK_NEWS = [
   {
     id: 'fallback-alto-adige-1',
@@ -55,14 +89,14 @@ const FALLBACK_NEWS = [
     source: 'Alto Adige / Südtirol',
     link: 'https://www.altoadige.it',
     pubDate: new Date().toISOString(),
-    title: {
-      ku: 'زانیاری و هەواڵە ناوخۆییەکانی ئەلتۆ ئادیجێ و باشووری تیرۆل',
-      it: 'Aggiornamenti locali dall’Alto Adige e Südtirol'
-    },
-    summary: {
-      ku: 'نوێترین ئاگادارییەکانی هاتوچۆ، خزمەتگوزارییە گشتییەکان و کاروباری ڕۆژانەی دانیشتووانی ناوچەکە.',
-      it: 'Ultime comunicazioni su mobilità, servizi pubblici e vita quotidiana sul territorio.'
-    }
+    title: buildFallbackMap(
+      'Aggiornamenti locali dall’Alto Adige e Südtirol',
+      'زانیاری و هەواڵە ناوخۆییەکانی ئەلتۆ ئادیجێ و باشووری تیرۆل'
+    ),
+    summary: buildFallbackMap(
+      'Ultime comunicazioni su mobilità, servizi pubblici e vita quotidiana sul territorio.',
+      'نوێترین ئاگادارییەکانی هاتوچۆ، خزمەتگوزارییە گشتییەکان و کاروباری ڕۆژانەی دانیشتووانی ناوچەکە.'
+    )
   },
   {
     id: 'fallback-refugees-1',
@@ -70,47 +104,122 @@ const FALLBACK_NEWS = [
     source: 'ANSA / Cronaca Italia',
     link: 'https://www.ansa.it',
     pubDate: new Date().toISOString(),
-    title: {
-      ku: 'نوێترین ڕێنماییەکانی مۆڵەتی مانەوە و کاروباری کۆچبەران لە ئیتاڵیا',
-      it: 'Aggiornamenti su permesso di soggiorno e pratiche immigrazione in Italia'
-    },
-    summary: {
-      ku: 'زانیاری گشتی سەبارەت بە ڕێکارەکانی کوێستوورا، نوێکردنەوەی بەڵگەنامەکان و ماف و ئەرکە یاساییەکان.',
-      it: 'Informazioni generali su procedure in Questura, rinnovo documenti e normative vigenti.'
-    }
+    title: buildFallbackMap(
+      'Aggiornamenti su permesso di soggiorno e pratiche immigrazione in Italia',
+      'نوێترین ڕێنماییەکانی مۆڵەتی مانەوە و کاروباری کۆچبەران لە ئیتاڵیا'
+    ),
+    summary: buildFallbackMap(
+      'Informazioni generali su procedure in Questura, rinnovo documenti e normative vigenti.',
+      'زانیاری گشتی سەبارەت بە ڕێکارەکانی کوێستوورا، نوێکردنەوەی بەڵگەنامەکان و ماف و ئەرکە یاساییەکان.'
+    )
   }
 ];
+
+function parseJsonObject(raw) {
+  if (!raw || typeof raw !== 'string') return null;
+  const cleaned = raw
+    .replace(/^```json\s*/i, '')
+    .replace(/^```\s*/i, '')
+    .replace(/```$/i, '')
+    .trim();
+
+  try {
+    return JSON.parse(cleaned);
+  } catch (_) {
+    const match = cleaned.match(/\{[\s\S]*\}/);
+    if (!match) return null;
+    try {
+      return JSON.parse(match[0]);
+    } catch (_) {
+      return null;
+    }
+  }
+}
 
 async function translateText(text) {
   const apiKey = process.env.GEMINI_API_KEY;
   const cleanText = (text || '').replace(/\s+/g, ' ').trim();
-  if (!apiKey || !cleanText) return { ku: cleanText, it: cleanText };
+  if (!cleanText) {
+    return buildFallbackMap('');
+  }
+  if (!apiKey) {
+    return buildFallbackMap(cleanText);
+  }
 
-  const prompt = `Translate this Italian news text into natural Kurdish Sorani (ku). Return ONLY the Kurdish translation with no extra notes:\n\n"${cleanText}"`;
+  const prompt = `Translate the following Italian news text into ALL of these languages/dialects:
+- ku: Central Kurdish (Sorani, Arabic script)
+- bad: Badini Kurdish (Arabic script)
+- kmr: Kurmanji Kurdish (Latin script)
+- it: Italian (keep clean and natural)
+- en: English
+- ar: Standard Arabic
+- ma: Moroccan Arabic (Darija, Arabic script)
+- tn: Tunisian Arabic (Arabic script)
+- dz: Algerian Arabic (Arabic script)
+- tr: Turkish
+- fa: Persian (Farsi)
+- sq: Albanian
+- ur: Urdu
+- hi: Hindi
+- bn: Bengali
+- ps: Pashto
+
+Return ONLY a valid JSON object with exact keys:
+{"ku":"","bad":"","kmr":"","it":"","en":"","ar":"","ma":"","tn":"","dz":"","tr":"","fa":"","sq":"","ur":"","hi":"","bn":"","ps":""}
+Do not include markdown or extra explanations.
+
+Text:
+"${cleanText}"`;
 
   try {
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      `[https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$](https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$){apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }]
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.2,
+            responseMimeType: 'application/json'
+          }
         })
       }
     );
 
     if (!res.ok) {
-      return { ku: cleanText, it: cleanText };
+      return buildFallbackMap(cleanText);
     }
 
     const data = await res.json();
-    const kuTranslation =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || cleanText;
+    const rawContent = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+    const parsed = parseJsonObject(rawContent);
 
-    return { ku: kuTranslation, it: cleanText };
+    if (!parsed || typeof parsed !== 'object') {
+      return buildFallbackMap(cleanText);
+    }
+
+    const fallbackKu =
+      (typeof parsed.ku === 'string' && parsed.ku.trim()) ||
+      (typeof parsed.en === 'string' && parsed.en.trim()) ||
+      cleanText;
+
+    const result = {};
+    for (const lang of SUPPORTED_LANGS) {
+      const val = typeof parsed[lang] === 'string' ? parsed[lang].trim() : '';
+      if (val) {
+        result[lang] = val;
+      } else if (lang === 'it') {
+        result[lang] = cleanText;
+      } else {
+        result[lang] = fallbackKu;
+      }
+    }
+
+    return result;
   } catch (err) {
-    return { ku: cleanText, it: cleanText };
+    console.error(`Translation error: ${err.message}`);
+    return buildFallbackMap(cleanText);
   }
 }
 
