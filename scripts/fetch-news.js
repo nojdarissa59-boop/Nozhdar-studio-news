@@ -18,8 +18,14 @@ if (typeof dns.setDefaultResultOrder === 'function') {
 
 // Host built from parts so chat/markdown auto-linking can never corrupt it.
 const GEMINI_HOST = ['generativelanguage', 'googleapis', 'com'].join('.');
-const GEMINI_MODEL = (process.env.GEMINI_MODEL || 'gemini-3.8-flash').trim();
-const GEMINI_PATH = '/v1beta/models/' + GEMINI_MODEL;
+// Comma-separated list; the next model is tried when one is overloaded or out of quota.
+const GEMINI_MODELS = (process.env.GEMINI_MODELS || process.env.GEMINI_MODEL || 'gemini-3.8-flash')
+  .split(',')
+  .map((m) => m.trim())
+  .filter(Boolean);
+const modelPath = (model) => '/v1beta/models/' + model;
+const MAX_NEW_TRANSLATIONS = Number(process.env.MAX_NEW_TRANSLATIONS || 5);
+const RUN_BUDGET_MS = Number(process.env.RUN_BUDGET_MS || 10 * 60000);
 
 const REQUEST_TIMEOUT_MS = 90000;
 const MAX_ATTEMPTS = 4;
@@ -75,6 +81,16 @@ const FALLBACK_PREFERENCE = {
   kurdish: ['ku', 'kmr', 'bad'],
   arabic: ['ar']
 };
+
+const LANG_DESC = {};
+for (const g of LANG_GROUPS) {
+  for (const line of g.desc.split('\n')) {
+    const m = /^- (\w+):/.exec(line);
+    if (m) LANG_DESC[m[1]] = line;
+  }
+}
+const ALL_LANGS = LANG_GROUPS.flatMap((g) => g.langs);
+const descFor = (langs) => langs.map((l) => LANG_DESC[l]).join('\n');
 
 const googleNews = (query) =>
   'https://news.google.com/rss/search?q=' +
@@ -294,55 +310,79 @@ async function throttle() {
 
 function retryDelayFrom(res) {
   const header = Number(res.headers && res.headers['retry-after']);
-  if (header > 0) return Math.min(header * 1000, 60000);
+  if (header > 0) return header * 1000;
   const m = /"retryDelay"\s*:\s*"(\d+(?:\.\d+)?)s"/.exec(res.text || '');
-  if (m) return Math.min(Math.ceil(Number(m[1]) * 1000) + 500, 60000);
-  return 0;
+  return m ? Math.ceil(Number(m[1]) * 1000) + 500 : 0;
 }
 
-async function callGemini(apiKey, payload) {
+async function callModel(apiKey, model, payload) {
+  const body = JSON.parse(JSON.stringify(payload)); // thinkingConfig may be dropped per model
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     await throttle();
     let failure;
     try {
-      const res = await requestJson('POST', GEMINI_PATH + ':generateContent', apiKey, payload);
+      const res = await requestJson('POST', modelPath(model) + ':generateContent', apiKey, body);
       if (res.status === 200) return JSON.parse(res.text);
       if (
         res.status === 400 &&
         /thinking/i.test(res.text) &&
-        payload.generationConfig &&
-        payload.generationConfig.thinkingConfig
+        body.generationConfig &&
+        body.generationConfig.thinkingConfig
       ) {
-        console.warn('Model rejected thinkingConfig; retrying without it');
-        delete payload.generationConfig.thinkingConfig;
+        console.warn('Model ' + model + ' rejected thinkingConfig; retrying without it');
+        delete body.generationConfig.thinkingConfig;
         attempt--;
         continue;
       }
+      const delay = retryDelayFrom(res);
+      // Daily quota (or a very long wait) will not recover during this run.
+      const quotaExhausted = res.status === 429 && (/PerDay|per day/i.test(res.text) || delay > 90000);
       failure = {
-        retryable: res.status === 429 || res.status >= 500,
+        status: res.status,
+        quota: res.status === 429,
+        retryable: (res.status === 429 || res.status >= 500) && !quotaExhausted,
         message: 'HTTP ' + res.status + ': ' + res.text.slice(0, 200).replace(/\s+/g, ' '),
-        delay: retryDelayFrom(res)
+        delay: Math.min(delay, 60000)
       };
     } catch (err) {
-      failure = { retryable: true, message: describeError(err), delay: 0 };
+      failure = { status: 0, quota: false, retryable: true, message: describeError(err), delay: 0 };
     }
 
     if (!failure.retryable || attempt === MAX_ATTEMPTS) {
-      const e = new Error(failure.message);
-      e.fatal = !failure.retryable; // 400/401/403/404: retrying other items is pointless
+      const e = new Error('[' + model + '] ' + failure.message);
+      e.status = failure.status;
+      e.quota = failure.quota;
       throw e;
     }
     const delay = failure.delay || 2000 * 2 ** (attempt - 1);
     console.warn(
-      'Gemini attempt ' + attempt + '/' + MAX_ATTEMPTS + ' failed (' + failure.message + '); retry in ' +
-        Math.round(delay / 1000) + 's'
+      'Gemini ' + model + ' attempt ' + attempt + '/' + MAX_ATTEMPTS + ' failed (' + failure.message +
+        '); retry in ' + Math.round(delay / 1000) + 's'
     );
     await sleep(delay);
   }
   throw new Error('unreachable');
 }
 
+async function callGemini(apiKey, models, payload) {
+  let lastErr;
+  for (const model of models) {
+    try {
+      return await callModel(apiKey, model, payload);
+    } catch (err) {
+      lastErr = err;
+      const tryNext = err.quota || err.status === 404 || err.status >= 500 || err.status === 0;
+      if (!tryNext) break; // 400/401/403: other models will not help
+      console.warn('Model ' + model + ' unavailable: ' + err.message);
+    }
+  }
+  const st = lastErr.status;
+  lastErr.fatal = Boolean(lastErr.quota) || st === 400 || st === 401 || st === 403 || st === 404;
+  throw lastErr;
+}
+
 // Cheap connectivity + key + model check (does not consume generation quota).
+// Returns the list of models that answer.
 async function preflight(apiKey) {
   try {
     const addrs = await dns.promises.lookup(GEMINI_HOST, { all: true });
@@ -351,21 +391,25 @@ async function preflight(apiKey) {
     console.error('DNS lookup failed: ' + describeError(err));
   }
 
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    try {
-      const res = await requestJson('GET', GEMINI_PATH, apiKey, null);
-      if (res.status === 200) {
-        console.log('Gemini preflight OK (' + GEMINI_MODEL + ')');
-        return true;
+  const working = [];
+  for (const model of GEMINI_MODELS) {
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const res = await requestJson('GET', modelPath(model), apiKey, null);
+        if (res.status === 200) {
+          console.log('Gemini preflight OK (' + model + ')');
+          working.push(model);
+          break;
+        }
+        console.error('Gemini preflight ' + model + ' HTTP ' + res.status + ': ' + res.text.slice(0, 200).replace(/\s+/g, ' '));
+        if (res.status !== 429 && res.status < 500) break; // bad key / wrong model: no point retrying
+      } catch (err) {
+        console.error('Gemini preflight ' + model + ' network error (attempt ' + attempt + '): ' + describeError(err));
       }
-      console.error('Gemini preflight HTTP ' + res.status + ': ' + res.text.slice(0, 200).replace(/\s+/g, ' '));
-      if (res.status !== 429 && res.status < 500) return false; // bad key / wrong model: no point retrying
-    } catch (err) {
-      console.error('Gemini preflight network error (attempt ' + attempt + '): ' + describeError(err));
+      await sleep(2000 * attempt);
     }
-    await sleep(2000 * attempt);
   }
-  return false;
+  return working;
 }
 
 /* ------------------------------------------------------------------ */
@@ -379,7 +423,7 @@ const SAFETY_SETTINGS = [
   'HARM_CATEGORY_DANGEROUS_CONTENT'
 ].map((category) => ({ category, threshold: 'BLOCK_ONLY_HIGH' }));
 
-async function translateGroup(apiKey, group, title, summary) {
+async function translateGroup(apiKey, models, group, title, summary) {
   const keysTemplate = JSON.stringify(
     Object.fromEntries(group.langs.map((l) => [l, { title: '', summary: '' }]))
   );
@@ -413,10 +457,10 @@ async function translateGroup(apiKey, group, title, summary) {
   };
 
   const best = {};
-  for (let pass = 1; pass <= 2; pass++) {
+  for (let pass = 1; pass <= 1; pass++) {
     let data;
     try {
-      data = await callGemini(apiKey, payload);
+      data = await callGemini(apiKey, models, payload);
     } catch (err) {
       if (Object.keys(best).length) break;
       throw err;
@@ -492,12 +536,16 @@ function finalizeTexts(titles, summaries, title, summary) {
   return { title: outTitle, summary: outSummary, untranslated };
 }
 
-async function translateItem(apiKey, title, summary, stats) {
+// One request for all languages; a second request only for languages still missing.
+async function translateItem(apiKey, models, title, summary, stats) {
   const titles = {};
   const summaries = {};
-  for (const group of LANG_GROUPS) {
+  let pending = ALL_LANGS;
+
+  for (let round = 1; round <= 2 && pending.length; round++) {
+    const group = { name: round === 1 ? 'all' : 'missing', langs: pending, desc: descFor(pending) };
     try {
-      const part = await translateGroup(apiKey, group, title, summary);
+      const part = await translateGroup(apiKey, models, group, title, summary);
       stats.ok++;
       for (const [lang, v] of Object.entries(part)) {
         titles[lang] = v.title;
@@ -505,12 +553,13 @@ async function translateItem(apiKey, title, summary, stats) {
       }
     } catch (err) {
       stats.failed++;
-      console.error('Group translation error (' + group.name + '): ' + err.message);
+      console.error('Translation error (' + group.name + '): ' + err.message);
       if (err.fatal) {
         stats.fatal = true;
         break;
       }
     }
+    pending = ALL_LANGS.filter((l) => !titles[l]);
   }
   return finalizeTexts(titles, summaries, title, summary);
 }
@@ -621,16 +670,19 @@ async function run() {
   const outputPath = path.join(process.cwd(), 'public', 'data', 'news.json');
   const existing = readExisting(outputPath);
   const cache = new Map(existing.map((n) => [n.id, n]));
+  const deadline = Date.now() + RUN_BUDGET_MS;
 
-  console.log('Node ' + process.version + ' | model ' + GEMINI_MODEL + ' | existing items: ' + existing.length);
+  console.log(
+    'Node ' + process.version + ' | models ' + GEMINI_MODELS.join(', ') + ' | existing items: ' + existing.length
+  );
   if (!apiKey) console.error('Missing GEMINI_API_KEY in environment.');
 
   const candidates = await collectCandidates();
-  const stats = { ok: 0, failed: 0, needed: 0, fatal: false };
-  let geminiReady = null;
+  const stats = { ok: 0, failed: 0, needed: 0, skipped: 0, fatal: false };
+  let models = null;
   const ensureGemini = async () => {
-    if (geminiReady === null) geminiReady = apiKey ? await preflight(apiKey) : false;
-    return geminiReady;
+    if (models === null) models = apiKey ? await preflight(apiKey) : [];
+    return models;
   };
 
   const fresh = [];
@@ -641,12 +693,24 @@ async function run() {
       continue;
     }
 
+    if (stats.fatal || Date.now() > deadline || stats.needed >= MAX_NEW_TRANSLATIONS) {
+      stats.skipped++; // retried automatically on the next run
+      continue;
+    }
+
     stats.needed++;
-    let texts;
-    if (!stats.fatal && (await ensureGemini())) {
-      texts = await translateItem(apiKey, c.title, c.summary, stats);
-    } else {
-      texts = finalizeTexts({}, {}, c.title, c.summary);
+    const active = await ensureGemini();
+    if (!active.length) {
+      stats.fatal = true;
+      stats.skipped++;
+      continue;
+    }
+
+    const texts = await translateItem(apiKey, active, c.title, c.summary, stats);
+    if (texts.untranslated.length >= SUPPORTED_LANGS.length - 1) {
+      console.warn('Skipping untranslated item: ' + c.title.slice(0, 60));
+      stats.skipped++;
+      continue;
     }
 
     const item = {
@@ -673,7 +737,8 @@ async function run() {
       isRecent(n.pubDate)
   );
 
-  let finalNews = fresh.concat(kept)
+  let finalNews = fresh
+    .concat(kept)
     .sort((a, b) => Date.parse(b.pubDate) - Date.parse(a.pubDate))
     .slice(0, MAX_STORED_ITEMS);
   if (!finalNews.length) finalNews = FALLBACK_NEWS;
@@ -682,8 +747,8 @@ async function run() {
   fs.writeFileSync(outputPath, JSON.stringify(finalNews, null, 2), 'utf-8');
 
   console.log(
-    'Saved ' + finalNews.length + ' news items (' + fresh.length + ' fresh, ' + kept.length +
-      ' kept). Gemini group calls ok=' + stats.ok + ' failed=' + stats.failed
+    'Saved ' + finalNews.length + ' news items (' + fresh.length + ' fresh, ' + kept.length + ' kept, ' +
+      stats.skipped + ' skipped). Gemini calls ok=' + stats.ok + ' failed=' + stats.failed
   );
 
   // Fail the job (so the commit step is skipped) if nothing could be translated.
