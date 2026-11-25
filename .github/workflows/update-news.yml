@@ -2,7 +2,7 @@ name: Auto Fetch & Translate News
 
 on:
   schedule:
-    - cron: '7,37 * * * *'
+    - cron: '7 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -29,4 +29,10 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODELS: gemini-3.8-flash,gemini-3.6-flash
-          MAX
+          MAX_NEW_TRANSLATIONS: '9'
+          MAX_ITEMS_PER_FEED: '6'
+        run: node scripts/fetch-news.js
+
+      - name: Commit and push updated news
+        run: |
+          git config
