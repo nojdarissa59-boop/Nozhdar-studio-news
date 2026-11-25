@@ -29,7 +29,7 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODELS: gemini-3.8-flash,gemini-3.6-flash
-          MAX_NEW_TRANSLATIONS: '3'
+          MAX_NEW_TRANSLATIONS: '9'
         run: node scripts/fetch-news.js
 
       - name: Commit and push updated news
