@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#06150d">
+<title>NOZHDAR STUDIO — News</title>
+<style>
+:root{--bg:#06140d;--panel:#0b2115;--panel2:#102b1c;--gold:#e0b84f;--gold2:#f4d77e;--cream:#f7f0dc;--muted:#b4c0b5;--line:#6c5b25;--green:#163c25}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% 0%,#173e27 0%,#0a2114 45%,#041009 100%);color:var(--cream);font:16px/1.65 Arial,sans-serif}
+a{color:var(--gold2);text-decoration:none}.wrap{width:min(100% - 28px,1050px);margin:auto}
+header{position:sticky;top:0;z-index:5;background:#06150df2;backdrop-filter:blur(12px);border-bottom:1px solid #8b7130}
+.head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}.mark{font:42px/1 Georgia;color:var(--gold);border:2px solid var(--gold);padding:0 8px;text-shadow:0 0 14px #d9a72a66}.brand strong{display:block;font-size:20px;letter-spacing:3px}.brand small{display:block;color:var(--gold);letter-spacing:5px;font-size:10px}
+.controls{display:flex;align-items:center;gap:8px}select,input,button{font:inherit;color:var(--cream);background:#102719;border:1px solid #58613b;border-radius:9px;padding:10px 12px;min-height:42px}select{max-width:100%}button{cursor:pointer}button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--gold2);outline-offset:3px}
+.hero{padding:24px 0 16px}.eyebrow{color:var(--gold);font-size:10px;letter-spacing:3px}.hero h1{font:clamp(38px,7vw,66px)/1.05 Georgia;margin:7px 0 10px}.hero p{max-width:720px;color:var(--muted);font-size:17px;margin:0}
+.toolbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,220px) auto;gap:9px;padding:15px 0}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:8px 0 16px;border-bottom:1px solid #6d5c2a}
+.tabs button{white-space:nowrap;border:1px solid #77642b;background:#0c2115;color:var(--cream);padding:9px 16px;font-weight:600}.tabs button.active{background:linear-gradient(135deg,#f1d27b,#d6a83f);color:#132116;border-color:var(--gold2);box-shadow:0 0 18px #d8ad4a30}
+.section{display:flex;justify-content:space-between;align-items:end;gap:10px;margin:23px 0 12px;border-bottom:1px solid #5a542f;padding-bottom:8px}.section h2{font:25px Georgia;margin:0}.section span{font-size:10px;letter-spacing:2px;color:var(--gold)}
+.feature{position:relative;background:linear-gradient(145deg,#12341f,#08180f);border:2px solid var(--gold);border-radius:19px;overflow:hidden;margin:14px 0 20px;box-shadow:0 0 0 1px #f4d77e22,0 14px 40px #0008}
+.feature-link{display:block;color:inherit}.feature-image{position:relative;min-height:210px;background:#17291d}.feature-image img{display:block;width:100%;height:clamp(220px,56vw,460px);object-fit:cover}.feature-image:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,#041009eF)}
+.feature-image.no-image{min-height:170px;background:radial-gradient(ellipse at 70% 30%,#2a5732,#0a1b10 70%)}
+.feature-overlay{position:absolute;z-index:1;left:0;right:0;bottom:0;padding:20px 22px 16px}
+.pill{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#f6d779,#d7a83d);color:#172014;border-radius:30px;padding:4px 11px;font-size:11px;font-weight:800;letter-spacing:.6px}
+.feature-overlay h2{font:clamp(24px,5vw,42px)/1.2 Georgia;margin:12px 0 7px;text-shadow:0 2px 8px #000}
+.meta{display:flex;flex-wrap:wrap;gap:9px;color:var(--muted);font-size:12px;margin:9px 0}.meta span+span:before{content:"·";margin-right:9px;color:var(--gold)}
+.feature-copy{padding:15px 20px 17px;background:linear-gradient(120deg,#0d2818,#07170e)}
+.feature-copy p{color:#e0e6d9;margin:0;font-size:15px;line-height:1.9;white-space:pre-line}
+.source-line{border-top:1px solid #62552c;margin-top:14px;padding-top:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--gold)}
+.source-button{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--gold);border-radius:24px;padding:7px 13px;color:var(--gold2);font-weight:bold}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{background:linear-gradient(145deg,#102a1a,#08180f);border:1px solid #6b5c30;border-radius:15px;overflow:hidden;min-width:0;box-shadow:0 8px 22px #0004}.card>a{display:block;color:inherit}.card img{width:100%;height:180px;object-fit:cover;background:#1b3024;display:block}.card-body{padding:13px}.card h3{font:21px/1.3 Georgia;margin:7px 0 8px}.card p{font-size:13px;color:var(--muted);margin:0 0 10px;line-height:1.8}.card .meta{margin:0 0 7px}.card .source-button{font-size:11px;margin-top:6px}.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed #6b5c30;border-radius:14px;grid-column:1/-1}
+footer{border-top:1px solid #5d522c;margin-top:35px;padding:20px 0;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+@media(max-width:650px){.wrap{width:min(100% - 22px,1050px)}.head{align-items:flex-start}.brand strong{font-size:17px}.mark{font-size:34px}.controls{flex-direction:column;align-items:stretch}.controls select{max-width:145px;font-size:12px;padding:8px}.hero{padding-top:18px}.hero p{font-size:15px}.toolbar{grid-template-columns:1fr auto}.toolbar input{grid-column:1/-1}.toolbar select{min-width:0}.grid{grid-template-columns:1fr}.card{display:grid;grid-template-columns:112px minmax(0,1fr)}.card img{height:100%;min-height:150px}.card h3{font-size:17px}.card p{font-size:11px}.feature-overlay{padding:13px}.feature-overlay h2{font-size:25px}.feature-copy{padding:12px}.feature-copy p{font-size:13px}.section h2{font-size:21px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="head">
+ <div class="brand"><div class="mark">N</div><div><strong>NOZHDAR</strong><small>STUDIO / NEWSROOM</small></div></div>
+ <div class="controls"><select id="region" aria-label="Region"></select><select id="language" aria-label="Language">
+ <option value="bad">کوردی بادینی</option><option value="ku" selected>کوردی سۆرانی</option><option value="km">Kurmancî</option><option value="en">English</option><option value="it">Italiano</option><option value="ar">العربية</option><option value="ma">الدارجة المغربية</option><option value="tn">التونسية</option><option value="dz">الدارجة الجزائرية</option><option value="tr">Türkçe</option><option value="fa">فارسی</option><option value="sq">Shqip</option><option value="ur">اردو</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option><option value="ps">پښتو</option>
+ </select></div>
+</div></header>
+<section class="hero"><div class="eyebrow">NOZHDAR STUDIO / INDEPENDENT NEWS</div><h1 id="pageTitle">هەواڵ</h1><p id="intro">هەواڵە نوێیەکان لە ناوچەکان و سەرتاسەری ئیتالیا.</p></section>
+<div class="toolbar"><input id="search" type="search" placeholder="گەڕان لە هەواڵەکاندا…" aria-label="Search news"><select id="kind" aria-label="Category"><option value="all">هەموو جۆرەکان</option><option value="local">هەواڵی ناوخۆیی</option><option value="immigration">کۆچبەران و یاسا</option></select><button id="refresh">↻ نوێکردنەوە</button></div>
+<nav class="tabs" id="tabs"><button class="active" data-tab="all">هەموو</button><button data-tab="regional">هەرێمی هەڵبژێردراو</button><button data-tab="immigration">کۆچبەران / ئیتالیا</button></nav>
+<div class="section"><h2 id="topHeading">هەواڵی سەرەکی</h2><span id="updated">NOZHDAR / LIVE</span></div>
+<section id="featured" class="feature"><div class="feature-copy">هەواڵەکان بار دەکرێن…</div></section>
+<div class="section"><h2 id="latestHeading">دوایین هەواڵەکان</h2><span id="count">0 NEWS</span></div>
+<main id="news" class="grid"><div class="empty">هەواڵەکان بار دەکرێن…</div></main>
+<footer><span>© <span id="year"></span> NOZHDAR STUDIO</span><span>16 LANGUAGES · 20 REGIONS · ITALY IMMIGRATION & LAW</span></footer>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const special='italia-immigrazione';
+let news=[],regions=[],lang='ku',tab='all';
+const L={
+ku:{title:'هەواڵ',intro:'هەواڵە نوێیەکان لە ناوچەکان و سەرتاسەری ئیتالیا.',all:'هەموو',regional:'هەرێمی هەڵبژێردراو',immigration:'کۆچبەران / ئیتالیا',top:'هەواڵی سەرەکی',latest:'دوایین هەواڵەکان',search:'گەڕان لە هەواڵەکاندا…',refresh:'نوێکردنەوە',empty:'هیچ هەواڵێک بۆ ئەم هەڵبژاردنە نەدۆزرایەوە.',read:'وردەکاری زیاتر',allKinds:'هەموو جۆرەکان',local:'هەواڵی ناوخۆیی',law:'کۆچبەران و یاسا',official:'فەرمی',source:'سەرچاوە',date:'بەروار'},
+bad:{title:'هەواڵ',intro:'هەواڵێن نوی ژ ناڤچەیان و هەمی ئیتالیایێ.',all:'هەمی',regional:'هەرێما هەلبژارتی',immigration:'کۆچبەران / ئیتالیایێ',top:'هەواڵا سەرەکی',latest:'دوماهیک هەواڵ',search:'ل هەواڵان بگەڕێ…',refresh:'نوێ بکە',empty:'هیچ هەواڵ نەهاتە دیتن.',read:'وردەکاریێن زێدەتر',allKinds:'هەمی جۆر',local:'هەواڵێ ناڤخۆیی',law:'کۆچبەری و یاسا',official:'فەرمی',source:'سەرچاوە',date:'بەروار'},
+km:{title:'Nûçe',intro:'Nûçeyên herêmî û ji tevahiya Îtalyayê.',all:'Hemû',regional:'Herêma hilbijartî',immigration:'Koçberî / Îtalya',top:'Nûçeya sereke',latest:'Nûçeyên dawî',search:'Di nûçeyan de bigere…',refresh:'Nû bike',empty:'Nûçe nehat dîtin.',read:'Zêdetir bixwîne',allKinds:'Hemû kategorî',local:'Nûçeyên herêmî',law:'Koçberî û qanûn',official:'FERMÎ',source:'Çavkanî',date:'Dîrok'},
+en:{title:'News',intro:'Latest regional updates and important news from across Italy.',all:'All',regional:'Selected region',immigration:'Immigration / Italy',top:'Top story',latest:'Latest news',search:'Search news…',refresh:'Refresh',empty:'No stories found for this selection.',read:'Read more',allKinds:'All categories',local:'Regional news',law:'Immigration & law',official:'OFFICIAL',source:'Source',date:'Date'},
+it:{title:'Notizie',intro:'Ultime notizie locali e aggiornamenti importanti da tutta Italia.',all:'Tutte',regional:'Regione selezionata',immigration:'Immigrazione / Italia',top:'Notizia principale',latest:'Ultime notizie',search:'Cerca notizie…',refresh:'Aggiorna',empty:'Nessuna notizia trovata.',read:'Leggi di più',allKinds:'Tutte le categorie',local:'Notizie regionali',law:'Immigrazione e leggi',official:'UFFICIALE',source:'Fonte',date:'Data'},
+ar:{title:'الأخبار',intro:'آخر الأخبار المحلية وأهم المستجدات من جميع أنحاء إيطاليا.',all:'الكل',regional:'المنطقة المختارة',immigration:'الهجرة / إيطاليا',top:'الخبر الرئيسي',latest:'آخر الأخبار',search:'ابحث في الأخبار…',refresh:'تحديث',empty:'لا توجد أخبار لهذا الاختيار.',read:'اقرأ المزيد',allKinds:'كل الفئات',local:'أخبار محلية',law:'الهجرة والقوانين',official:'رسمي',source:'المصدر',date:'التاريخ'},
+ma:{title:'الأخبار',intro:'آخر الأخبار المحلية والمستجدات من إيطاليا.',all:'الكل',regional:'المنطقة المختارة',immigration:'الهجرة / إيطاليا',top:'الخبر الرئيسي',latest:'آخر الأخبار',search:'قلب على الأخبار…',refresh:'تحديث',empty:'ما كايناش أخبار لهاد الاختيار.',read:'قرا المزيد',allKinds:'جميع الفئات',local:'أخبار محلية',law:'الهجرة والقوانين',official:'رسمي',source:'المصدر',date:'التاريخ'},
+tn:{title:'الأخبار',intro:'آخر الأخبار المحلية وأهم المستجدات من إيطاليا.',all:'الكل',regional:'الجهة المختارة',immigration:'الهجرة / إيطاليا',top:'الخبر الرئيسي',latest:'آخر الأخبار',search:'لوّج على الأخبار…',refresh:'تحديث',empty:'ما فماش أخبار للاختيار هذا.',read:'اقرا المزيد',allKinds:'كل الأصناف',local:'أخبار محلية',law:'الهجرة والقوانين',official:'رسمي',source:'المصدر',date:'التاريخ'},
+dz:{title:'الأخبار',intro:'آخر الأخبار المحلية والمستجدات من كامل إيطاليا.',all:'الكل',regional:'المنطقة المختارة',immigration:'الهجرة / إيطاليا',top:'الخبر الرئيسي',latest:'آخر الأخبار',search:'قلب على الأخبار…',refresh:'تحديث',empty:'ماكانش أخبار لهذا الاختيار.',read:'اقرا المزيد',allKinds:'كل الفئات',local:'أخبار محلية',law:'الهجرة والقوانين',official:'رسمي',source:'المصدر',date:'التاريخ'},
+tr:{title:'Haberler',intro:'Bölgesel gelişmeler ve İtalya genelinden önemli haberler.',all:'Tümü',regional:'Seçili bölge',immigration:'Göç / İtalya',top:'Öne çıkan haber',latest:'Son haberler',search:'Haberlerde ara…',refresh:'Yenile',empty:'Bu seçim için haber bulunamadı.',read:'Devamını oku',allKinds:'Tüm kategoriler',local:'Bölgesel haberler',law:'Göç ve hukuk',official:'RESMÎ',source:'Kaynak',date:'Tarih'},
+fa:{title:'اخبار',intro:'آخرین اخبار منطقه‌ای و رویدادهای مهم سراسر ایتالیا.',all:'همه',regional:'منطقه انتخاب‌شده',immigration:'مهاجرت / ایتالیا',top:'خبر برتر',latest:'آخرین اخبار',search:'جستجو در اخبار…',refresh:'تازه‌سازی',empty:'خبری برای این انتخاب پیدا نشد.',read:'ادامه مطلب',allKinds:'همه دسته‌ها',local:'اخبار منطقه‌ای',law:'مهاجرت و قوانین',official:'رسمی',source:'منبع',date:'تاریخ'},
+sq:{title:'Lajme',intro:'Përditësimet rajonale dhe lajmet kryesore nga Italia.',all:'Të gjitha',regional:'Rajoni i zgjedhur',immigration:'Emigracioni / Italia',top:'Lajmi kryesor',latest:'Lajmet e fundit',search:'Kërko lajme…',refresh:'Përditëso',empty:'Nuk u gjet asnjë lajm.',read:'Lexo më shumë',allKinds:'Të gjitha kategoritë',local:'Lajme rajonale',law:'Emigracioni dhe ligjet',official:'ZYRTARE',source:'Burimi',date:'Data'},
+ur:{title:'خبریں',intro:'علاقائی تازہ ترین خبریں اور اٹلی بھر کی اہم معلومات۔',all:'سب',regional:'منتخب علاقہ',immigration:'امیگریشن / اٹلی',top:'اہم خبر',latest:'تازہ ترین خبریں',search:'خبریں تلاش کریں…',refresh:'تازہ کریں',empty:'اس انتخاب کے لیے کوئی خبر نہیں ملی۔',read:'مزید پڑھیں',allKinds:'تمام اقسام',local:'علاقائی خبریں',law:'امیگریشن اور قانون',official:'سرکاری',source:'ماخذ',date:'تاریخ'},
+hi:{title:'समाचार',intro:'क्षेत्रीय अपडेट और पूरे इटली की महत्वपूर्ण खबरें।',all:'सभी',regional:'चुना गया क्षेत्र',immigration:'आव्रजन / इटली',top:'मुख्य खबर',latest:'ताज़ा खबरें',search:'खबरें खोजें…',refresh:'रिफ्रेश',empty:'इस चयन के लिए कोई खबर नहीं मिली।',read:'और पढ़ें',allKinds:'सभी श्रेणियाँ',local:'क्षेत्रीय समाचार',law:'आव्रजन और कानून',official:'आधिकारिक',source:'स्रोत',date:'तारीख'},
+bn:{title:'সংবাদ',intro:'আঞ্চলিক আপডেট এবং পুরো ইতালির গুরুত্বপূর্ণ খবর।',all:'সব',regional:'নির্বাচিত অঞ্চল',immigration:'অভিবাসন / ইতালি',top:'প্রধান খবর',latest:'সর্বশেষ খবর',search:'খবর খুঁজুন…',refresh:'রিফ্রেশ',empty:'এই নির্বাচনের জন্য কোনো খবর পাওয়া যায়নি।',read:'আরও পড়ুন',allKinds:'সব বিভাগ',local:'আঞ্চলিক সংবাদ',law:'অভিবাসন ও আইন',official:'সরকারি',source:'সূত্র',date:'তারিখ'},
+ps:{title:'خبرونه',intro:'سیمه‌ییز تازه معلومات او د ټولې ایټالیا مهم خبرونه.',all:'ټول',regional:'ټاکل شوې سیمه',immigration:'کډوالي / ایټالیا',top:'مهم خبر',latest:'وروستي خبرونه',search:'خبرونه ولټوئ…',refresh:'تازه کول',empty:'د دې ټاکنې لپاره خبر ونه موندل شو.',read:'نور ولولئ',allKinds:'ټولې کټګورۍ',local:'سیمه‌ییز خبرونه',law:'کډوالي او قوانین',official:'رسمي',source:'سرچینه',date:'نېټه'}
+};
+const rtl=['ku','bad','ar','ma','tn','dz','fa','ur','ps'];
+function tr(key){return (L[lang]&&L[lang][key])||L.en[key]||key}
+function getText(item,key){const v=item?.[key];if(v&&typeof v==='object')return v[lang]||v.en||v.it||v.ku||Object.values(v)[0]||'';return v||''}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function regionName(id){return regions.find(r=>r.id===id)?.name||id}
+function applyLanguage(){
+ lang=$('language').value;document.documentElement.lang=lang;document.documentElement.dir=rtl.includes(lang)?'rtl':'ltr';
+ $('pageTitle').textContent=tr('title');$('intro').textContent=tr('intro');$('topHeading').textContent=tr('top');$('latestHeading').textContent=tr('latest');
+ $('search').placeholder=tr('search');$('refresh').textContent='↻ '+tr('refresh');
+ $('kind').innerHTML=`<option value="all">${tr('allKinds')}</option><option value="local">${tr('local')}</option><option value="immigration">${tr('law')}</option>`;
+ render();
+}
+function buildTabs(){
+ $('tabs').innerHTML=`<button data-tab="all">${tr('all')}</button><button data-tab="regional">${tr('regional')}</button><button data-tab="immigration">${tr('immigration')}</button>`;
+ $('tabs').querySelectorAll('button').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.onclick=()=>{tab=b.dataset.tab;render()}});
+}
+function eligible(){
+ let list=[...news];
+ if(tab==='regional')list=list.filter(n=>n.region===$('region').value&&n.region!==special);
+ if(tab==='immigration')list=list.filter(n=>n.region===special||n.category==='immigration-law');
+ const kind=$('kind').value;
+ if(kind==='local')list=list.filter(n=>n.region!==special&&n.category!=='immigration-law');
+ if(kind==='immigration')list=list.filter(n=>n.region===special||n.category==='immigration-law');
+ const q=$('search').value.trim().toLowerCase();
+ if(q)list=list.filter(n=>[getText(n,'title'),getText(n,'summary'),getText(n,'content'),n.source,n.regionName].join(' ').toLowerCase().includes(q));
+ return list.sort((a,b)=>new Date(b.date||b.pubDate)-new Date(a.date||a.pubDate));
+}
+function dateLabel(n){const d=new Date(n.date||n.pubDate||'');if(isNaN(d))return '';const localeMap={ku:'ckb-IQ',bad:'ku-IQ',km:'ku-TR',ma:'ar-MA',tn:'ar-TN',dz:'ar-DZ',ps:'ps-AF',fa:'fa-IR',ur:'ur-PK',sq:'sq-AL',bn:'bn-BD',hi:'hi-IN',tr:'tr-TR',it:'it-IT',ar:'ar',en:'en-GB'};return d.toLocaleDateString(localeMap[lang]||'en-GB',{day:'numeric',month:'short',year:'numeric'})}
+function featureHTML(n){
+ const title=getText(n,'title'),summary=getText(n,'summary'),content=getText(n,'content');
+ const img=n.image?`<div class="feature-image"><img src="${esc(n.image)}" alt="" loading="lazy" onerror="this.parentElement.classList.add('no-image');this.remove()"><div class="feature-overlay">${n.official?`<span class="pill">★ ${tr('official')}</span>`:''}<h2>${esc(title)}</h2><div class="meta"><span>${esc(dateLabel(n))}</span><span>${esc(n.source||'')}</span><span>${esc(n.regionName||'Italy')}</span></div></div></div>`:`<div class="feature-image no-image"><div class="feature-overlay">${n.official?`<span class="pill">★ ${tr('official')}</span>`:''}<h2>${esc(title)}</h2><div class="meta"><span>${esc(dateLabel(n))}</span><span>${esc(n.source||'')}</span></div></div></div>`;
+ return `<article id="featured" class="feature">${img}<div class="feature-copy"><p>${esc(summary||content)}</p><div class="source-line"><span>${tr('source')}: ${esc(n.source||'')}</span><a class="source-button" href="${esc(n.link)}" target="_blank" rel="noopener">${tr('read')} ›</a></div></div></article>`;
+}
+function cardHTML(n){
+ return `<article class="card"><a href="${esc(n.link)}" target="_blank" rel="noopener">${n.image?`<img src="${esc(n.image)}" alt="" loading="lazy" onerror="this.style.display='none'">`:''}<div class="card-body"><div class="meta"><span>${esc(dateLabel(n))}</span><span>${esc(n.regionName||'Italy')}</span></div><h3>${esc(getText(n,'title'))}</h3><p>${esc(getText(n,'summary'))}</p><span class="source-button">${esc(n.source||tr('source'))} ›</span></div></a></article>`;
+}
+function render(){
+ buildTabs();const list=eligible();$('count').textContent=list.length+' NEWS';
+ if(!list.length){$('featured').innerHTML=`<div class="feature-copy"><p>${tr('empty')}</p></div>`;$('news').innerHTML=`<div class="empty">${tr('empty')}<br><small>Check GitHub Actions and the translation secret.</small></div>`;return}
+ $('featured').outerHTML=featureHTML(list[0]);$('news').innerHTML=list.slice(1).map(cardHTML).join('')||`<div class="empty">${tr('empty')}</div>`;
+}
+async function load(){
+ $('news').innerHTML='<div class="empty">Loading…</div>';
+ try{const response=await fetch('/data/news.json?t='+Date.now(),{cache:'no-store'});if(!response.ok)throw Error('news.json missing');const data=await response.json();news=Array.isArray(data)?data:(data.items||[]);$('updated').textContent='UPDATED '+(data.updatedAt?new Date(data.updatedAt).toLocaleString():'');render()}
+ catch(e){$('featured').innerHTML='<div class="feature-copy">News data is not available yet.</div>';$('news').innerHTML='<div class="empty">News data is not available yet. Run the GitHub Actions workflow.</div>'}
+}
+$('language').addEventListener('change',applyLanguage);$('region').addEventListener('change',render);$('kind').addEventListener('change',render);$('search').addEventListener('input',render);$('refresh').addEventListener('click',load);$('year').textContent=new Date().getFullYear();
+fetch('/data/regions.json').then(r=>r.json()).then(data=>{regions=data;$('region').innerHTML=regions.filter(r=>r.id!==special).map(r=>`<option value="${esc(r.id)}">${esc(r.name)}</option>`).join('');$('region').value=regions.some(r=>r.id==='trentino-alto-adige')?'trentino-alto-adige':(regions[0]?.id||'');applyLanguage();load()}).catch(()=>load());
+</script>
+</body></html>
