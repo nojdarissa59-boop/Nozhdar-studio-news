@@ -1,546 +1,367 @@
 
+
 <!DOCTYPE html>
-<html lang="ckb" dir="rtl">
+
+<html lang="ku" dir="rtl">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b1712">
-<title>NOZHDAR DAILY NEWS</title>
+
+<meta name="theme-color" content="#06140d">
+
+<title>NOZHDAR STUDIO</title>
 
 <style>
-:root {
-  --bg:#0b1712;
-  --panel:#13251c;
-  --panel2:#192e23;
-  --gold:#d9b66e;
-  --text:#f1ead9;
-  --muted:#a5b3a8;
-  --line:#304638;
-}
+
+:root{--bg:#06140d;--panel:#102719;--gold:#e0b84f;--cream:#f7f0dc;--muted:#b4c0b5}
+
 *{box-sizing:border-box}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,sans-serif;
-  line-height:1.7;
-}
-a{color:var(--gold);text-decoration:none}
-button,input{font:inherit}
-.container{max-width:1100px;margin:auto;padding:22px}
-.topline{
-  display:flex;justify-content:space-between;
-  align-items:center;gap:12px;
-  border-bottom:1px solid var(--line);
-  padding-bottom:14px;color:var(--muted);
-  font-size:12px;letter-spacing:2px;
-}
-.brand{
-  padding:35px 0 25px;
-  border-bottom:1px solid var(--line);
-}
-.logo{
-  font-family:Georgia,serif;
-  font-size:clamp(35px,7vw,65px);
-  letter-spacing:3px;color:var(--gold);
-  line-height:1.1;
-}
-.subtitle{
-  color:var(--muted);letter-spacing:4px;
-  font-size:12px;margin-top:10px;
-}
-.edition{
-  color:var(--gold);font-size:11px;
-  letter-spacing:3px;margin-top:20px;
-}
-.toolbar{
-  display:flex;justify-content:space-between;
-  align-items:center;gap:12px;flex-wrap:wrap;
-  padding:20px 0;
-}
-select,input{
-  background:var(--panel);
-  border:1px solid var(--line);
-  color:var(--text);
-  padding:12px;border-radius:5px;
-  outline:none;
-}
-select{max-width:100%}
-.search{flex:1;min-width:160px}
-button{
-  background:var(--panel2);
-  color:var(--gold);
-  border:1px solid var(--line);
-  padding:11px 16px;border-radius:5px;
-  cursor:pointer;
-}
-button:hover{border-color:var(--gold)}
-.categories{
-  display:flex;gap:9px;overflow-x:auto;
-  padding:15px 0;border-bottom:1px solid var(--line);
-}
-.categories button{white-space:nowrap}
-.categories button.active{
-  background:var(--gold);color:#101a13;
-}
-.section-heading{
-  display:flex;align-items:center;
-  justify-content:space-between;
-  border-bottom:1px solid var(--line);
-  margin:35px 0 20px;padding-bottom:10px;
-}
-.section-heading h2{
-  font-family:Georgia,serif;
-  font-size:25px;margin:0;
-}
-.section-heading span{
-  color:var(--gold);font-size:11px;
-  letter-spacing:2px;
-}
-.featured{
-  background:linear-gradient(135deg,#203b2b,#122219);
-  border:1px solid var(--line);
-  padding:28px;border-radius:6px;
-  margin:25px 0;
-}
-.featured-label{
-  color:var(--gold);font-size:11px;
-  letter-spacing:3px;
-}
-.featured h2{
-  font-family:Georgia,serif;
-  font-size:clamp(25px,5vw,42px);
-  line-height:1.25;margin:15px 0;
-}
-.featured p{color:#c2cec3}
-.news-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:15px;
-}
-.news-card{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:5px;padding:20px;
-  display:flex;flex-direction:column;
-  min-height:240px;
-}
-.news-card:hover{border-color:var(--gold)}
-.meta{
-  display:flex;flex-wrap:wrap;gap:9px;
-  font-size:11px;color:var(--muted);
-  margin-bottom:12px;
-}
-.tag{color:var(--gold);letter-spacing:1px}
-.news-card h3{
-  font-family:Georgia,serif;
-  font-size:21px;line-height:1.4;
-  margin:0 0 12px;
-}
-.news-card p{
-  color:#bac6bb;font-size:14px;
-  margin:0 0 18px;
-}
-.read{
-  margin-top:auto;font-size:13px;
-  color:var(--gold);font-weight:bold;
-}
-.empty{
-  background:var(--panel);padding:35px;
-  text-align:center;color:var(--muted);
-  border:1px solid var(--line);
-  grid-column:1/-1;
-}
-.status{font-size:12px;color:var(--muted)}
-footer{
-  margin-top:65px;border-top:1px solid var(--line);
-  padding:25px 0;color:var(--muted);
-  font-size:12px;
-}
-.footer-row{
-  display:flex;justify-content:space-between;
-  flex-wrap:wrap;gap:10px;
-}
-.gold{color:var(--gold)}
-@media(max-width:600px){
-  .container{padding:16px}
-  .featured{padding:20px}
-  .topline{font-size:10px}
-}
+
+body{margin:0;background:radial-gradient(ellipse at top,#173e27,#06140d 70%);color:var(--cream);font:16px/1.7 Arial,sans-serif}
+
+.wrap{max-width:1050px;width:94%;margin:auto}
+
+header{position:sticky;top:0;background:#06140df5;border-bottom:1px solid #78642e;z-index:5}
+
+.head{display:flex;justify-content:space-between;align-items:center;padding:15px 0;gap:10px}
+
+.brand{display:flex;align-items:center;gap:12px}
+
+.logo{font:40px Georgia;color:var(--gold);border:2px solid var(--gold);padding:0 10px}
+
+.brand strong{letter-spacing:3px;font-size:20px}
+
+.brand small{display:block;color:var(--gold);letter-spacing:5px}
+
+select,input,button{background:#102719;color:var(--cream);border:1px solid #645b37;border-radius:9px;padding:11px;font:inherit}
+
+select{max-width:175px}
+
+.hero{padding:30px 0 20px}
+
+.eyebrow{color:var(--gold);letter-spacing:3px;font-size:11px}
+
+h1{font:clamp(42px,8vw,68px) Georgia;margin:8px 0}
+
+.hero p{color:var(--muted);font-size:18px}
+
+.filters{display:flex;gap:9px;flex-wrap:wrap;margin:20px 0}
+
+.filters button{font-weight:bold}
+
+.filters button.active{background:var(--gold);color:#102116}
+
+.tools{display:flex;gap:9px;margin:15px 0}
+
+.tools input{flex:1;min-width:100px}
+
+.section{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #66582e;margin:25px 0 14px}
+
+.section h2{font:25px Georgia}
+
+.section span{color:var(--gold);font-size:11px}
+
+.feature,.card{background:linear-gradient(145deg,#12341f,#08180f);border:1px solid var(--gold);border-radius:15px;overflow:hidden;margin-bottom:18px}
+
+.feature img{width:100%;max-height:440px;object-fit:cover;display:block}
+
+.feature-body{padding:18px}
+
+.feature h2{font:clamp(25px,5vw,40px)/1.3 Georgia}
+
+.feature p,.card p{color:#d4ded3;line-height:1.9}
+
+.meta{color:var(--muted);font-size:12px}
+
+.source{color:var(--gold)}
+
+.read{display:inline-block;border:1px solid var(--gold);padding:7px 14px;border-radius:25px;color:var(--gold);margin-top:10px}
+
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+
+.card{border-color:#655b36}
+
+.card img{width:100%;height:190px;object-fit:cover}
+
+.card-body{padding:14px}
+
+.card h3{font:22px/1.4 Georgia}
+
+.empty{padding:25px;text-align:center;color:var(--muted);border:1px dashed #756638;border-radius:12px}
+
+footer{border-top:1px solid #66582e;margin-top:35px;padding:20px 0;color:var(--muted);font-size:12px}
+
+@media(max-width:650px){.head{align-items:flex-start}.brand strong{font-size:16px}.logo{font-size:30px}.head select{max-width:130px;font-size:12px}.grid{grid-template-columns:1fr}.card{display:grid;grid-template-columns:110px 1fr}.card img{height:100%;min-height:150px}.card h3{font-size:17px}.card p{font-size:12px}.hero p{font-size:15px}}
+
 </style>
+
 </head>
 
 <body>
-<div class="container">
 
-<header>
-  <div class="topline">
-    <span>INDEPENDENT DAILY NEWS</span>
-    <span id="today"></span>
-  </div>
+<div class="wrap">
 
-  <div class="brand">
-    <div class="logo">NOZHDAR</div>
-    <div class="subtitle">STUDIO / NEWSROOM</div>
-    <div class="edition" id="edition">
-      THE DAILY NEWS EDITION
-    </div>
-  </div>
-</header>
+<header><div class="head">
 
-<div class="toolbar">
-  <select id="language" aria-label="Language">
-    <option value="ku">کوردی سۆرانی</option>
-    <option value="bad">کوردی بادینی</option>
-    <option value="km">Kurmancî</option>
-    <option value="it">Italiano</option>
-    <option value="en" selected>English</option>
-    <option value="ar">العربية</option>
-    <option value="ma">المغربية</option>
-    <option value="tn">التونسية</option>
-    <option value="dz">الجزائرية</option>
-    <option value="tr">Türkçe</option>
-    <option value="fa">فارسی</option>
-    <option value="sq">Shqip</option>
-    <option value="ur">اردو</option>
-    <option value="hi">हिन्दी</option>
-    <option value="bn">বাংলা</option>
-    <option value="ps">پښتو</option>
-  </select>
+<div class="brand"><div class="logo">N</div><div><strong>NOZHDAR</strong><small>STUDIO</small></div></div>
 
-  <input class="search" id="search"
-    type="search" placeholder="Search news...">
+<select id="language">
 
-  <button id="refresh">↻ Refresh</button>
-</div>
+<option value="bad">کوردی بادینی</option>
 
-<nav class="categories">
-  <button class="active" data-cat="all" id="allBtn">All News</button>
-  <button data-cat="alto-adige" id="altoBtn">Alto Adige</button>
-  <button data-cat="refugees" id="refugeesBtn">Immigration</button>
-  <button data-cat="italia" id="italiaBtn">Italy</button>
-  <button data-cat="world" id="worldBtn">World</button>
-</nav>
+<option value="ku" selected>کوردی سۆرانی</option>
 
-<div class="section-heading">
-  <h2 id="topTitle">Top Story</h2>
-  <span>NOZHDAR / 01</span>
-</div>
+<option value="km">Kurmancî</option>
 
-<section class="featured" id="featured">
-  <div class="featured-label">THE LATEST EDITION</div>
-  <h2 id="featuredTitle">NOZHDAR DAILY NEWS</h2>
-  <p id="featuredSummary">
-    Daily news from Alto Adige, Italy and around the world.
-  </p>
+<option value="en">English</option>
+
+<option value="it">Italiano</option>
+
+<option value="ar">العربية</option>
+
+<option value="ma">الدارجة المغربية</option>
+
+<option value="tn">التونسية</option>
+
+<option value="dz">الدارجة الجزائرية</option>
+
+<option value="tr">Türkçe</option>
+
+<option value="fa">فارسی</option>
+
+<option value="sq">Shqip</option>
+
+<option value="ur">اردو</option>
+
+<option value="hi">हिन्दी</option>
+
+<option value="bn">বাংলা</option>
+
+<option value="ps">پښتو</option>
+
+</select>
+
+</div></header>
+
+<section class="hero">
+
+<div class="eyebrow">NOZHDAR STUDIO / INDEPENDENT NEWS</div>
+
+<h1 id="heading">هەواڵ</h1>
+
+<p id="intro">هەواڵە نوێیەکان لە ناوچەکان و سەرتاسەری ئیتالیا.</p>
+
 </section>
 
-<div class="section-heading">
-  <h2 id="latestTitle">Latest News</h2>
-  <span id="newsCount">0 NEWS</span>
+<div class="tools">
+
+<input id="search" placeholder="گەڕان لە هەواڵەکاندا…">
+
+<button id="refresh">↻ نوێکردنەوە</button>
+
 </div>
 
-<main class="news-grid" id="newsList">
-  <div class="empty">Loading news...</div>
-</main>
+<nav class="filters" id="filters">
 
-<footer>
-  <div class="footer-row">
-    <span>© 2026 NOZHDAR STUDIO</span>
-    <span class="gold">ALTO ADIGE / ITALIA / WORLD</span>
-  </div>
-  <p>Independent news • Daily updates • Multiple languages</p>
-</footer>
+<button class="active" data-tab="all">هەموو</button>
+
+<button data-tab="regional">هەواڵی ناوچەکان</button>
+
+<button data-tab="immigration">کۆچبەران / ئیتالیا</button>
+
+</nav>
+
+<div class="filters">
+
+<select id="region"><option value="all">هەموو ناوچەکان</option></select>
+
+<select id="category">
+
+<option value="all">هەموو جۆرەکان</option>
+
+<option value="local">هەواڵی ناوخۆیی</option>
+
+<option value="law">کۆچبەران و یاسا</option>
+
+</select>
+
+</div>
+
+<div class="section"><h2 id="top">هەواڵی سەرەکی</h2><span id="status">NOZHDAR LIVE</span></div>
+
+<div id="featured" class="feature"><div class="feature-body">هەواڵەکان بار دەکرێن…</div></div>
+
+<div class="section"><h2 id="latest">دوایین هەواڵەکان</h2><span id="count">0 NEWS</span></div>
+
+<main id="news" class="grid"><div class="empty">هەواڵەکان بار دەکرێن…</div></main>
+
+<footer>© <span id="year"></span> NOZHDAR STUDIO · 16 LANGUAGES · ITALY NEWS & LAW</footer>
 
 </div>
 
 <script>
-const translations = {
-  ku:{
-    dir:'rtl',lang:'ku',
-    all:'هەموو هەواڵەکان',alto:'ئەلتۆ ئادیجێ',
-    refugees:'کۆچبەران',italia:'ئیتاڵیا',world:'جیهان',
-    top:'هەواڵی سەرەکی',latest:'دوایین هەواڵەکان',
-    read:'خوێندنەوەی هەواڵ ←',
-    search:'گەڕان بەدوای هەواڵ...',
-    empty:'هیچ هەواڵێک نەدۆزرایەوە',
-    loading:'هەواڵەکان بار دەکرێن...',
-    refresh:'نوێکردنەوە',
-    edition:'ڕۆژنامەی ڕۆژانەی NOZHDAR',
-    intro:'هەواڵی ئەلتۆ ئادیجێ، ئیتاڵیا و جیهان',
-    count:'هەواڵ'
-  },
-  bad:{
-    dir:'rtl',all:'هەمی هەواڵ',alto:'ئەلتۆ ئادیجێ',
-    refugees:'کۆچبەران',italia:'ئیتاڵیا',world:'جیهان',
-    top:'هەواڵێ سەرەکی',latest:'دوماهیک هەواڵ',
-    read:'خوێندنەوە ←',search:'گەڕان...',
-    empty:'هیچ هەواڵ نەهاتە دیتن',
-    loading:'بارکرنا هەواڵان...',
-    refresh:'نوێ بکەرەوە',
-    edition:'ڕۆژنامەیا ڕۆژانە',
-    intro:'هەواڵێ ئەلتۆ ئادیجێ و ئیتاڵیا',
-    count:'هەواڵ'
-  },
-  km:{
-    dir:'ltr',all:'Hemû nûçe',alto:'Alto Adige',
-    refugees:'Koçberî',italia:'Îtalya',world:'Cîhan',
-    top:'Nûçeya sereke',latest:'Nûçeyên dawî',
-    read:'Bixwîne →',search:'Li nûçeyan bigere...',
-    empty:'Nûçe nehat dîtin',loading:'Nûçe tên barkirin...',
-    refresh:'Nû bike',edition:'ROJNAMÊYA ROJANÊ',
-    intro:'Nûçeyên Alto Adige, Îtalya û cîhanê',
-    count:'Nûçe'
-  },
-  it:{
-    dir:'ltr',all:'Tutte le notizie',alto:'Alto Adige',
-    refugees:'Immigrazione',italia:'Italia',world:'Mondo',
-    top:'Notizia principale',latest:'Ultime notizie',
-    read:'Leggi articolo →',search:'Cerca notizie...',
-    empty:'Nessuna notizia trovata',loading:'Caricamento...',
-    refresh:'Aggiorna',edition:'EDIZIONE QUOTIDIANA',
-    intro:'Notizie dall’Alto Adige, Italia e dal mondo',
-    count:'NOTIZIE'
-  },
-  en:{
-    dir:'ltr',all:'All News',alto:'Alto Adige',
-    refugees:'Immigration',italia:'Italy',world:'World',
-    top:'Top Story',latest:'Latest News',
-    read:'Read full story →',search:'Search news...',
-    empty:'No news found',loading:'Loading news...',
-    refresh:'Refresh',edition:'THE DAILY NEWS EDITION',
-    intro:'Daily news from Alto Adige, Italy and around the world',
-    count:'NEWS'
-  },
-  ar:{
-    dir:'rtl',all:'كل الأخبار',alto:'ألتو أديجي',
-    refugees:'الهجرة',italia:'إيطاليا',world:'العالم',
-    top:'الخبر الرئيسي',latest:'آخر الأخبار',
-    read:'اقرأ الخبر ←',search:'ابحث عن الأخبار...',
-    empty:'لا توجد أخبار',loading:'جاري تحميل الأخبار...',
-    refresh:'تحديث',edition:'الأخبار اليومية',
-    intro:'أخبار من ألتو أديجي وإيطاليا والعالم',
-    count:'أخبار'
-  },
-  ma:{dir:'rtl',all:'جميع الأخبار',alto:'ألتو أديجي',
-    refugees:'الهجرة',italia:'إيطاليا',world:'العالم',
-    top:'الخبر الرئيسي',latest:'آخر الأخبار',
-    read:'اقرأ المزيد ←',search:'ابحث...',
-    empty:'لا توجد أخبار',loading:'تحميل الأخبار...',
-    refresh:'تحديث',edition:'الأخبار اليومية',
-    intro:'أخبار إيطاليا والعالم',count:'أخبار'},
-  tn:{dir:'rtl',all:'كل الأخبار',alto:'ألتو أديجي',
-    refugees:'الهجرة',italia:'إيطاليا',world:'العالم',
-    top:'الخبر الرئيسي',latest:'آخر الأخبار',
-    read:'اقرأ المزيد ←',search:'فتش على الأخبار...',
-    empty:'ما فماش أخبار',loading:'جاري التحميل...',
-    refresh:'تحديث',edition:'الأخبار اليومية',
-    intro:'أخبار إيطاليا والعالم',count:'أخبار'},
-  dz:{dir:'rtl',all:'كل الأخبار',alto:'ألتو أديجي',
-    refugees:'الهجرة',italia:'إيطاليا',world:'العالم',
-    top:'الخبر الرئيسي',latest:'آخر الأخبار',
-    read:'اقرأ المزيد ←',search:'ابحث عن الأخبار...',
-    empty:'لا توجد أخبار',loading:'تحميل الأخبار...',
-    refresh:'تحديث',edition:'الأخبار اليومية',
-    intro:'أخبار إيطاليا والعالم',count:'أخبار'},
-  tr:{dir:'ltr',all:'Tüm Haberler',alto:'Alto Adige',
-    refugees:'Göç',italia:'İtalya',world:'Dünya',
-    top:'Manşet',latest:'Son Haberler',
-    read:'Haberi oku →',search:'Haber ara...',
-    empty:'Haber bulunamadı',loading:'Haberler yükleniyor...',
-    refresh:'Yenile',edition:'GÜNLÜK HABERLER',
-    intro:'İtalya ve dünyadan günlük haberler',count:'HABER'},
-  fa:{dir:'rtl',all:'همه اخبار',alto:'آلتو آدیجه',
-    refugees:'مهاجرت',italia:'ایتالیا',world:'جهان',
-    top:'خبر اصلی',latest:'آخرین اخبار',
-    read:'ادامه مطلب ←',search:'جستجوی اخبار...',
-    empty:'خبری یافت نشد',loading:'در حال بارگذاری...',
-    refresh:'بروزرسانی',edition:'اخبار روزانه',
-    intro:'اخبار ایتالیا و جهان',count:'خبر'},
-  sq:{dir:'ltr',all:'Të gjitha lajmet',alto:'Alto Adige',
-    refugees:'Emigracioni',italia:'Italia',world:'Bota',
-    top:'Lajmi kryesor',latest:'Lajmet e fundit',
-    read:'Lexo lajmin →',search:'Kërko lajme...',
-    empty:'Nuk u gjet asnjë lajm',loading:'Duke ngarkuar...',
-    refresh:'Rifresko',edition:'LAJMET DITORE',
-    intro:'Lajme nga Italia dhe bota',count:'LAJME'},
-  ur:{dir:'rtl',all:'تمام خبریں',alto:'آلٹو آدیجے',
-    refugees:'امیگریشن',italia:'اٹلی',world:'دنیا',
-    top:'اہم خبر',latest:'تازہ ترین خبریں',
-    read:'خبر پڑھیں ←',search:'خبریں تلاش کریں...',
-    empty:'کوئی خبر نہیں ملی',loading:'خبریں لوڈ ہو رہی ہیں...',
-    refresh:'تازہ کریں',edition:'روزانہ کی خبریں',
-    intro:'اٹلی اور دنیا کی خبریں',count:'خبریں'},
-  hi:{dir:'ltr',all:'सभी समाचार',alto:'आल्टो अडिजे',
-    refugees:'आप्रवासन',italia:'इटली',world:'दुनिया',
-    top:'मुख्य समाचार',latest:'ताज़ा समाचार',
-    read:'पूरी खबर पढ़ें →',search:'समाचार खोजें...',
-    empty:'कोई समाचार नहीं मिला',loading:'लोड हो रहा है...',
-    refresh:'रिफ्रेश',edition:'दैनिक समाचार',
-    intro:'इटली और दुनिया की खबरें',count:'समाचार'},
-  bn:{dir:'ltr',all:'সব খবর',alto:'আল্টো আদিজে',
-    refugees:'অভিবাসন',italia:'ইতালি',world:'বিশ্ব',
-    top:'প্রধান খবর',latest:'সর্বশেষ খবর',
-    read:'সম্পূর্ণ খবর পড়ুন →',search:'খবর খুঁজুন...',
-    empty:'কোনো খবর পাওয়া যায়নি',loading:'লোড হচ্ছে...',
-    refresh:'রিফ্রেশ',edition:'দৈনিক সংবাদ',
-    intro:'ইতালি ও বিশ্বের খবর',count:'খবর'},
-  ps:{dir:'rtl',all:'ټول خبرونه',alto:'التو ادیجي',
-    refugees:'کډوالي',italia:'ایټالیا',world:'نړۍ',
-    top:'مهم خبر',latest:'وروستي خبرونه',
-    read:'بشپړ خبر ولولئ ←',search:'خبرونه ولټوئ...',
-    empty:'خبر ونه موندل شو',loading:'خبرونه پورته کېږي...',
-    refresh:'تازه کول',edition:'ورځني خبرونه',
-    intro:'د ایټالیا او نړۍ خبرونه',count:'خبرونه'}
-};
-
-let allNews=[];
-let category='all';
-let lang='en';
 
 const $=id=>document.getElementById(id);
 
-function safe(value){
-  return String(value??'').replace(/[&<>"']/g,c=>({
-    '&':'&amp;','<':'&lt;','>':'&gt;',
-    '"':'&quot;',"'":'&#39;'
-  })[c]);
+const special='italia-immigrazione';
+
+let items=[],regions=[],tab='all',lang='ku';
+
+const words={
+
+ku:['هەواڵ','هەواڵە نوێیەکان لە ناوچەکان و سەرتاسەری ئیتالیا.','هەموو','هەواڵی ناوچەکان','کۆچبەران / ئیتالیا','هەواڵی سەرەکی','دوایین هەواڵەکان','گەڕان لە هەواڵەکاندا…','نوێکردنەوە','هیچ هەواڵێک نەدۆزرایەوە.','وردەکاری زیاتر'],
+
+bad:['هەواڵ','هەواڵێن نوی ژ ناڤچەیان و ئیتالیایێ.','هەمی','هەواڵێ ناڤچەیان','کۆچبەران / ئیتالیایێ','هەواڵا سەرەکی','دوماهیک هەواڵ','ل هەواڵان بگەڕێ…','نوێ بکە','هیچ هەواڵ نەهاتە دیتن.','زێدەتر بخوینە'],
+
+km:['Nûçe','Nûçeyên herêmî û ji tevahiya Îtalyayê.','Hemû','Nûçeyên herêmî','Koçberî / Îtalya','Nûçeya sereke','Nûçeyên dawî','Di nûçeyan de bigere…','Nû bike','Nûçe nehat dîtin.','Zêdetir bixwîne'],
+
+en:['News','Latest regional updates and important news from across Italy.','All','Regional news','Immigration / Italy','Top story','Latest news','Search news…','Refresh','No stories found.','Read more'],
+
+it:['Notizie','Ultime notizie locali e aggiornamenti da tutta Italia.','Tutte','Notizie regionali','Immigrazione / Italia','Notizia principale','Ultime notizie','Cerca notizie…','Aggiorna','Nessuna notizia trovata.','Leggi di più'],
+
+ar:['الأخبار','آخر الأخبار المحلية والمستجدات من إيطاليا.','الكل','أخبار المناطق','الهجرة / إيطاليا','الخبر الرئيسي','آخر الأخبار','ابحث في الأخبار…','تحديث','لا توجد أخبار.','اقرأ المزيد'],
+
+ma:['الأخبار','آخر الأخبار المحلية والمستجدات من إيطاليا.','الكل','أخبار محلية','الهجرة / إيطاليا','الخبر الرئيسي','آخر الأخبار','قلب على الأخبار…','تحديث','ما كايناش أخبار.','قرا المزيد'],
+
+tn:['الأخبار','آخر الأخبار المحلية وأهم المستجدات من إيطاليا.','الكل','أخبار محلية','الهجرة / إيطاليا','الخبر الرئيسي','آخر الأخبار','لوّج على الأخبار…','تحديث','ما فماش أخبار.','اقرا المزيد'],
+
+dz:['الأخبار','آخر الأخبار المحلية من كامل إيطاليا.','الكل','أخبار محلية','الهجرة / إيطاليا','الخبر الرئيسي','آخر الأخبار','قلب على الأخبار…','تحديث','ماكانش أخبار.','اقرا المزيد'],
+
+tr:['Haberler','İtalya genelinden son haberler.','Tümü','Bölgesel haberler','Göç / İtalya','Öne çıkan haber','Son haberler','Haberlerde ara…','Yenile','Haber bulunamadı.','Devamını oku'],
+
+fa:['اخبار','آخرین اخبار منطقه‌ای و سراسر ایتالیا.','همه','اخبار منطقه‌ای','مهاجرت / ایتالیا','خبر برتر','آخرین اخبار','جستجو…','تازه‌سازی','خبری پیدا نشد.','ادامه مطلب'],
+
+sq:['Lajme','Lajmet e fundit nga Italia.','Të gjitha','Lajme rajonale','Emigracioni / Italia','Lajmi kryesor','Lajmet e fundit','Kërko lajme…','Përditëso','Nuk u gjet lajm.','Lexo më shumë'],
+
+ur:['خبریں','اٹلی بھر کی تازہ خبریں۔','سب','علاقائی خبریں','امیگریشن / اٹلی','اہم خبر','تازہ ترین خبریں','خبریں تلاش کریں…','تازہ کریں','کوئی خبر نہیں ملی۔','مزید پڑھیں'],
+
+hi:['समाचार','इटली की ताज़ा क्षेत्रीय खबरें।','सभी','क्षेत्रीय समाचार','आव्रजन / इटली','मुख्य खबर','ताज़ा खबरें','खबरें खोजें…','रिफ्रेश','कोई खबर नहीं मिली।','और पढ़ें'],
+
+bn:['সংবাদ','ইতালির সর্বশেষ আঞ্চলিক খবর।','সব','আঞ্চলিক সংবাদ','অভিবাসন / ইতালি','প্রধান খবর','সর্বশেষ খবর','খবর খুঁজুন…','রিফ্রেশ','কোনো খবর পাওয়া যায়নি।','আরও পড়ুন'],
+
+ps:['خبرونه','د ایټالیا وروستي سیمه‌ییز خبرونه.','ټول','سیمه‌ییز خبرونه','کډوالي / ایټالیا','مهم خبر','وروستي خبرونه','خبرونه ولټوئ…','تازه کول','خبر ونه موندل شو.','نور ولولئ']
+
+};
+
+const rtl=['ku','bad','ar','ma','tn','dz','fa','ur','ps'];
+
+function textOf(n,k){let v=n[k];return v&&typeof v==='object'?(v[lang]||v.en||v.it||v.ku||Object.values(v)[0]||''):v||''}
+
+function tr(i){return words[lang]?.[i]||words.en[i]}
+
+function escapeHTML(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function dateOf(n){let d=new Date(n.date||n.pubDate||'');return isNaN(d)?'':d.toLocaleDateString()}
+
+function applyLanguage(){
+
+lang=$('language').value;
+
+document.documentElement.lang=lang;
+
+document.documentElement.dir=rtl.includes(lang)?'rtl':'ltr';
+
+$('heading').textContent=tr(0);$('intro').textContent=tr(1);
+
+$('top').textContent=tr(5);$('latest').textContent=tr(6);
+
+$('search').placeholder=tr(7);$('refresh').textContent='↻ '+tr(8);
+
+$('filters').innerHTML=`<button data-tab="all">${tr(2)}</button><button data-tab="regional">${tr(3)}</button><button data-tab="immigration">${tr(4)}</button>`;
+
+$('filters').querySelectorAll('button').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.onclick=()=>{tab=b.dataset.tab;render()}});
+
+render();
+
 }
 
-function localized(field){
-  if(!field)return '';
-  if(typeof field==='string')return field;
-  return field[lang] || field.ku || field.it || '';
+function filtered(){
+
+let a=[...items];
+
+if(tab==='regional')a=a.filter(n=>n.region!==special);
+
+if(tab==='immigration')a=a.filter(n=>n.region===special||n.category==='immigration-law');
+
+let r=$('region').value;if(r!=='all'&&tab!=='immigration')a=a.filter(n=>n.region===r);
+
+let c=$('category').value;
+
+if(c==='local')a=a.filter(n=>n.region!==special);
+
+if(c==='law')a=a.filter(n=>n.region===special||n.category==='immigration-law');
+
+let q=$('search').value.toLowerCase().trim();
+
+if(q)a=a.filter(n=>(textOf(n,'title')+' '+textOf(n,'summary')+' '+(n.source||'')).toLowerCase().includes(q));
+
+return a.sort((x,y)=>new Date(y.date||y.pubDate)-new Date(x.date||x.pubDate));
+
 }
 
-function setLanguage(){
-  lang=$('language').value;
-  const t=translations[lang]||translations.en;
-  document.documentElement.lang=lang;
-  document.documentElement.dir=t.dir;
-  $('allBtn').textContent=t.all;
-  $('altoBtn').textContent=t.alto;
-  $('refugeesBtn').textContent=t.refugees;
-  $('italiaBtn').textContent=t.italia;
-  $('worldBtn').textContent=t.world;
-  $('topTitle').textContent=t.top;
-  $('latestTitle').textContent=t.latest;
-  $('search').placeholder=t.search;
-  $('refresh').textContent='↻ '+t.refresh;
-  $('edition').textContent=t.edition;
-  $('featuredSummary').textContent=t.intro;
-  renderNews();
+function card(n,featured=false){
+
+let title=escapeHTML(textOf(n,'title')),summary=escapeHTML(textOf(n,'summary')||textOf(n,'content'));
+
+let image=n.image?`<img src="${escapeHTML(n.image)}" alt="" loading="lazy">`:'';
+
+let body=`<div class="${featured?'feature-body':'card-body'}"><div class="meta">${escapeHTML(dateOf(n))} · ${escapeHTML(n.regionName||'Italy')}</div><h${featured?'2':'3'}>${title}</h${featured?'2':'3'}><p>${summary}</p><div class="source">${escapeHTML(n.source||'NOZHDAR')}</div><a class="read" href="${escapeHTML(n.link)}" target="_blank" rel="noopener">${tr(10)} ›</a></div>`;
+
+return featured?`<article class="feature">${image}${body}</article>`:`<article class="card"><a href="${escapeHTML(n.link)}" target="_blank" rel="noopener">${image}</a>${body}</article>`;
+
 }
 
-function setCategory(cat){
-  category=cat;
-  document.querySelectorAll('.categories button')
-    .forEach(b=>b.classList.toggle('active',b.dataset.cat===cat));
-  renderNews();
+function render(){
+
+let a=filtered();$('count').textContent=a.length+' NEWS';
+
+if(!a.length){$('featured').innerHTML=`<div class="feature-body">${tr(9)}</div>`;$('news').innerHTML=`<div class="empty">${tr(9)}</div>`;return}
+
+$('featured').outerHTML=card(a[0],true);
+
+$('news').innerHTML=a.slice(1).map(n=>card(n)).join('');
+
 }
 
-function dateFormat(date){
-  if(!date)return '';
-  const d=new Date(date);
-  if(isNaN(d))return '';
-  return d.toLocaleDateString(
-    lang==='ku'?'en-GB':lang,
-    {day:'2-digit',month:'short',year:'numeric'}
-  );
+async function load(){
+
+try{
+
+let [n,r]=await Promise.all([fetch('/data/news.json?t='+Date.now()),fetch('/data/regions.json')]);
+
+if(!n.ok||!r.ok)throw Error('Missing data');
+
+let nd=await n.json();items=Array.isArray(nd)?nd:(nd.items||[]);regions=await r.json();
+
+$('region').innerHTML='<option value="all">All regions</option>'+regions.filter(x=>x.id!==special).map(x=>`<option value="${escapeHTML(x.id)}">${escapeHTML(x.name)}</option>`).join('');
+
+$('status').textContent='UPDATED '+(nd.updatedAt?new Date(nd.updatedAt).toLocaleString():'');
+
+render();
+
+}catch(e){$('featured').innerHTML='<div class="feature-body">News data is not available. Check the news JSON files.</div>';$('news').innerHTML='<div class="empty">News data is not available yet.</div>'}
+
 }
 
-function renderNews(){
-  const t=translations[lang]||translations.en;
-  const query=$('search').value.trim().toLowerCase();
+$('language').onchange=applyLanguage;
 
-  const filtered=allNews.filter(item=>{
-    const matchesCategory=category==='all' ||
-      item.category===category;
-    const title=localized(item.title).toLowerCase();
-    const summary=localized(item.summary).toLowerCase();
-    const matchesSearch=!query ||
-      title.includes(query)||summary.includes(query);
-    return matchesCategory&&matchesSearch;
-  });
+$('search').oninput=render;
 
-  $('newsCount').textContent=filtered.length+' '+t.count;
+$('region').onchange=render;
 
-  if(filtered.length){
-    const first=filtered[0];
-    $('featuredTitle').textContent=localized(first.title);
-    $('featuredSummary').textContent=localized(first.summary);
-  }else{
-    $('featuredTitle').textContent=t.empty;
-    $('featuredSummary').textContent=t.intro;
-  }
+$('category').onchange=render;
 
-  $('newsList').innerHTML=filtered.length?
-    filtered.map(item=>`
-      <article class="news-card">
-        <div class="meta">
-          <span class="tag">${safe(item.category||'NEWS')}</span>
-          <span>${safe(item.source||'')}</span>
-          <span>${safe(dateFormat(item.pubDate))}</span>
-        </div>
-        <h3>${safe(localized(item.title)||'')}</h3>
-        <p>${safe(localized(item.summary)||'')}</p>
-        ${item.link?
-          `<a class="read" href="${safe(item.link)}"
-          target="_blank" rel="noopener noreferrer">
-          ${safe(t.read)}</a>`:''}
-      </article>
-    `).join(''):
-    `<div class="empty">${safe(t.empty)}</div>`;
-}
+$('refresh').onclick=load;
 
-async function loadNews(){
-  const t=translations[lang]||translations.en;
-  $('newsList').innerHTML=`<div class="empty">${safe(t.loading)}</div>`;
+$('year').textContent=new Date().getFullYear();
 
-  const paths=[
-    '../public/data/news.json',
-    './public/data/news.json',
-    '/public/data/news.json'
-  ];
-
-  for(const path of paths){
-    try{
-      const response=await fetch(path+'?t='+Date.now());
-      if(!response.ok)continue;
-      const data=await response.json();
-      if(!Array.isArray(data))continue;
-
-      allNews=data.sort((a,b)=>
-        new Date(b.pubDate||0)-new Date(a.pubDate||0)
-      );
-      renderNews();
-      return;
-    }catch(error){}
-  }
-
-  allNews=[];
-  $('newsList').innerHTML=
-    `<div class="empty">${safe(t.empty)} — Check news.json</div>`;
-}
-
-document.querySelectorAll('.categories button')
-.forEach(button=>{
-  button.addEventListener('click',()=>{
-    setCategory(button.dataset.cat);
-  });
-});
-
-$('language').addEventListener('change',setLanguage);
-$('search').addEventListener('input',renderNews);
-$('refresh').addEventListener('click',loadNews);
-
-$('today').textContent=new Date().toLocaleDateString(
-  'en-GB',{day:'2-digit',month:'long',year:'numeric'}
-);
-
-setLanguage();
-loadNews();
+applyLanguage();load();
 
 </script>
+
 </body>
+
 </html>
