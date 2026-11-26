@@ -9,11 +9,12 @@ const parser = new Parser({
 const config = JSON.parse(await fs.readFile(new URL("./sources.json", import.meta.url), "utf8"));
 const regions = config.regions;
 const sources = config.sources;
-const MAX_PER_SOURCE = 8;
+const MAX_PER_SOURCE = Math.max(1, Math.min(8, Number(process.env.MAX_ITEMS_PER_FEED || 4)));
 const MAX_SOURCE_TEXT_CHARS = 2400;
 const GOOGLE_RSS = "https://news.google.com/rss/search?q=";
 const LANGUAGES = ["bad","ku","km","en","it","ar","ma","tn","dz","tr","fa","sq","ur","hi","bn","ps"];
-const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
+const GEMINI_MODELS = (process.env.GEMINI_MODELS || process.env.GEMINI_MODEL || "gemini-2.0-flash")
+  .split(",").map(x => x.trim()).filter(Boolean);
 
 function clean(s = "") {
   return String(s).replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ")
@@ -88,7 +89,7 @@ async function translateFields(fields) {
     summary: originalMap(fields.summary),
     content: originalMap(fields.content)
   };
-  if (!key) return fallback;
+  if (!key) return { ...fallback, _translated: false };
 
   const languageNames = {
     bad: "Badini Kurdish", ku: "Sorani Kurdish", km: "Kurmanji Kurdish",
@@ -103,7 +104,8 @@ async function translateFields(fields) {
     "You are a professional news journalist and translator.",
     "Translate and format each field into every target language based ONLY on the provided source fields.",
     "For summary, write a clear, informative 2-3 sentence summary from the article text rather than repeating the headline verbatim.",
-    "For content, write a clear, well-structured explanation covering the key details and context present in the source text.",
+    "For content, write a clear, well-structured original editorial summary covering the key details and context present in the source text.",
+    "Do NOT reproduce the article verbatim or copy long passages. Paraphrase in your own words, and never add facts that are not in the supplied source text.",
     "For it, return clear natural Italian; for ku use Sorani Kurdish in Arabic script; for bad use Badini Kurdish in Arabic script; for km use Kurmanji Kurdish in Latin script.",
     "For ma, tn, dz use the natural local Arabic dialect in Arabic script. Use the correct writing system for every other language.",
     "Preserve all names, places, dates, numbers, legal terms, quotes and factual meaning. Do not invent facts beyond the source text.",
@@ -113,32 +115,38 @@ async function translateFields(fields) {
     `Source fields: ${JSON.stringify(fields)}`
   ].join("\n");
 
-  try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.2, responseMimeType: "application/json" }
-        })
-      }
-    );
-    if (!response.ok) throw new Error(`Gemini translation failed: ${response.status} ${await response.text()}`);
-    const data = await response.json();
-    const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
-    const jsonText = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
-    const parsed = JSON.parse(jsonText);
-    return {
-      title: normalizeTranslations(parsed.title, fields.title),
-      summary: normalizeTranslations(parsed.summary, fields.summary),
-      content: normalizeTranslations(parsed.content, fields.content)
-    };
-  } catch (error) {
-    console.warn(`Translation fallback: ${error.message}`);
-    return fallback;
+  let lastError;
+  for (const model of GEMINI_MODELS) {
+    try {
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.2, responseMimeType: "application/json" }
+          })
+        }
+      );
+      if (!response.ok) throw new Error(`${model}: ${response.status} ${await response.text()}`);
+      const data = await response.json();
+      const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+      const jsonText = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+      const parsed = JSON.parse(jsonText);
+      return {
+        title: normalizeTranslations(parsed.title, fields.title),
+        summary: normalizeTranslations(parsed.summary, fields.summary),
+        content: normalizeTranslations(parsed.content, fields.content),
+        _translated: true
+      };
+    } catch (error) {
+      lastError = error;
+      console.warn(`Translation model failed; trying next model if available: ${error.message}`);
+    }
   }
+  console.warn(`Translation fallback after all models failed: ${lastError?.message || "unknown error"}`);
+  return { ...fallback, _translated: false };
 }
 
 const output = [];
@@ -196,6 +204,7 @@ for (const source of sources) {
         title: translated.title,
         summary: translated.summary,
         content: translated.content,
+        translationStatus: translated._translated ? "translated" : "original-only",
         image,
         link: resolvedUrl,
         date: dateISO(item.isoDate || item.pubDate),
