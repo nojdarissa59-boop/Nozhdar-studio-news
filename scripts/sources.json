@@ -82,7 +82,7 @@
     },
     {
       "id": "italia-immigrazione",
-      "name": "Italia — Immigrazione e nuove leggi"
+      "name": "Italia â Immigrazione e nuove leggi"
     }
   ],
   "sources": [
@@ -465,7 +465,7 @@
       "regionName": "Umbria"
     },
     {
-      "name": "La Vallée Notizie",
+      "name": "La VallĂŠe Notizie",
       "domain": "lavalleenotizie.it",
       "type": "newspaper",
       "region": "valle-daosta",
@@ -507,11 +507,11 @@
       "regionName": "Veneto"
     },
     {
-      "name": "Ministero dell’Interno",
+      "name": "Ministero dellâInterno",
       "domain": "interno.gov.it",
       "type": "official",
       "region": "italia-immigrazione",
-      "regionName": "Italia — Immigrazione e nuove leggi",
+      "regionName": "Italia â Immigrazione e nuove leggi",
       "query": "site:interno.gov.it immigrazione asilo permessi di soggiorno decreto"
     },
     {
@@ -519,7 +519,7 @@
       "domain": "asgi.it",
       "type": "legal",
       "region": "italia-immigrazione",
-      "regionName": "Italia — Immigrazione e nuove leggi",
+      "regionName": "Italia â Immigrazione e nuove leggi",
       "query": "site:asgi.it immigrazione diritto asilo permesso soggiorno legge"
     },
     {
@@ -527,7 +527,7 @@
       "domain": "gazzettaufficiale.it",
       "type": "official",
       "region": "italia-immigrazione",
-      "regionName": "Italia — Immigrazione e nuove leggi",
+      "regionName": "Italia â Immigrazione e nuove leggi",
       "query": "site:gazzettaufficiale.it immigrazione cittadinanza asilo decreto legge"
     }
   ]
