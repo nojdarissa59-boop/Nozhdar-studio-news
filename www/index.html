@@ -1,367 +1,43 @@
 
-
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="ku" dir="rtl">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<meta name="theme-color" content="#06140d">
-
-<title>NOZHDAR STUDIO</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#06130c">
+<meta name="description" content="NOZHDAR STUDIO — هەواڵی ناوچەکانی ئیتالیا، کۆچبەران و یاساکانی نوێ">
+<title>NOZHDAR STUDIO — News</title>
 <style>
-
-:root{--bg:#06140d;--panel:#102719;--gold:#e0b84f;--cream:#f7f0dc;--muted:#b4c0b5}
-
-*{box-sizing:border-box}
-
-body{margin:0;background:radial-gradient(ellipse at top,#173e27,#06140d 70%);color:var(--cream);font:16px/1.7 Arial,sans-serif}
-
-.wrap{max-width:1050px;width:94%;margin:auto}
-
-header{position:sticky;top:0;background:#06140df5;border-bottom:1px solid #78642e;z-index:5}
-
-.head{display:flex;justify-content:space-between;align-items:center;padding:15px 0;gap:10px}
-
-.brand{display:flex;align-items:center;gap:12px}
-
-.logo{font:40px Georgia;color:var(--gold);border:2px solid var(--gold);padding:0 10px}
-
-.brand strong{letter-spacing:3px;font-size:20px}
-
-.brand small{display:block;color:var(--gold);letter-spacing:5px}
-
-select,input,button{background:#102719;color:var(--cream);border:1px solid #645b37;border-radius:9px;padding:11px;font:inherit}
-
-select{max-width:175px}
-
-.hero{padding:30px 0 20px}
-
-.eyebrow{color:var(--gold);letter-spacing:3px;font-size:11px}
-
-h1{font:clamp(42px,8vw,68px) Georgia;margin:8px 0}
-
-.hero p{color:var(--muted);font-size:18px}
-
-.filters{display:flex;gap:9px;flex-wrap:wrap;margin:20px 0}
-
-.filters button{font-weight:bold}
-
-.filters button.active{background:var(--gold);color:#102116}
-
-.tools{display:flex;gap:9px;margin:15px 0}
-
-.tools input{flex:1;min-width:100px}
-
-.section{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #66582e;margin:25px 0 14px}
-
-.section h2{font:25px Georgia}
-
-.section span{color:var(--gold);font-size:11px}
-
-.feature,.card{background:linear-gradient(145deg,#12341f,#08180f);border:1px solid var(--gold);border-radius:15px;overflow:hidden;margin-bottom:18px}
-
-.feature img{width:100%;max-height:440px;object-fit:cover;display:block}
-
-.feature-body{padding:18px}
-
-.feature h2{font:clamp(25px,5vw,40px)/1.3 Georgia}
-
-.feature p,.card p{color:#d4ded3;line-height:1.9}
-
-.meta{color:var(--muted);font-size:12px}
-
-.source{color:var(--gold)}
-
-.read{display:inline-block;border:1px solid var(--gold);padding:7px 14px;border-radius:25px;color:var(--gold);margin-top:10px}
-
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-
-.card{border-color:#655b36}
-
-.card img{width:100%;height:190px;object-fit:cover}
-
-.card-body{padding:14px}
-
-.card h3{font:22px/1.4 Georgia}
-
-.empty{padding:25px;text-align:center;color:var(--muted);border:1px dashed #756638;border-radius:12px}
-
-footer{border-top:1px solid #66582e;margin-top:35px;padding:20px 0;color:var(--muted);font-size:12px}
-
-@media(max-width:650px){.head{align-items:flex-start}.brand strong{font-size:16px}.logo{font-size:30px}.head select{max-width:130px;font-size:12px}.grid{grid-template-columns:1fr}.card{display:grid;grid-template-columns:110px 1fr}.card img{height:100%;min-height:150px}.card h3{font-size:17px}.card p{font-size:12px}.hero p{font-size:15px}}
-
+:root{color-scheme:dark;--bg:#06130c;--panel:#0b2116;--panel2:#102c1d;--gold:#e5bd58;--gold2:#f5d77f;--cream:#f6f0df;--muted:#aebcaf;--line:#5e512c;--green:#0c5932;--red:#a83d35;--shadow:0 18px 55px #0008}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 75% -10%,#174b30 0,transparent 42%),radial-gradient(ellipse at 0 50%,#0b2819 0,transparent 38%),var(--bg);color:var(--cream);font:16px/1.7 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}a{color:inherit}.wrap{width:min(1180px,94%);margin:auto}.site-header{position:sticky;top:0;z-index:20;background:#06130cf2;backdrop-filter:blur(16px);border-bottom:1px solid #8e7438}.head{min-height:82px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{display:flex;align-items:center;gap:13px;text-decoration:none}.logo{width:53px;height:53px;border:2px solid var(--gold);display:grid;place-items:center;color:var(--gold);font:40px/1 Georgia,serif;box-shadow:inset 0 0 15px #e5bd5820}.brand-name{font:700 22px/1.1 Georgia,serif;letter-spacing:3px}.brand-sub{display:block;color:var(--gold);font-size:10px;letter-spacing:6px;margin-top:5px}.head-actions{display:flex;align-items:center;gap:10px}.control,.icon-btn{background:#0d2418;color:var(--cream);border:1px solid #75643a;border-radius:10px;padding:10px 13px;font:inherit}.control{max-width:210px}.icon-btn{cursor:pointer;min-width:43px}.main-nav{border-top:1px solid #66552b;display:flex;align-items:center;gap:0;overflow:auto;scrollbar-width:none}.main-nav button{white-space:nowrap;background:none;border:0;border-inline-end:1px solid #66552b;color:#e9e2d0;padding:13px 22px;font:600 14px inherit;cursor:pointer}.main-nav button.active,.main-nav button:hover{color:var(--gold2);background:#d9ad3c12}.hero{padding:36px 0 20px}.eyebrow{font-size:11px;letter-spacing:4px;color:var(--gold);font-weight:700}.hero h1{font:clamp(38px,6vw,66px)/1.15 Georgia,serif;margin:8px 0 10px}.hero p{color:var(--muted);font-size:clamp(15px,2vw,19px);max-width:720px;margin:0}.toolbar{display:flex;gap:10px;align-items:center;margin:20px 0 24px;flex-wrap:wrap}.search{flex:1;min-width:190px;background:#0b2116;border:1px solid #5b512f;border-radius:10px;padding:13px 15px;color:var(--cream);font:inherit}.toolbar select{background:#0b2116;color:var(--cream);border:1px solid #5b512f;border-radius:10px;padding:12px;font:inherit}.section-head{display:flex;align-items:center;gap:15px;margin:30px 0 15px}.section-head h2{font:clamp(23px,3vw,31px) Georgia,serif;color:var(--gold2);margin:0;white-space:nowrap}.section-line{height:1px;background:linear-gradient(90deg,#806b34,transparent);flex:1}.section-kicker{font-size:10px;letter-spacing:2px;color:var(--muted);white-space:nowrap}.feature{display:grid;grid-template-columns:1.08fr .92fr;min-height:350px;border:1px solid #b18d3e;border-radius:18px;overflow:hidden;background:linear-gradient(130deg,#123b26,#07170e);box-shadow:var(--shadow);cursor:pointer}.feature-media{position:relative;min-height:320px;background:linear-gradient(135deg,#16452d,#0a1a10);overflow:hidden}.feature-media img{width:100%;height:100%;min-height:320px;object-fit:cover;display:block}.image-fallback{height:100%;min-height:320px;display:grid;place-items:center;background:radial-gradient(circle at 70% 25%,#e4bd5b 0 7%,transparent 7.5%),linear-gradient(145deg,#22573a,#0b2015);color:#e5bd58;font:90px Georgia}.feature-copy{padding:clamp(22px,4vw,42px);display:flex;flex-direction:column;justify-content:center}.tag{display:inline-flex;align-items:center;gap:7px;width:max-content;border:1px solid #b48c3c;background:#d6ad4920;color:var(--gold2);border-radius:30px;padding:5px 12px;font-size:12px;font-weight:700}.feature h2{font:clamp(25px,3.4vw,43px)/1.35 Georgia,serif;margin:15px 0 12px}.feature-summary{color:#d2ddcf;line-height:2;font-size:15px}.meta{display:flex;flex-wrap:wrap;gap:12px;color:var(--muted);font-size:12px;margin-top:13px}.meta span{display:inline-flex;align-items:center;gap:5px}.gold{color:var(--gold2)}.read-link{display:inline-flex;align-items:center;gap:8px;width:max-content;margin-top:20px;border:1px solid var(--gold);border-radius:30px;padding:9px 18px;color:var(--gold2);font-weight:700;text-decoration:none}.read-link:hover{background:var(--gold);color:#102015}.dots{display:flex;justify-content:center;gap:8px;margin:15px}.dot{width:8px;height:8px;border-radius:50%;background:#68776c}.dot.active{background:var(--gold);width:22px;border-radius:9px}.news-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.news-card{border:1px solid #665a35;border-radius:15px;overflow:hidden;background:linear-gradient(155deg,#102b1c,#09170f);transition:transform .2s,border-color .2s;cursor:pointer}.news-card:hover{transform:translateY(-4px);border-color:var(--gold)}.card-media{height:190px;background:linear-gradient(145deg,#1b4a30,#0a1a10);overflow:hidden}.card-media img{width:100%;height:100%;object-fit:cover;display:block}.card-no-image{height:100%;display:grid;place-items:center;color:var(--gold);font:55px Georgia;background:radial-gradient(circle at 70% 20%,#caa74d 0 8%,transparent 8.5%),linear-gradient(145deg,#1a4930,#091a10)}.card-body{padding:16px}.card-title{font:21px/1.45 Georgia,serif;margin:9px 0 8px}.card-summary{color:#c3d0c3;font-size:13px;line-height:1.9;margin:0}.card-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid #564b2d;margin-top:14px;padding-top:12px;font-size:11px;color:var(--muted)}.card-source{color:var(--gold2);font-weight:700}.empty{border:1px dashed #75663a;border-radius:14px;padding:32px;text-align:center;color:var(--muted);grid-column:1/-1}.topic-banners{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:28px 0}.topic-banner{border:1px solid #927538;border-radius:14px;padding:22px;background:linear-gradient(110deg,#133a25,#09180f);display:flex;align-items:center;justify-content:space-between;gap:12px}.topic-banner strong{font:24px Georgia;color:var(--gold2)}.topic-banner span{display:block;color:var(--muted);font-size:13px}.topic-banner button{border:1px solid var(--gold);border-radius:25px;padding:9px 15px;color:var(--gold2);background:transparent;cursor:pointer;white-space:nowrap}.detail{display:none;max-width:920px;margin:20px auto 50px}.detail.show{display:block}.detail-back{border:1px solid #806c3a;color:var(--gold2);background:#0d2418;border-radius:25px;padding:9px 16px;cursor:pointer;font:inherit;margin:15px 0}.detail-article{border:1px solid #9a7a38;border-radius:18px;overflow:hidden;background:linear-gradient(145deg,#102b1b,#07150d);box-shadow:var(--shadow)}.detail-image{width:100%;max-height:470px;object-fit:cover;display:block}.detail-content{padding:clamp(20px,4vw,42px)}.detail-title{font:clamp(30px,5vw,52px)/1.3 Georgia,serif;margin:15px 0}.detail-summary{font-size:17px;line-height:2;color:#d7e0d4;border-bottom:1px solid #66552e;padding-bottom:22px}.detail-body{font-size:16px;line-height:2.1;color:#e6e9dc;white-space:pre-line}.detail-body p{margin:0 0 18px}.verify-box{margin-top:30px;padding:20px;border:1px solid #a68a45;border-radius:14px;background:#0a2015}.verify-title{font-size:18px;color:var(--gold2);font-weight:800}.verify-note{color:var(--muted);font-size:13px;margin:6px 0 14px}.source-list{display:grid;gap:9px}.source-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;border:1px solid #544b30;border-radius:10px;background:#0c1c13}.source-row strong{display:block}.source-row small{color:var(--muted)}.source-row a{color:var(--gold2);border:1px solid #8d7339;padding:7px 12px;border-radius:22px;text-decoration:none;font-size:12px;white-space:nowrap}.disclaimer{font-size:11px;color:var(--muted);margin-top:15px}.hidden{display:none!important}footer{margin-top:45px;padding:25px 0 35px;border-top:1px solid #68572d;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.status{color:var(--gold2)}
+@media(max-width:850px){.news-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.feature{grid-template-columns:1fr}.feature-media,.feature-media img,.image-fallback{min-height:260px;max-height:330px}.feature-copy{padding:23px}.main-nav button{padding:12px 15px}}
+@media(max-width:560px){.head{min-height:72px}.logo{width:43px;height:43px;font-size:32px}.brand-name{font-size:17px}.brand-sub{font-size:9px;letter-spacing:4px}.control{max-width:135px;font-size:12px;padding:9px}.head-actions{gap:6px}.main-nav button{font-size:12px;padding:11px 12px}.hero{padding-top:27px}.toolbar{gap:8px}.toolbar select{flex:1;min-width:120px}.news-grid{grid-template-columns:1fr}.news-card{display:grid;grid-template-columns:118px 1fr;min-height:150px}.card-media{height:100%;min-height:150px}.card-body{padding:12px}.card-title{font-size:17px;margin:4px 0}.card-summary{font-size:12px;line-height:1.65;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.card-foot{margin-top:8px;padding-top:8px}.topic-banners{grid-template-columns:1fr}.topic-banner{padding:16px}.topic-banner strong{font-size:20px}.detail-content{padding:20px}.detail-title{font-size:30px}.detail-summary{font-size:15px}.detail-body{font-size:14px}.source-row{align-items:flex-start}.source-row a{font-size:11px;padding:6px 9px}}
 </style>
-
 </head>
-
 <body>
-
-<div class="wrap">
-
-<header><div class="head">
-
-<div class="brand"><div class="logo">N</div><div><strong>NOZHDAR</strong><small>STUDIO</small></div></div>
-
-<select id="language">
-
-<option value="bad">کوردی بادینی</option>
-
-<option value="ku" selected>کوردی سۆرانی</option>
-
-<option value="km">Kurmancî</option>
-
-<option value="en">English</option>
-
-<option value="it">Italiano</option>
-
-<option value="ar">العربية</option>
-
-<option value="ma">الدارجة المغربية</option>
-
-<option value="tn">التونسية</option>
-
-<option value="dz">الدارجة الجزائرية</option>
-
-<option value="tr">Türkçe</option>
-
-<option value="fa">فارسی</option>
-
-<option value="sq">Shqip</option>
-
-<option value="ur">اردو</option>
-
-<option value="hi">हिन्दी</option>
-
-<option value="bn">বাংলা</option>
-
-<option value="ps">پښتو</option>
-
-</select>
-
-</div></header>
-
-<section class="hero">
-
-<div class="eyebrow">NOZHDAR STUDIO / INDEPENDENT NEWS</div>
-
-<h1 id="heading">هەواڵ</h1>
-
-<p id="intro">هەواڵە نوێیەکان لە ناوچەکان و سەرتاسەری ئیتالیا.</p>
-
-</section>
-
-<div class="tools">
-
-<input id="search" placeholder="گەڕان لە هەواڵەکاندا…">
-
-<button id="refresh">↻ نوێکردنەوە</button>
-
+<header class="site-header">
+ <div class="wrap head">
+  <a class="brand" href="#home" aria-label="NOZHDAR STUDIO"><span class="logo">N</span><span><span class="brand-name">NOZHDAR</span><span class="brand-sub">STUDIO</span></span></a>
+  <div class="head-actions">
+   <select class="control" id="language" aria-label="Language">
+    <option value="bad">کوردی بادینی</option><option value="ku" selected>کوردی سۆرانی</option><option value="km">Kurmancî</option><option value="en">English</option><option value="it">Italiano</option><option value="ar">العربية</option><option value="ma">الدارجة المغربية</option><option value="tn">التونسية</option><option value="dz">الدارجة الجزائرية</option><option value="tr">Türkçe</option><option value="fa">فارسی</option><option value="sq">Shqip</option><option value="ur">اردو</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option><option value="ps">پښتو</option>
+   </select>
+   <button class="icon-btn" id="focusSearch" aria-label="Search">⌕</button><button class="icon-btn" id="menuToggle" aria-label="Menu">☰</button>
+  </div>
+ </div>
+ <nav class="wrap main-nav" id="mainNav"><button class="active" data-tab="all">⌂ <span data-i="all">هەواڵ</span></button><button data-tab="regional" data-i="regions">ناوچەکان</button><button data-tab="immigration" data-i="immigration">کۆچبەران / ئیتالیا</button><button data-tab="law" data-i="laws">یاسا و ڕێنمایی</button><button data-tab="all" data-i="allNews">هەموو هەواڵەکان</button></nav>
+</header>
+<div id="listingPage">
+ <main class="wrap">
+  <section class="hero"><div class="eyebrow">NOZHDAR STUDIO / INDEPENDENT NEWS</div><h1 data-i="headline">هەواڵی ئیتالیا</h1><p data-i="intro">هەواڵی نوێی ناوچەکان، کۆچبەران و گۆڕانکارییە یاساییەکان لە ئیتالیا.</p></section>
+  <div class="toolbar"><input class="search" id="search" type="search" placeholder="گەڕان لە هەواڵەکاندا…"><select id="region"><option value="all">هەموو ناوچەکان</option></select><select id="category"><option value="all">هەموو بابەتەکان</option><option value="local">هەواڵی ناوخۆیی</option><option value="law">کۆچبەران و یاسا</option></select></div>
+  <div class="section-head"><h2 data-i="featured">هەواڵی سەرەکی</h2><div class="section-line"></div><span class="section-kicker" id="updated">NOZHDAR LIVE</span></div>
+  <div id="featured"></div><div class="dots" id="featureDots"></div>
+  <div class="section-head"><h2 data-i="latest">دوایین هەواڵەکان</h2><div class="section-line"></div><span class="section-kicker" id="count">0 NEWS</span></div>
+  <section class="news-grid" id="newsGrid"><div class="empty">هەواڵەکان بار دەکرێن…</div></section>
+  <section class="topic-banners"><div class="topic-banner"><div><strong data-i="immigration">کۆچبەران / ئیتالیا</strong><span data-i="immigrationSub">مۆڵەتی نیشتەجێبوون، پەنابەری و گۆڕانکارییەکان</span></div><button data-topic="immigration" data-i="explore">بینینی هەموو ›</button></div><div class="topic-banner"><div><strong data-i="laws">یاسا و ڕێنمایی</strong><span data-i="lawsSub">یاسا نوێیەکان و بڕیارە فەرمییەکان</span></div><button data-topic="law" data-i="explore">بینینی هەموو ›</button></div></section>
+ </main>
 </div>
-
-<nav class="filters" id="filters">
-
-<button class="active" data-tab="all">هەموو</button>
-
-<button data-tab="regional">هەواڵی ناوچەکان</button>
-
-<button data-tab="immigration">کۆچبەران / ئیتالیا</button>
-
-</nav>
-
-<div class="filters">
-
-<select id="region"><option value="all">هەموو ناوچەکان</option></select>
-
-<select id="category">
-
-<option value="all">هەموو جۆرەکان</option>
-
-<option value="local">هەواڵی ناوخۆیی</option>
-
-<option value="law">کۆچبەران و یاسا</option>
-
-</select>
-
-</div>
-
-<div class="section"><h2 id="top">هەواڵی سەرەکی</h2><span id="status">NOZHDAR LIVE</span></div>
-
-<div id="featured" class="feature"><div class="feature-body">هەواڵەکان بار دەکرێن…</div></div>
-
-<div class="section"><h2 id="latest">دوایین هەواڵەکان</h2><span id="count">0 NEWS</span></div>
-
-<main id="news" class="grid"><div class="empty">هەواڵەکان بار دەکرێن…</div></main>
-
-<footer>© <span id="year"></span> NOZHDAR STUDIO · 16 LANGUAGES · ITALY NEWS & LAW</footer>
-
-</div>
-
+<section class="detail wrap" id="detailPage"><button class="detail-back" id="backButton">← <span data-i="back">گەڕانەوە بۆ هەواڵەکان</span></button><article class="detail-article" id="detailArticle"></article></section>
+<footer class="wrap"><span>© <span id="year"></span> NOZHDAR STUDIO · 16 LANGUAGES</span><span class="status" id="footerStatus">ITALY NEWS · IMMIGRATION · LAW</span></footer>
 <script>
-
-const $=id=>document.getElementById(id);
-
-const special='italia-immigrazione';
-
-let items=[],regions=[],tab='all',lang='ku';
-
-const words={
-
-ku:['هەواڵ','هەواڵە نوێیەکان لە ناوچەکان و سەرتاسەری ئیتالیا.','هەموو','هەواڵی ناوچەکان','کۆچبەران / ئیتالیا','هەواڵی سەرەکی','دوایین هەواڵەکان','گەڕان لە هەواڵەکاندا…','نوێکردنەوە','هیچ هەواڵێک نەدۆزرایەوە.','وردەکاری زیاتر'],
-
-bad:['هەواڵ','هەواڵێن نوی ژ ناڤچەیان و ئیتالیایێ.','هەمی','هەواڵێ ناڤچەیان','کۆچبەران / ئیتالیایێ','هەواڵا سەرەکی','دوماهیک هەواڵ','ل هەواڵان بگەڕێ…','نوێ بکە','هیچ هەواڵ نەهاتە دیتن.','زێدەتر بخوینە'],
-
-km:['Nûçe','Nûçeyên herêmî û ji tevahiya Îtalyayê.','Hemû','Nûçeyên herêmî','Koçberî / Îtalya','Nûçeya sereke','Nûçeyên dawî','Di nûçeyan de bigere…','Nû bike','Nûçe nehat dîtin.','Zêdetir bixwîne'],
-
-en:['News','Latest regional updates and important news from across Italy.','All','Regional news','Immigration / Italy','Top story','Latest news','Search news…','Refresh','No stories found.','Read more'],
-
-it:['Notizie','Ultime notizie locali e aggiornamenti da tutta Italia.','Tutte','Notizie regionali','Immigrazione / Italia','Notizia principale','Ultime notizie','Cerca notizie…','Aggiorna','Nessuna notizia trovata.','Leggi di più'],
-
-ar:['الأخبار','آخر الأخبار المحلية والمستجدات من إيطاليا.','الكل','أخبار المناطق','الهجرة / إيطاليا','الخبر الرئيسي','آخر الأخبار','ابحث في الأخبار…','تحديث','لا توجد أخبار.','اقرأ المزيد'],
-
-ma:['الأخبار','آخر الأخبار المحلية والمستجدات من إيطاليا.','الكل','أخبار محلية','الهجرة / إيطاليا','الخبر الرئيسي','آخر الأخبار','قلب على الأخبار…','تحديث','ما كايناش أخبار.','قرا المزيد'],
-
-tn:['الأخبار','آخر الأخبار المحلية وأهم المستجدات من إيطاليا.','الكل','أخبار محلية','الهجرة / إيطاليا','الخبر الرئيسي','آخر الأخبار','لوّج على الأخبار…','تحديث','ما فماش أخبار.','اقرا المزيد'],
-
-dz:['الأخبار','آخر الأخبار المحلية من كامل إيطاليا.','الكل','أخبار محلية','الهجرة / إيطاليا','الخبر الرئيسي','آخر الأخبار','قلب على الأخبار…','تحديث','ماكانش أخبار.','اقرا المزيد'],
-
-tr:['Haberler','İtalya genelinden son haberler.','Tümü','Bölgesel haberler','Göç / İtalya','Öne çıkan haber','Son haberler','Haberlerde ara…','Yenile','Haber bulunamadı.','Devamını oku'],
-
-fa:['اخبار','آخرین اخبار منطقه‌ای و سراسر ایتالیا.','همه','اخبار منطقه‌ای','مهاجرت / ایتالیا','خبر برتر','آخرین اخبار','جستجو…','تازه‌سازی','خبری پیدا نشد.','ادامه مطلب'],
-
-sq:['Lajme','Lajmet e fundit nga Italia.','Të gjitha','Lajme rajonale','Emigracioni / Italia','Lajmi kryesor','Lajmet e fundit','Kërko lajme…','Përditëso','Nuk u gjet lajm.','Lexo më shumë'],
-
-ur:['خبریں','اٹلی بھر کی تازہ خبریں۔','سب','علاقائی خبریں','امیگریشن / اٹلی','اہم خبر','تازہ ترین خبریں','خبریں تلاش کریں…','تازہ کریں','کوئی خبر نہیں ملی۔','مزید پڑھیں'],
-
-hi:['समाचार','इटली की ताज़ा क्षेत्रीय खबरें।','सभी','क्षेत्रीय समाचार','आव्रजन / इटली','मुख्य खबर','ताज़ा खबरें','खबरें खोजें…','रिफ्रेश','कोई खबर नहीं मिली।','और पढ़ें'],
-
-bn:['সংবাদ','ইতালির সর্বশেষ আঞ্চলিক খবর।','সব','আঞ্চলিক সংবাদ','অভিবাসন / ইতালি','প্রধান খবর','সর্বশেষ খবর','খবর খুঁজুন…','রিফ্রেশ','কোনো খবর পাওয়া যায়নি।','আরও পড়ুন'],
-
-ps:['خبرونه','د ایټالیا وروستي سیمه‌ییز خبرونه.','ټول','سیمه‌ییز خبرونه','کډوالي / ایټالیا','مهم خبر','وروستي خبرونه','خبرونه ولټوئ…','تازه کول','خبر ونه موندل شو.','نور ولولئ']
-
-};
-
-const rtl=['ku','bad','ar','ma','tn','dz','fa','ur','ps'];
-
-function textOf(n,k){let v=n[k];return v&&typeof v==='object'?(v[lang]||v.en||v.it||v.ku||Object.values(v)[0]||''):v||''}
-
-function tr(i){return words[lang]?.[i]||words.en[i]}
-
-function escapeHTML(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-
-function dateOf(n){let d=new Date(n.date||n.pubDate||'');return isNaN(d)?'':d.toLocaleDateString()}
-
-function applyLanguage(){
-
-lang=$('language').value;
-
-document.documentElement.lang=lang;
-
-document.documentElement.dir=rtl.includes(lang)?'rtl':'ltr';
-
-$('heading').textContent=tr(0);$('intro').textContent=tr(1);
-
-$('top').textContent=tr(5);$('latest').textContent=tr(6);
-
-$('search').placeholder=tr(7);$('refresh').textContent='↻ '+tr(8);
-
-$('filters').innerHTML=`<button data-tab="all">${tr(2)}</button><button data-tab="regional">${tr(3)}</button><button data-tab="immigration">${tr(4)}</button>`;
-
-$('filters').querySelectorAll('button').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.onclick=()=>{tab=b.dataset.tab;render()}});
-
-render();
-
-}
-
-function filtered(){
-
-let a=[...items];
-
-if(tab==='regional')a=a.filter(n=>n.region!==special);
-
-if(tab==='immigration')a=a.filter(n=>n.region===special||n.category==='immigration-law');
-
-let r=$('region').value;if(r!=='all'&&tab!=='immigration')a=a.filter(n=>n.region===r);
-
-let c=$('category').value;
-
-if(c==='local')a=a.filter(n=>n.region!==special);
-
-if(c==='law')a=a.filter(n=>n.region===special||n.category==='immigration-law');
-
-let q=$('search').value.toLowerCase().trim();
-
-if(q)a=a.filter(n=>(textOf(n,'title')+' '+textOf(n,'summary')+' '+(n.source||'')).toLowerCase().includes(q));
-
-return a.sort((x,y)=>new Date(y.date||y.pubDate)-new Date(x.date||x.pubDate));
-
-}
-
-function card(n,featured=false){
-
-let title=escapeHTML(textOf(n,'title')),summary=escapeHTML(textOf(n,'summary')||textOf(n,'content'));
-
-let image=n.image?`<img src="${escapeHTML(n.image)}" alt="" loading="lazy">`:'';
-
-let body=`<div class="${featured?'feature-body':'card-body'}"><div class="meta">${escapeHTML(dateOf(n))} · ${escapeHTML(n.regionName||'Italy')}</div><h${featured?'2':'3'}>${title}</h${featured?'2':'3'}><p>${summary}</p><div class="source">${escapeHTML(n.source||'NOZHDAR')}</div><a class="read" href="${escapeHTML(n.link)}" target="_blank" rel="noopener">${tr(10)} ›</a></div>`;
-
-return featured?`<article class="feature">${image}${body}</article>`:`<article class="card"><a href="${escapeHTML(n.link)}" target="_blank" rel="noopener">${image}</a>${body}</article>`;
-
-}
-
-function render(){
-
-let a=filtered();$('count').textContent=a.length+' NEWS';
-
-if(!a.length){$('featured').innerHTML=`<div class="feature-body">${tr(9)}</div>`;$('news').innerHTML=`<div class="empty">${tr(9)}</div>`;return}
-
-$('featured').outerHTML=card(a[0],true);
-
-$('news').innerHTML=a.slice(1).map(n=>card(n)).join('');
-
-}
-
-async function load(){
-
-try{
-
-let [n,r]=await Promise.all([fetch('/data/news.json?t='+Date.now()),fetch('/data/regions.json')]);
-
-if(!n.ok||!r.ok)throw Error('Missing data');
-
-let nd=await n.json();items=Array.isArray(nd)?nd:(nd.items||[]);regions=await r.json();
-
-$('region').innerHTML='<option value="all">All regions</option>'+regions.filter(x=>x.id!==special).map(x=>`<option value="${escapeHTML(x.id)}">${escapeHTML(x.name)}</option>`).join('');
-
-$('status').textContent='UPDATED '+(nd.updatedAt?new Date(nd.updatedAt).toLocaleString():'');
-
-render();
-
-}catch(e){$('featured').innerHTML='<div class="feature-body">News data is not available. Check the news JSON files.</div>';$('news').innerHTML='<div class="empty">News data is not available yet.</div>'}
-
-}
-
-$('language').onchange=applyLanguage;
-
-$('search').oninput=render;
-
-$('region').onchange=render;
-
-$('category').onchange=render;
-
-$('refresh').onclick=load;
-
-$('year').textContent=new Date().getFullYear();
-
-applyLanguage();load();
-
-</script>
-
-</body>
-
-</html>
