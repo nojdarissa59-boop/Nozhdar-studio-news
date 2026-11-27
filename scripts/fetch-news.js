@@ -11,7 +11,10 @@ const parser = new Parser({
 });
 
 const config = JSON.parse(
-  await fs.readFile(new URL("./sources.json", import.meta.url), "utf8")
+  await fs.readFile(
+    new URL("./sources.json", import.meta.url),
+    "utf8"
+  )
 );
 
 const regions = config.regions || [];
@@ -21,13 +24,15 @@ const MAX_PER_SOURCE = 4;
 const MAX_TOTAL_STORIES = 180;
 const MAX_ARTICLE_CHARS = 6000;
 const MAX_TRANSLATE_CONTENT_CHARS = 500;
+
 const TRANSLATE_BATCH_SIZE = 3;
-const MAX_TRANSLATION_CALLS = 4;
+const MAX_TRANSLATION_CALLS = 1;
+
 const SOURCE_CONCURRENCY = 6;
 const EXTRACT_CONCURRENCY = 6;
 
-const GEMINI_MODEL =
-  process.env.GEMINI_MODEL || "gemini-2.5-flash";
+// Fixed model: no old GEMINI_MODEL secret can override it.
+const GEMINI_MODEL = "gemini-3.8-flash";
 
 const GOOGLE_RSS =
   "https://news.google.com/rss/search?q=";
@@ -109,19 +114,24 @@ function isTranslated(item) {
     return false;
   }
 
-  const original = getLanguageValue(item.title, "it");
-  if (!original) return false;
+  const originalTitle = getLanguageValue(item.title, "it");
+  const originalSummary = getLanguageValue(item.summary, "it");
+
+  if (!originalTitle) return false;
 
   const coreLanguages = ["ku", "bad", "en"];
 
   return coreLanguages.every((language) => {
-    const title = getLanguageValue(item.title, language);
-    const summary = getLanguageValue(item.summary, language);
+    const translatedTitle =
+      getLanguageValue(item.title, language);
+
+    const translatedSummary =
+      getLanguageValue(item.summary, language);
 
     return (
-      (title && title !== original) ||
-      (summary &&
-        summary !== getLanguageValue(item.summary, "it"))
+      (translatedTitle && translatedTitle !== originalTitle) ||
+      (translatedSummary &&
+        translatedSummary !== originalSummary)
     );
   });
 }
@@ -167,9 +177,7 @@ async function mapLimit(items, limit, callback) {
         try {
           results[index] = await callback(items[index], index);
         } catch (error) {
-          console.warn(
-            `Task failed: ${error.message}`
-          );
+          console.warn(`Task failed: ${error.message}`);
           results[index] = null;
         }
       }
@@ -231,11 +239,12 @@ async function translateBatch(records) {
     "en means English.",
     "ar means Arabic.",
     "Preserve names, places, dates, numbers and facts.",
-    "Do not invent information or summarize differently.",
+    "Do not invent information.",
+    "Do not omit important news details.",
     "Return only valid JSON.",
     "Return an array in the same order.",
     "Each item must contain index, title, summary and content.",
-    "Each text field must be an object containing all language codes.",
+    "Each text field must contain all requested language codes.",
     "INPUT:",
     JSON.stringify(input)
   ].join("\n");
@@ -302,7 +311,7 @@ async function translateBatch(records) {
   });
 }
 
-// Load previous news to reuse completed translations.
+// Read previously saved news.
 const previousPath = new URL(
   "../public/data/news.json",
   import.meta.url
@@ -329,7 +338,7 @@ const previousById = new Map(
 const seen = new Set();
 const collected = [];
 
-// Fetch all RSS sources with limited concurrency.
+// Fetch RSS feeds from all configured sources.
 const sourceResults = await mapLimit(
   sources,
   SOURCE_CONCURRENCY,
@@ -341,10 +350,9 @@ const sourceResults = await mapLimit(
 
       return (feed.items || [])
         .slice(0, MAX_PER_SOURCE)
-        .map((item, index) => ({
+        .map((item) => ({
           source,
-          item,
-          index
+          item
         }));
     } catch (error) {
       console.warn(
@@ -396,8 +404,7 @@ for (const candidate of candidates) {
   if (collected.length >= MAX_TOTAL_STORIES) break;
 }
 
-// Extract article text and images only for the first story
-// from each source to avoid excessive requests.
+// Extract article details with limited concurrency.
 const extracted = await mapLimit(
   collected,
   EXTRACT_CONCURRENCY,
@@ -411,26 +418,29 @@ const extracted = await mapLimit(
 
     let image = "";
 
-    if (entry.item && entry.item.enclosure?.url) {
+    if (entry.item.enclosure?.url) {
       image = entry.item.enclosure.url;
     }
 
-    if (entry.item && entry.item.mediaContent?.$?.url) {
+    if (entry.item.mediaContent?.$?.url) {
       image = entry.item.mediaContent.$.url;
     }
 
-    if (entry.item && entry.item.mediaThumbnail?.$?.url) {
+    if (entry.item.mediaThumbnail?.$?.url) {
       image = entry.item.mediaThumbnail.$.url;
     }
 
-    if (entry.item && entry.item["media:content"]?.url) {
+    if (entry.item["media:content"]?.url) {
       image = entry.item["media:content"].url;
     }
 
-    // Extract only one article per source.
+    // Extract full article only for the first story
+    // belonging to each source.
+    const previousSource = collected[index - 1]?.source?.name;
+
     const firstFromSource =
       index === 0 ||
-      collected[index - 1]?.source?.name !== entry.source.name;
+      previousSource !== entry.source.name;
 
     if (firstFromSource) {
       const article = await extractArticle(entry.link);
@@ -444,13 +454,12 @@ const extracted = await mapLimit(
           content = extractedText.slice(0, MAX_ARTICLE_CHARS);
         }
 
-        image =
-          String(
-            article.image ||
-            article.images?.[0] ||
-            image ||
-            ""
-          ).trim();
+        image = String(
+          article.image ||
+          article.images?.[0] ||
+          image ||
+          ""
+        ).trim();
       }
     }
 
@@ -474,8 +483,7 @@ const freshItems = extracted.filter(Boolean);
 const outputMap = new Map();
 const pending = [];
 
-// Keep translations already completed.
-// Retry items that still have only their original language.
+// Reuse translations already completed.
 for (const entry of freshItems) {
   const source = entry.source;
 
@@ -527,33 +535,53 @@ for (const entry of freshItems) {
   });
 }
 
-// Keep recent previous stories that were not found in this run.
-// This also preserves untranslated stories for later attempts.
-const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+// Preserve recent previous stories not found in this run.
+const sevenDaysAgo =
+  Date.now() - 7 * 24 * 60 * 60 * 1000;
+
+const pendingIds = new Set(
+  pending.map((item) => item.id)
+);
 
 for (const old of previousItems) {
   if (outputMap.has(old.id)) continue;
-  if (pending.some((item) => item.id === old.id)) continue;
+  if (pendingIds.has(old.id)) continue;
 
-  const oldDate = new Date(old.date || old.pubDate || 0).getTime();
+  const oldDate = new Date(
+    old.date || old.pubDate || 0
+  ).getTime();
 
   if (!oldDate || oldDate < sevenDaysAgo) continue;
 
   if (isTranslated(old)) {
     outputMap.set(old.id, old);
   } else {
+    const originalTitle =
+      getLanguageValue(old.title, "it");
+
+    const originalSummary =
+      getLanguageValue(old.summary, "it");
+
+    const originalContent =
+      getLanguageValue(old.content, "it");
+
+    if (!originalTitle) continue;
+
     pending.push({
       ...old,
       sourceRecord: {
-        title: getLanguageValue(old.title, "it"),
-        summary: getLanguageValue(old.summary, "it"),
-        content: getLanguageValue(old.content, "it")
+        title: originalTitle,
+        summary: originalSummary,
+        content: originalContent
       }
     });
+
+    pendingIds.add(old.id);
   }
 }
 
-// Translate a limited number of batches per workflow run.
+// Translate only one small batch per execution.
+// This helps protect the daily free-tier quota.
 let translationCalls = 0;
 let quotaBlocked = false;
 
@@ -589,7 +617,7 @@ for (
 
       translationCalls++;
 
-      await sleep(1200);
+      await sleep(1000);
     } catch (error) {
       console.warn(
         `Translation failed: ${error.message}`
@@ -603,7 +631,7 @@ for (
         quotaBlocked = true;
 
         console.warn(
-          "Gemini quota reached. Remaining translations will be retried in a later run."
+          "Gemini quota reached. Remaining translations will be retried later."
         );
       }
 
@@ -643,7 +671,7 @@ for (
   });
 }
 
-// Preserve already translated stories and save the final result.
+// Sort and save news.
 const output = [...outputMap.values()]
   .sort(
     (a, b) =>
@@ -674,8 +702,11 @@ await fs.writeFile(
   JSON.stringify(regions, null, 2)
 );
 
-const translatedCount = output.filter(isTranslated).length;
-const pendingCount = output.length - translatedCount;
+const translatedCount =
+  output.filter(isTranslated).length;
+
+const pendingCount =
+  output.length - translatedCount;
 
 console.log(
   `Saved ${output.length} stories from ${sources.length} sources.`
