@@ -1,3 +1,4 @@
+
 import fs from "node:fs/promises";
 import Parser from "rss-parser";
 import { extract } from "@extractus/article-extractor";
@@ -6,49 +7,81 @@ const parser = new Parser({
   timeout: 20000,
   headers: { "User-Agent": "NOZHDAR-NewsBot/1.0 (+https://nozhdar07studio.com)" }
 });
-const config = JSON.parse(await fs.readFile(new URL("./sources.json", import.meta.url), "utf8"));
-const regions = config.regions;
-const sources = config.sources;
-const MAX_PER_SOURCE = Math.max(1, Math.min(8, Number(process.env.MAX_ITEMS_PER_FEED || 4)));
+
+const config = JSON.parse(
+  await fs.readFile(new URL("./sources.json", import.meta.url), "utf8")
+);
+const sources = config.sources || [];
+const regions = config.regions || [];
+const DATA_DIR = new URL("../public/data/", import.meta.url);
+const NEWS_FILE = new URL("../public/data/news.json", import.meta.url);
+const MAX_PER_SOURCE = Math.max(1, Math.min(8, Number(process.env.MAX_ITEMS_PER_FEED || 6)));
 const MAX_SOURCE_TEXT_CHARS = 2400;
 const GOOGLE_RSS = "https://news.google.com/rss/search?q=";
 const LANGUAGES = ["bad","ku","km","en","it","ar","ma","tn","dz","tr","fa","sq","ur","hi","bn","ps"];
-const GEMINI_MODELS = (process.env.GEMINI_MODELS || process.env.GEMINI_MODEL || "gemini-2.0-flash")
-  .split(",").map(x => x.trim()).filter(Boolean);
+const MODE = (process.env.NEWS_MODE || "fetch").toLowerCase();
 
-function clean(s = "") {
-  return String(s).replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
+function clean(value = "") {
+  return String(value)
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
 }
-function host(domain) { return domain.split("/")[0].replace(/^www\./, ""); }
+
+function host(domain = "") {
+  return domain.split("/")[0].replace(/^www\./, "");
+}
+
 function queryFor(source) {
-  const q = source.query || `site:${host(source.domain)} ${source.regionName}`;
-  return `${q} when:7d`;
+  const query = source.query || `site:${host(source.domain)} ${source.regionName}`;
+  return `${query} when:7d`;
 }
-function googleFeed(q) {
-  return GOOGLE_RSS + encodeURIComponent(q) + "&hl=it&gl=IT&ceid=IT:it";
+
+function googleFeed(query) {
+  return GOOGLE_RSS + encodeURIComponent(query) + "&hl=it&gl=IT&ceid=IT:it";
 }
-function dateISO(v) {
-  const d = new Date(v || Date.now());
-  return isNaN(d) ? new Date().toISOString() : d.toISOString();
+
+function dateISO(value) {
+  const date = new Date(value || Date.now());
+  return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
 }
+
 function originalMap(value) {
   return Object.fromEntries(LANGUAGES.map(code => [code, value]));
 }
-function normalizeTranslations(value, original) {
-  if (!value || typeof value !== "object") return originalMap(original);
-  return Object.fromEntries(LANGUAGES.map(code => {
-    const translated = typeof value[code] === "string" ? value[code].trim() : "";
-    return [code, translated || original];
-  }));
+
+function makeOriginalFields(title, summary, content) {
+  return {
+    title: originalMap(title),
+    summary: originalMap(summary),
+    content: originalMap(content)
+  };
+}
+
+function stableKey(item) {
+  return String(item.link || item.id || item.title?.it || item.title?.ku || "")
+    .trim()
+    .toLowerCase();
+}
+
+async function readExistingNews() {
+  try {
+    const data = JSON.parse(await fs.readFile(NEWS_FILE, "utf8"));
+    return Array.isArray(data.items) ? data.items : [];
+  } catch {
+    return [];
+  }
 }
 
 async function fetchMetaImage(pageUrl) {
   if (!pageUrl) return "";
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 8000);
+
   try {
-    const res = await fetch(pageUrl, {
+    const response = await fetch(pageUrl, {
       signal: controller.signal,
       redirect: "follow",
       headers: {
@@ -56,22 +89,23 @@ async function fetchMetaImage(pageUrl) {
         "Accept": "text/html,application/xhtml+xml"
       }
     });
-    if (!res.ok) return "";
-    const html = (await res.text()).slice(0, 120000);
+
+    if (!response.ok) return "";
+    const html = (await response.text()).slice(0, 120000);
     const patterns = [
       /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
       /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i,
       /<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i,
       /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image["']/i
     ];
-    for (const re of patterns) {
-      const match = html.match(re);
-      if (match?.[1]) {
-        const candidate = match[1].trim();
-        if (/^https?:\/\//i.test(candidate)) return candidate;
-        try {
-          return new URL(candidate, res.url || pageUrl).toString();
-        } catch {}
+
+    for (const pattern of patterns) {
+      const match = html.match(pattern);
+      if (!match?.[1]) continue;
+      try {
+        return new URL(match[1].trim(), response.url || pageUrl).toString();
+      } catch {
+        // Ignore malformed image URLs and try the next metadata field.
       }
     }
     return "";
@@ -82,14 +116,129 @@ async function fetchMetaImage(pageUrl) {
   }
 }
 
-async function translateFields(fields) {
+async function fetchMode() {
+  const existing = await readExistingNews();
+  const byKey = new Map(existing.map(item => [stableKey(item), item]).filter(([key]) => key));
+  let fetchedCount = 0;
+
+  for (const source of sources) {
+    try {
+      const feed = await parser.parseURL(googleFeed(queryFor(source)));
+
+      for (const item of (feed.items || []).slice(0, MAX_PER_SOURCE)) {
+        const title = clean(item.title);
+        const link = item.link || "";
+        if (!title || !link) continue;
+
+        let bodyText = clean(item.contentSnippet || item.content || item.summary || "");
+        let image = item.enclosure?.url || "";
+        let resolvedUrl = link;
+
+        try {
+          const article = await extract(link, {
+            headers: { "User-Agent": "Mozilla/5.0 NOZHDAR-NewsBot" }
+          });
+          if (article) {
+            resolvedUrl = article.url || link;
+            const extractedText = clean(article.content || article.description || "");
+            if (extractedText.length > bodyText.length) bodyText = extractedText;
+            image = article.image || article.images?.[0] || image;
+          }
+        } catch {
+          // RSS title/summary remain usable if the publisher blocks extraction.
+        }
+
+        if (!image) image = await fetchMetaImage(resolvedUrl);
+        if (!bodyText) bodyText = title;
+
+        const summary = bodyText.slice(0, 550);
+        const content = bodyText.slice(0, MAX_SOURCE_TEXT_CHARS);
+        const key = link.toLowerCase();
+        const previous = byKey.get(key);
+
+        if (previous) {
+          // Keep existing translations and metadata; only fill missing source details.
+          byKey.set(key, {
+            ...previous,
+            image: previous.image || image,
+            link: previous.link || resolvedUrl,
+            summary: previous.summary || originalMap(summary),
+            content: previous.content || originalMap(content),
+            date: previous.date || dateISO(item.isoDate || item.pubDate),
+            pubDate: previous.pubDate || dateISO(item.isoDate || item.pubDate)
+          });
+          continue;
+        }
+
+        const dedupeTitle = title.toLowerCase().slice(0, 150);
+        const duplicate = [...byKey.values()].some(existingItem => {
+          const existingTitle = existingItem.title?.it || existingItem.title?.ku ||
+            existingItem.title?.en || "";
+          return existingTitle.toLowerCase().slice(0, 150) === dedupeTitle;
+        });
+        if (duplicate) continue;
+
+        const date = dateISO(item.isoDate || item.pubDate);
+        const id = `${source.region}-${Buffer.from(dedupeTitle).toString("base64url").slice(0, 18)}`;
+
+        byKey.set(key, {
+          id,
+          region: source.region,
+          regionName: source.regionName,
+          category: source.region === "italia-immigrazione" ? "immigration-law" : "local",
+          section: source.region === "italia-immigrazione" ? "italia-immigrazione" : "regional",
+          source: source.name,
+          sourceDomain: source.domain,
+          sourceType: source.type,
+          official: source.type === "official" ||
+            (source.type === "tv" && String(source.domain).includes("rainews.it")),
+          ...makeOriginalFields(title, summary, content),
+          translationStatus: "original-only",
+          image,
+          link: resolvedUrl,
+          date,
+          pubDate: date
+        });
+        fetchedCount++;
+      }
+    } catch (error) {
+      console.warn(`Source skipped: ${source.name} (${source.domain}): ${error.message}`);
+    }
+  }
+
+  const items = [...byKey.values()].sort((a, b) => new Date(b.date) - new Date(a.date));
+  await fs.mkdir(DATA_DIR, { recursive: true });
+  await fs.writeFile(
+    NEWS_FILE,
+    JSON.stringify({ updatedAt: new Date().toISOString(), items }, null, 2)
+  );
+  await fs.writeFile(
+    new URL("../public/data/regions.json", import.meta.url),
+    JSON.stringify(regions, null, 2)
+  );
+
+  console.log(`Fetch complete: ${fetchedCount} new stories; ${items.length} stories retained.`);
+}
+
+function isQuotaError(error) {
+  const message = String(error?.message || error);
+  return /429|RESOURCE_EXHAUSTED|quota|rate.?limit|too many requests/i.test(message);
+}
+
+function normalizeTranslations(value, original) {
+  if (!value || typeof value !== "object") return originalMap(original);
+  return Object.fromEntries(LANGUAGES.map(code => {
+    const translated = typeof value[code] === "string" ? value[code].trim() : "";
+    return [code, translated || original];
+  }));
+}
+
+async function translateOne(fields) {
   const key = process.env.GEMINI_API_KEY;
-  const fallback = {
-    title: originalMap(fields.title),
-    summary: originalMap(fields.summary),
-    content: originalMap(fields.content)
-  };
-  if (!key) return { ...fallback, _translated: false };
+  if (!key) throw new Error("GEMINI_API_KEY is missing.");
+
+  const models = (process.env.GEMINI_MODELS || "gemini-2.5-flash")
+    .split(",").map(value => value.trim()).filter(Boolean);
 
   const languageNames = {
     bad: "Badini Kurdish", ku: "Sorani Kurdish", km: "Kurmanji Kurdish",
@@ -97,26 +246,25 @@ async function translateFields(fields) {
     tn: "Tunisian Arabic", dz: "Algerian Arabic", tr: "Turkish", fa: "Persian",
     sq: "Albanian", ur: "Urdu", hi: "Hindi", bn: "Bengali", ps: "Pashto"
   };
-  const schema = Object.fromEntries(["title","summary","content"].map(field => [
+
+  const schema = Object.fromEntries(["title", "summary", "content"].map(field => [
     field, Object.fromEntries(LANGUAGES.map(code => [code, "translated string"]))
   ]));
+
   const prompt = [
     "You are a professional news journalist and translator.",
-    "Translate and format each field into every target language based ONLY on the provided source fields.",
-    "For summary, write a clear, informative 2-3 sentence summary from the article text rather than repeating the headline verbatim.",
-    "For content, write a clear, well-structured original editorial summary covering the key details and context present in the source text.",
-    "Do NOT reproduce the article verbatim or copy long passages. Paraphrase in your own words, and never add facts that are not in the supplied source text.",
-    "For it, return clear natural Italian; for ku use Sorani Kurdish in Arabic script; for bad use Badini Kurdish in Arabic script; for km use Kurmanji Kurdish in Latin script.",
-    "For ma, tn, dz use the natural local Arabic dialect in Arabic script. Use the correct writing system for every other language.",
-    "Preserve all names, places, dates, numbers, legal terms, quotes and factual meaning. Do not invent facts beyond the source text.",
-    "Return ONLY valid JSON, no markdown. The JSON must have exactly the keys title, summary, content; each value must be an object with every language code.",
+    "Translate the supplied fields into every target language using only the supplied facts.",
+    "Write an informative 2-3 sentence summary. Paraphrase; do not reproduce long passages.",
+    "Do not invent details. Preserve names, places, dates, numbers, legal terms and factual meaning.",
+    "For ku use Sorani Kurdish in Arabic script; for bad use Badini Kurdish in Arabic script; for km use Kurmanji Kurdish in Latin script.",
+    "Return only valid JSON with exactly the keys title, summary, content. Each value must contain every language code.",
     `Target languages: ${JSON.stringify(languageNames)}.`,
     `Required shape: ${JSON.stringify(schema)}.`,
     `Source fields: ${JSON.stringify(fields)}`
   ].join("\n");
 
   let lastError;
-  for (const model of GEMINI_MODELS) {
+  for (const model of models) {
     try {
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
@@ -129,100 +277,95 @@ async function translateFields(fields) {
           })
         }
       );
-      if (!response.ok) throw new Error(`${model}: ${response.status} ${await response.text()}`);
+
+      if (!response.ok) {
+        const detail = await response.text();
+        const error = new Error(`${model}: HTTP ${response.status} ${detail}`);
+        if (response.status === 429 || isQuotaError(detail)) throw Object.assign(error, { quota: true });
+        lastError = error;
+        console.warn(`Translation model failed; trying next model: ${error.message}`);
+        continue;
+      }
+
       const data = await response.json();
       const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
-      const jsonText = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
-      const parsed = JSON.parse(jsonText);
+      const parsed = JSON.parse(raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, ""));
+
       return {
         title: normalizeTranslations(parsed.title, fields.title),
         summary: normalizeTranslations(parsed.summary, fields.summary),
-        content: normalizeTranslations(parsed.content, fields.content),
-        _translated: true
+        content: normalizeTranslations(parsed.content, fields.content)
       };
     } catch (error) {
+      if (error.quota || isQuotaError(error)) throw error;
       lastError = error;
-      console.warn(`Translation model failed; trying next model if available: ${error.message}`);
+      console.warn(`Translation model failed; trying next model: ${error.message}`);
     }
   }
-  console.warn(`Translation fallback after all models failed: ${lastError?.message || "unknown error"}`);
-  return { ...fallback, _translated: false };
+
+  throw lastError || new Error("All configured translation models failed.");
 }
 
-const output = [];
-const seen = new Set();
-for (const source of sources) {
-  try {
-    const feed = await parser.parseURL(googleFeed(queryFor(source)));
-    for (const item of (feed.items || []).slice(0, MAX_PER_SOURCE)) {
-      const title = clean(item.title);
-      const link = item.link || "";
-      if (!title || !link) continue;
-      const dedupeKey = title.toLowerCase().slice(0, 150);
-      if (seen.has(dedupeKey)) continue;
-      seen.add(dedupeKey);
+async function translateMode() {
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) {
+    console.warn("GEMINI_API_KEY is missing; skipping translation. Fetched stories remain saved.");
+    return;
+  }
 
-      let bodyText = clean(item.contentSnippet || item.content || item.summary || "");
-      let image = item.enclosure?.url || "";
-      let resolvedUrl = link;
+  const data = JSON.parse(await fs.readFile(NEWS_FILE, "utf8"));
+  const items = Array.isArray(data.items) ? data.items : [];
+  const limit = Math.max(0, Number(process.env.MAX_NEW_TRANSLATIONS || 9));
+  let translatedCount = 0;
 
-      try {
-        const article = await extract(link, {
-          headers: { "User-Agent": "Mozilla/5.0 NOZHDAR-NewsBot" }
-        });
-        if (article) {
-          resolvedUrl = article.url || link;
-          const extractedText = clean(article.content || article.description || "");
-          if (extractedText.length > bodyText.length) {
-            bodyText = extractedText;
-          }
-          image = article.image || article.images?.[0] || image;
-        }
-      } catch {}
+  for (const item of items) {
+    if (translatedCount >= limit) break;
+    if (item.translationStatus === "translated") continue;
 
-      if (!image) {
-        image = await fetchMetaImage(resolvedUrl);
-      }
-      if (!bodyText) bodyText = title;
+    const originalTitle = item.title?.it || item.title?.en || item.title?.ku ||
+      (typeof item.title === "string" ? item.title : "");
+    const originalSummary = item.summary?.it || item.summary?.en || item.summary?.ku ||
+      (typeof item.summary === "string" ? item.summary : originalTitle);
+    const originalContent = item.content?.it || item.content?.en || item.content?.ku ||
+      (typeof item.content === "string" ? item.content : originalSummary);
 
-      const fields = {
-        title,
-        summary: bodyText.slice(0, 550),
-        content: bodyText.slice(0, MAX_SOURCE_TEXT_CHARS)
-      };
-      const translated = await translateFields(fields);
-      output.push({
-        id: `${source.region}-${Buffer.from(dedupeKey).toString("base64url").slice(0, 18)}`,
-        region: source.region,
-        regionName: source.regionName,
-        category: source.region === "italia-immigrazione" ? "immigration-law" : "local",
-        section: source.region === "italia-immigrazione" ? "italia-immigrazione" : "regional",
-        source: source.name,
-        sourceDomain: source.domain,
-        sourceType: source.type,
-        official: source.type === "official" || (source.type === "tv" && source.domain.includes("rainews.it")),
-        title: translated.title,
-        summary: translated.summary,
-        content: translated.content,
-        translationStatus: translated._translated ? "translated" : "original-only",
-        image,
-        link: resolvedUrl,
-        date: dateISO(item.isoDate || item.pubDate),
-        pubDate: dateISO(item.isoDate || item.pubDate)
+    try {
+      const translated = await translateOne({
+        title: originalTitle,
+        summary: originalSummary,
+        content: originalContent
       });
+      item.title = translated.title;
+      item.summary = translated.summary;
+      item.content = translated.content;
+      item.translationStatus = "translated";
+      translatedCount++;
+
+      // Persist after every successful article so a later quota error cannot lose work.
+      await fs.writeFile(
+        NEWS_FILE,
+        JSON.stringify({ ...data, updatedAt: new Date().toISOString(), items }, null, 2)
+      );
+    } catch (error) {
+      if (isQuotaError(error)) {
+        console.warn(`Gemini quota reached. Stopping translation now; saved ${translatedCount} translations.`);
+        break;
+      }
+      console.warn(`Could not translate article "${originalTitle}": ${error.message}`);
     }
-  } catch (error) {
-    console.warn(`Source skipped: ${source.name} (${source.domain}): ${error.message}`);
   }
+
+  await fs.writeFile(
+    NEWS_FILE,
+    JSON.stringify({ ...data, updatedAt: new Date().toISOString(), items }, null, 2)
+  );
+  console.log(`Translation complete: ${translatedCount} new translations (limit ${limit}).`);
 }
-output.sort((a, b) => new Date(b.date) - new Date(a.date));
-await fs.mkdir(new URL("../public/data/", import.meta.url), { recursive: true });
-await fs.writeFile(
-  new URL("../public/data/news.json", import.meta.url),
-  JSON.stringify({ updatedAt: new Date().toISOString(), items: output }, null, 2)
-);
-await fs.writeFile(
-  new URL("../public/data/regions.json", import.meta.url),
-  JSON.stringify(regions, null, 2)
-);
-console.log(`Saved ${output.length} stories from ${sources.length} configured sources.`);
+
+if (MODE === "fetch") {
+  await fetchMode();
+} else if (MODE === "translate") {
+  await translateMode();
+} else {
+  throw new Error(`Unknown NEWS_MODE "${MODE}". Use "fetch" or "translate".`);
+}
