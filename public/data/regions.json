@@ -1,0 +1,86 @@
+[
+  {
+    "id": "abruzzo",
+    "name": "Abruzzo"
+  },
+  {
+    "id": "basilicata",
+    "name": "Basilicata"
+  },
+  {
+    "id": "calabria",
+    "name": "Calabria"
+  },
+  {
+    "id": "campania",
+    "name": "Campania"
+  },
+  {
+    "id": "emilia-romagna",
+    "name": "Emilia-Romagna"
+  },
+  {
+    "id": "friuli-venezia-giulia",
+    "name": "Friuli-Venezia Giulia"
+  },
+  {
+    "id": "lazio",
+    "name": "Lazio"
+  },
+  {
+    "id": "liguria",
+    "name": "Liguria"
+  },
+  {
+    "id": "lombardia",
+    "name": "Lombardia"
+  },
+  {
+    "id": "marche",
+    "name": "Marche"
+  },
+  {
+    "id": "molise",
+    "name": "Molise"
+  },
+  {
+    "id": "piemonte",
+    "name": "Piemonte"
+  },
+  {
+    "id": "puglia",
+    "name": "Puglia"
+  },
+  {
+    "id": "sardegna",
+    "name": "Sardegna"
+  },
+  {
+    "id": "sicilia",
+    "name": "Sicilia"
+  },
+  {
+    "id": "toscana",
+    "name": "Toscana"
+  },
+  {
+    "id": "trentino-alto-adige",
+    "name": "Trentino-Alto Adige"
+  },
+  {
+    "id": "umbria",
+    "name": "Umbria"
+  },
+  {
+    "id": "valle-daosta",
+    "name": "Valle d'Aosta"
+  },
+  {
+    "id": "veneto",
+    "name": "Veneto"
+  },
+  {
+    "id": "italia-immigrazione",
+    "name": "Italia â Immigrazione e nuove leggi"
+  }
+]
