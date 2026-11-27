@@ -1,9 +1,8 @@
-
 name: Auto Fetch & Translate News
 
 on:
   schedule:
-    - cron: '7 * * * *'
+    - cron: "17 */6 * * *"
   workflow_dispatch:
 
 permissions:
@@ -16,7 +15,7 @@ concurrency:
 jobs:
   update-news:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
 
     steps:
       - name: Checkout repository
@@ -27,23 +26,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: "24"
 
       - name: Install news dependencies
         run: npm install rss-parser @extractus/article-extractor
 
-      - name: Fetch and save original news
+      - name: Fetch news and translate
         env:
-          NEWS_MODE: fetch
-          MAX_ITEMS_PER_FEED: '6'
-        run: node scripts/fetch-news.js
-
-      - name: Translate saved news (optional)
-        env:
-          NEWS_MODE: translate
+          AZURE_TRANSLATOR_KEY: ${{ secrets.AZURE_TRANSLATOR_KEY }}
+          AZURE_TRANSLATOR_REGION: ${{ secrets.AZURE_TRANSLATOR_REGION }}
+          AZURE_TRANSLATOR_ENDPOINT: ${{ secrets.AZURE_TRANSLATOR_ENDPOINT }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODELS: gemini-3.8-flash,gemini-3.6-flash
-          MAX_NEW_TRANSLATIONS: '9'
+          GEMINI_MODEL: gemini-3.8-flash
+          MAX_PER_SOURCE: "8"
         run: node scripts/fetch-news.js
 
       - name: Commit and push updated news
@@ -54,6 +49,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No news data changes to commit"
           else
-            git commit -m "Update news"
+            git commit -m "Update news and translations"
             git push
           fi
