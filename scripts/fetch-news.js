@@ -1,4 +1,3 @@
-
 import fs from "node:fs/promises";
 import Parser from "rss-parser";
 import { extract } from "@extractus/article-extractor";
@@ -27,29 +26,37 @@ try {
   const previousData = JSON.parse(await fs.readFile(NEWS_FILE, "utf8"));
   previousItems = Array.isArray(previousData.items) ? previousData.items : [];
   badiniRequestTimestamps = Array.isArray(previousData.badiniRequestTimestamps)
-    ? previousData.badiniRequestTimestamps.filter((value) => Number.isFinite(Number(value))).map(Number)
+    ? previousData.badiniRequestTimestamps
+        .filter((value) => Number.isFinite(Number(value)))
+        .map(Number)
     : [];
   badiniQuotaResetAt = typeof previousData.badiniQuotaResetAt === "string"
     ? previousData.badiniQuotaResetAt
     : null;
-  myMemoryUsageDate = typeof previousData.myMemoryUsageDate === "string" ? previousData.myMemoryUsageDate : "";
+  myMemoryUsageDate = typeof previousData.myMemoryUsageDate === "string"
+    ? previousData.myMemoryUsageDate
+    : "";
   myMemoryCharsUsed = Number(previousData.myMemoryCharsUsed || 0);
 } catch {
   previousItems = [];
 }
 
-// Recover the Italian source text from older saved translation maps when possible.
+// Recover Italian source text from older saved translation maps.
 for (const item of previousItems) {
   if (!item.sourceRecord) {
     const pickItalian = (field) => {
       const value = item?.[field];
       if (typeof value === "string") return value;
-      if (value && typeof value.it === "string" && value.it.trim()) return value.it;
+      if (value && typeof value.it === "string" && value.it.trim()) {
+        return value.it;
+      }
       return "";
     };
+
     const title = pickItalian("title");
     const summary = pickItalian("summary");
     const content = pickItalian("content");
+
     if (title || summary || content) {
       item.sourceRecord = {
         title: title || summary || content,
@@ -62,14 +69,39 @@ for (const item of previousItems) {
 
 const previousById = new Map(previousItems.map((item) => [item.id, item]));
 
+// Keep news published from 27 November 2026 onward.
+// Change this date only if you want a different archive start date.
+const NEWS_KEEP_FROM_DATE =
+  process.env.NEWS_KEEP_FROM_DATE || "2026-11-27";
+
+function italyDateKey(value) {
+  const date = new Date(value || 0);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Rome",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(date);
+
+  const part = (type) =>
+    parts.find((entry) => entry.type === type)?.value || "";
+
+  return `${part("year")}-${part("month")}-${part("day")}`;
+}
+
 const MAX_PER_SOURCE = Number(process.env.MAX_PER_SOURCE || 8);
 const MAX_ARTICLE_CHARS = 9000;
 const MAX_TRANSLATE_CONTENT_CHARS = 2500;
+
 const GEMINI_BATCH_SIZE = Number(process.env.GEMINI_BATCH_SIZE || 5);
-const GEMINI_MAX_REQUESTS_24H = Number(process.env.GEMINI_MAX_REQUESTS_24H || 18);
+const GEMINI_MAX_REQUESTS_24H =
+  Number(process.env.GEMINI_MAX_REQUESTS_24H || 18);
 const GEMINI_CONTENT_CHARS = 1800;
 const GEMINI_REQUEST_WINDOW_MS = 24 * 60 * 60 * 1000;
 const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+
 const MYMEMORY_DAILY_LIMIT = process.env.MYMEMORY_EMAIL ? 50000 : 5000;
 const MYMEMORY_MAX_BYTES = 450;
 
@@ -95,6 +127,24 @@ const LANG_TARGETS = [
   "dz", "tr", "fa", "sq", "ur", "hi", "bn", "ps"
 ];
 
+const AZURE_LANGUAGES = {
+  ku: "ku",
+  it: "it",
+  en: "en",
+  km: "kmr",
+  ar: "ar",
+  ma: "ar",
+  tn: "ar",
+  dz: "ar",
+  tr: "tr",
+  fa: "fa",
+  sq: "sq",
+  ur: "ur",
+  hi: "hi",
+  bn: "bn",
+  ps: "ps"
+};
+
 function decodeEntities(str = "") {
   return String(str)
     .replace(/&nbsp;/gi, " ")
@@ -103,8 +153,12 @@ function decodeEntities(str = "") {
     .replace(/&#39;|&apos;/gi, "'")
     .replace(/&lt;/gi, "<")
     .replace(/&gt;/gi, ">")
-    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
-    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCharCode(parseInt(h, 16)));
+    .replace(/&#(\d+);/g, (_, n) =>
+      String.fromCharCode(Number(n))
+    )
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) =>
+      String.fromCharCode(parseInt(h, 16))
+    );
 }
 
 function clean(value = "") {
@@ -118,7 +172,8 @@ function host(domain = "") {
 }
 
 function queryFor(source) {
-  const q = source.query || `site:${host(source.domain)} ${source.regionName}`;
+  const q =
+    source.query || `site:${host(source.domain)} ${source.regionName}`;
   return `${q} when:7d`;
 }
 
@@ -128,11 +183,15 @@ function googleFeed(q) {
 
 function dateISO(value) {
   const date = new Date(value || Date.now());
-  return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
+  return Number.isNaN(date.getTime())
+    ? new Date().toISOString()
+    : date.toISOString();
 }
 
 function originalLanguageMap(value) {
-  return Object.fromEntries(LANG_TARGETS.map((lang) => [lang, value]));
+  return Object.fromEntries(
+    LANG_TARGETS.map((lang) => [lang, value])
+  );
 }
 
 function emptyTranslationRecord(record) {
@@ -148,7 +207,10 @@ function splitUtf8(text, maxBytes = MYMEMORY_MAX_BYTES) {
   let current = "";
 
   for (const char of String(text || "")) {
-    if (Buffer.byteLength(current + char, "utf8") > maxBytes && current) {
+    if (
+      Buffer.byteLength(current + char, "utf8") > maxBytes &&
+      current
+    ) {
       chunks.push(current);
       current = "";
     }
@@ -194,7 +256,9 @@ async function myMemoryTranslateText(text, targetCode) {
 
     if (!response.ok || Number(data.responseStatus) !== 200) {
       throw new Error(
-        `MyMemory ${response.status || data.responseStatus}: ${data.responseDetails || "translation failed"}`
+        `MyMemory ${response.status || data.responseStatus}: ${
+          data.responseDetails || "translation failed"
+        }`
       );
     }
 
@@ -246,6 +310,7 @@ function retryDelayMs(errorMessage) {
   const hours = Number(match[1] || 0);
   const minutes = Number(match[2] || 0);
   const seconds = Number(match[3] || 0);
+
   const total = ((hours * 60 + minutes) * 60 + seconds) * 1000;
 
   return total > 0 ? total : null;
@@ -292,7 +357,9 @@ async function translateBadiniBatch(items, startIndex) {
   ].join("\n");
 
   const url =
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(GEMINI_MODEL)}:generateContent?key=${encodeURIComponent(key)}`;
+    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
+      GEMINI_MODEL
+    )}:generateContent?key=${encodeURIComponent(key)}`;
 
   const response = await fetch(url, {
     method: "POST",
@@ -308,11 +375,15 @@ async function translateBadiniBatch(items, startIndex) {
 
   if (!response.ok) {
     const details = await response.text().catch(() => "");
-    throw new Error(`Gemini API ${response.status}: ${details.slice(0, 700)}`);
+    throw new Error(
+      `Gemini API ${response.status}: ${details.slice(0, 700)}`
+    );
   }
 
   const data = await response.json();
-  const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || "[]";
+  const raw =
+    data?.candidates?.[0]?.content?.parts?.[0]?.text || "[]";
+
   const parsed = parseJsonFromModel(raw);
 
   if (!Array.isArray(parsed)) {
@@ -321,14 +392,20 @@ async function translateBadiniBatch(items, startIndex) {
 
   for (let index = 0; index < items.length; index++) {
     const wantedIndex = startIndex + index;
+
     const found =
-      parsed.find((entry) => Number(entry?.index) === wantedIndex) || parsed[index];
+      parsed.find(
+        (entry) => Number(entry?.index) === wantedIndex
+      ) || parsed[index];
 
     if (
       !found ||
-      typeof found.title !== "string" || !found.title.trim() ||
-      typeof found.summary !== "string" || !found.summary.trim() ||
-      typeof found.content !== "string" || !found.content.trim()
+      typeof found.title !== "string" ||
+      !found.title.trim() ||
+      typeof found.summary !== "string" ||
+      !found.summary.trim() ||
+      typeof found.content !== "string" ||
+      !found.content.trim()
     ) {
       throw new Error(
         `Gemini omitted one or more Badini fields for story ${wantedIndex}.`
@@ -346,7 +423,9 @@ const seen = new Set();
 
 for (const source of sources) {
   try {
-    const feed = await parser.parseURL(googleFeed(queryFor(source)));
+    const feed = await parser.parseURL(
+      googleFeed(queryFor(source))
+    );
 
     for (const item of (feed.items || []).slice(0, MAX_PER_SOURCE)) {
       const title = clean(item.title);
@@ -359,24 +438,34 @@ for (const source of sources) {
       if (seen.has(dedupeKey)) continue;
       seen.add(dedupeKey);
 
-      let content = clean(item.contentSnippet || item.content || item.summary || "");
+      let content = clean(
+        item.contentSnippet || item.content || item.summary || ""
+      );
+
       let image = String(item.enclosure?.url || "").trim();
       let resolvedLink = link;
 
       try {
         const article = await extract(link, {
-          headers: { "User-Agent": "Mozilla/5.0 NOZHDAR-NewsBot" }
+          headers: {
+            "User-Agent": "Mozilla/5.0 NOZHDAR-NewsBot"
+          }
         });
 
         if (article) {
           resolvedLink = article.url || link;
-          const extracted = clean(article.content || article.description || "");
+
+          const extracted = clean(
+            article.content || article.description || ""
+          );
 
           if (extracted) {
             content = extracted.slice(0, MAX_ARTICLE_CHARS);
           }
 
-          image = String(article.image || article.images?.[0] || image).trim();
+          image = String(
+            article.image || article.images?.[0] || image
+          ).trim();
         }
       } catch {
         // Keep RSS text if the publisher blocks article extraction.
@@ -389,7 +478,9 @@ for (const source of sources) {
       const special = source.region === "italia-immigrazione";
 
       collected.push({
-        id: `${source.region}-${Buffer.from(dedupeKey).toString("base64url").slice(0, 18)}`,
+        id: `${source.region}-${Buffer.from(dedupeKey)
+          .toString("base64url")
+          .slice(0, 18)}`,
         region: source.region,
         regionName: source.regionName,
         category: special ? "immigration-law" : "local",
@@ -397,8 +488,10 @@ for (const source of sources) {
         source: source.name,
         sourceDomain: source.domain,
         sourceType: source.type,
-        official: source.type === "official" ||
-          (source.type === "tv" && String(source.domain).includes("rainews.it")),
+        official:
+          source.type === "official" ||
+          (source.type === "tv" &&
+            String(source.domain).includes("rainews.it")),
         sourceRecord: {
           title,
           summary,
@@ -417,7 +510,12 @@ for (const source of sources) {
   }
 }
 
-const output = collected.map((entry) => {
+// Remove anything older than the archive start date.
+const keptCollected = collected.filter(
+  (entry) => italyDateKey(entry.date) >= NEWS_KEEP_FROM_DATE
+);
+
+const output = keptCollected.map((entry) => {
   const previous = previousById.get(entry.id);
   const baseTranslations = emptyTranslationRecord(entry.sourceRecord);
 
@@ -463,27 +561,16 @@ const output = collected.map((entry) => {
   };
 });
 
-// Keep already-saved stories even if they are older than seven days
-// whenever any translation is still pending.
+// Preserve saved stories from the archive start date onward.
+// Older stories are deliberately discarded.
 const fetchedIds = new Set(output.map((item) => item.id));
-const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
 
 for (const previous of previousItems) {
   if (fetchedIds.has(previous.id)) continue;
 
-  const previousDate = new Date(
-    previous.date || previous.pubDate || 0
-  ).getTime();
-
-  const stillPending =
-    previous.translationStatus?.badini !== true ||
-    Object.keys(MYMEMORY_LANGUAGES).some(
-      (lang) => previous.translationStatus?.mymemory?.[lang] !== true
-    );
-
   if (
-    (!Number.isFinite(previousDate) || previousDate < sevenDaysAgo) &&
-    !stillPending
+    italyDateKey(previous.date || previous.pubDate) <
+    NEWS_KEEP_FROM_DATE
   ) {
     continue;
   }
@@ -491,9 +578,11 @@ for (const previous of previousItems) {
   output.push(previous);
 }
 
-const translatableItems = output.filter((item) => item.sourceRecord);
+const translatableItems = output.filter(
+  (item) => item.sourceRecord
+);
 
-// MyMemory handles non-Badini languages without an Azure account or bank card.
+// MyMemory translations.
 const todayUtc = new Date().toISOString().slice(0, 10);
 
 if (myMemoryUsageDate !== todayUtc) {
@@ -514,7 +603,7 @@ for (const languageKey of Object.keys(MYMEMORY_LANGUAGES)) {
       await translateWithMyMemory(item, languageKey);
       myMemoryCompleted++;
 
-      // Save after each story so a timeout cannot discard completed work.
+      // Save after each story to protect completed translations.
       await fs.mkdir(
         new URL("../public/data/", import.meta.url),
         { recursive: true }
@@ -522,17 +611,23 @@ for (const languageKey of Object.keys(MYMEMORY_LANGUAGES)) {
 
       await fs.writeFile(
         NEWS_FILE,
-        JSON.stringify({
-          updatedAt: new Date().toISOString(),
-          badiniRequestTimestamps,
-          badiniQuotaResetAt,
-          myMemoryUsageDate,
-          myMemoryCharsUsed,
-          items: output
-        }, null, 2)
+        JSON.stringify(
+          {
+            updatedAt: new Date().toISOString(),
+            badiniRequestTimestamps,
+            badiniQuotaResetAt,
+            myMemoryUsageDate,
+            myMemoryCharsUsed,
+            items: output
+          },
+          null,
+          2
+        )
       );
     } catch (error) {
-      console.warn(`MyMemory paused for ${languageKey}: ${error.message}`);
+      console.warn(
+        `MyMemory paused for ${languageKey}: ${error.message}`
+      );
 
       if (error.code === "MYMEMORY_DAILY_LIMIT") {
         myMemoryStoppedAtLimit = true;
@@ -545,18 +640,22 @@ for (const languageKey of Object.keys(MYMEMORY_LANGUAGES)) {
   if (myMemoryStoppedAtLimit) break;
 }
 
-// Gemini is used only for Badini.
+// Gemini translates Badini only.
 const pendingBadini = translatableItems.filter(
-  (item) => item.translationStatus?.badini !== true && item.sourceRecord
+  (item) =>
+    item.translationStatus?.badini !== true &&
+    item.sourceRecord
 );
 
 let badiniSuccess = 0;
 let badiniRequestsThisRun = 0;
+
 const now = Date.now();
 
 let recentBadiniRequests = badiniRequestTimestamps.filter(
   (timestamp) =>
-    timestamp > now - GEMINI_REQUEST_WINDOW_MS && timestamp <= now
+    timestamp > now - GEMINI_REQUEST_WINDOW_MS &&
+    timestamp <= now
 );
 
 const savedResetTime = badiniQuotaResetAt
@@ -565,7 +664,9 @@ const savedResetTime = badiniQuotaResetAt
 
 if (savedResetTime > now) {
   console.log(
-    `Gemini Badini is paused until ${new Date(savedResetTime).toISOString()} after a quota response.`
+    `Gemini Badini is paused until ${
+      new Date(savedResetTime).toISOString()
+    } after a quota response.`
   );
 } else {
   badiniQuotaResetAt = null;
@@ -575,14 +676,21 @@ if (savedResetTime > now) {
     start < pendingBadini.length;
     start += GEMINI_BATCH_SIZE
   ) {
-    if (recentBadiniRequests.length >= GEMINI_MAX_REQUESTS_24H) {
+    if (
+      recentBadiniRequests.length >= GEMINI_MAX_REQUESTS_24H
+    ) {
       console.log(
-        `Gemini safety limit reached: ${recentBadiniRequests.length}/${GEMINI_MAX_REQUESTS_24H}. Remaining Badini stories stay pending.`
+        `Gemini daily safety limit reached: ${
+          recentBadiniRequests.length
+        }/${GEMINI_MAX_REQUESTS_24H} requests in the last 24 hours.`
       );
       break;
     }
 
-    const batch = pendingBadini.slice(start, start + GEMINI_BATCH_SIZE);
+    const batch = pendingBadini.slice(
+      start,
+      start + GEMINI_BATCH_SIZE
+    );
 
     recentBadiniRequests.push(Date.now());
     badiniRequestsThisRun++;
@@ -597,21 +705,30 @@ if (savedResetTime > now) {
       badiniSuccess += batch.length;
 
       console.log(
-        `Gemini Badini translated: ${Math.min(start + batch.length, pendingBadini.length)}/${pendingBadini.length}`
+        `Gemini Badini translated: ${
+          Math.min(start + batch.length, pendingBadini.length)
+        }/${pendingBadini.length}`
       );
     } catch (error) {
       console.warn(
-        `Badini batch ${start + 1}-${start + batch.length} skipped: ${error.message}`
+        `Badini batch ${start + 1}-${start + batch.length} skipped: ${
+          error.message
+        }`
       );
 
       if (isGeminiQuotaError(error)) {
         const delay =
-          retryDelayMs(error.message) || 12 * 60 * 60 * 1000;
+          retryDelayMs(error.message) ||
+          12 * 60 * 60 * 1000;
 
-        badiniQuotaResetAt = new Date(Date.now() + delay).toISOString();
+        badiniQuotaResetAt = new Date(
+          Date.now() + delay
+        ).toISOString();
 
         console.warn(
-          `Gemini quota reached. Pausing until ${badiniQuotaResetAt}; remaining stories will be retried later.`
+          `Gemini quota reached. Pausing Badini translation until ${
+            badiniQuotaResetAt
+          }; remaining stories will be retried later.`
         );
 
         break;
@@ -620,7 +737,9 @@ if (savedResetTime > now) {
   }
 }
 
-output.sort((a, b) => new Date(b.date) - new Date(a.date));
+output.sort(
+  (a, b) => new Date(b.date) - new Date(a.date)
+);
 
 await fs.mkdir(
   new URL("../public/data/", import.meta.url),
@@ -629,14 +748,18 @@ await fs.mkdir(
 
 await fs.writeFile(
   NEWS_FILE,
-  JSON.stringify({
-    updatedAt: new Date().toISOString(),
-    badiniRequestTimestamps: recentBadiniRequests,
-    badiniQuotaResetAt,
-    myMemoryUsageDate,
-    myMemoryCharsUsed,
-    items: output
-  }, null, 2)
+  JSON.stringify(
+    {
+      updatedAt: new Date().toISOString(),
+      badiniRequestTimestamps: recentBadiniRequests,
+      badiniQuotaResetAt,
+      myMemoryUsageDate,
+      myMemoryCharsUsed,
+      items: output
+    },
+    null,
+    2
+  )
 );
 
 await fs.writeFile(
@@ -645,9 +768,16 @@ await fs.writeFile(
 );
 
 console.log(
-  `Saved ${output.length} stories. MyMemory languages: ${Object.keys(MYMEMORY_LANGUAGES).length}; ` +
-  `MyMemory stories translated this run: ${myMemoryCompleted}; daily characters: ${myMemoryCharsUsed}/${MYMEMORY_DAILY_LIMIT}; ` +
-  `Badini translated this run: ${badiniSuccess}/${pendingBadini.length} pending; ` +
+  `Saved ${output.length} stories. MyMemory languages: ${
+    Object.keys(MYMEMORY_LANGUAGES).length
+  }; ` +
+  `MyMemory stories translated this run: ${myMemoryCompleted}; ` +
+  `daily characters: ${myMemoryCharsUsed}/${MYMEMORY_DAILY_LIMIT}; ` +
+  `Badini translated in this run: ${
+    badiniSuccess
+  }/${pendingBadini.length} pending; ` +
   `Gemini requests this run: ${badiniRequestsThisRun}; ` +
-  `rolling 24h requests: ${recentBadiniRequests.length}/${GEMINI_MAX_REQUESTS_24H}.`
+  `rolling 24h requests: ${
+    recentBadiniRequests.length
+  }/${GEMINI_MAX_REQUESTS_24H}.`
 );
