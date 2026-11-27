@@ -6,49 +6,75 @@ import { extract } from "@extractus/article-extractor";
 const parser = new Parser({
   timeout: 20000,
   headers: {
-    "User-Agent": "NOZHDAR-NewsBot/1.0"
+    "User-Agent": "NOZHDAR-NewsBot/1.0 (+https://nozhdar07studio.com)"
   }
 });
 
 const config = JSON.parse(
   await fs.readFile(new URL("./sources.json", import.meta.url), "utf8")
 );
-
-const sources = config.sources || [];
 const regions = config.regions || [];
+const sources = config.sources || [];
 const NEWS_FILE = new URL("../public/data/news.json", import.meta.url);
-const REGIONS_FILE = new URL("../public/data/regions.json", import.meta.url);
 
-const MAX_PER_SOURCE = Math.max(
-  1,
-  Number(process.env.MAX_PER_SOURCE || 8)
-);
+let previousItems = [];
+let badiniRequestTimestamps = [];
+let badiniQuotaResetAt = null;
+let myMemoryUsageDate = "";
+let myMemoryCharsUsed = 0;
 
+try {
+  const previousData = JSON.parse(await fs.readFile(NEWS_FILE, "utf8"));
+  previousItems = Array.isArray(previousData.items) ? previousData.items : [];
+  badiniRequestTimestamps = Array.isArray(previousData.badiniRequestTimestamps)
+    ? previousData.badiniRequestTimestamps.filter((value) => Number.isFinite(Number(value))).map(Number)
+    : [];
+  badiniQuotaResetAt = typeof previousData.badiniQuotaResetAt === "string"
+    ? previousData.badiniQuotaResetAt
+    : null;
+  myMemoryUsageDate = typeof previousData.myMemoryUsageDate === "string" ? previousData.myMemoryUsageDate : "";
+  myMemoryCharsUsed = Number(previousData.myMemoryCharsUsed || 0);
+} catch {
+  previousItems = [];
+}
+
+// Recover the Italian source text from older saved translation maps when possible.
+for (const item of previousItems) {
+  if (!item.sourceRecord) {
+    const pickItalian = (field) => {
+      const value = item?.[field];
+      if (typeof value === "string") return value;
+      if (value && typeof value.it === "string" && value.it.trim()) return value.it;
+      return "";
+    };
+    const title = pickItalian("title");
+    const summary = pickItalian("summary");
+    const content = pickItalian("content");
+    if (title || summary || content) {
+      item.sourceRecord = {
+        title: title || summary || content,
+        summary: summary || title,
+        content: content || summary || title
+      };
+    }
+  }
+}
+
+const previousById = new Map(previousItems.map((item) => [item.id, item]));
+
+const MAX_PER_SOURCE = Number(process.env.MAX_PER_SOURCE || 8);
 const MAX_ARTICLE_CHARS = 9000;
 const MAX_TRANSLATE_CONTENT_CHARS = 2500;
+const GEMINI_BATCH_SIZE = Number(process.env.GEMINI_BATCH_SIZE || 5);
+const GEMINI_MAX_REQUESTS_24H = Number(process.env.GEMINI_MAX_REQUESTS_24H || 18);
 const GEMINI_CONTENT_CHARS = 1800;
-const GEMINI_BATCH_SIZE = Math.max(
-  1,
-  Number(process.env.GEMINI_BATCH_SIZE || 5)
-);
+const GEMINI_REQUEST_WINDOW_MS = 24 * 60 * 60 * 1000;
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const MYMEMORY_DAILY_LIMIT = process.env.MYMEMORY_EMAIL ? 50000 : 5000;
+const MYMEMORY_MAX_BYTES = 450;
 
-const GEMINI_MODEL =
-  process.env.GEMINI_MODEL || "gemini-2.5-flash";
-
-const GOOGLE_RSS = "https://news.google.com/rss/search?q=";
-
-const LANG_TARGETS = [
-  "ku", "it", "en", "bad", "km", "ar", "ma", "tn",
-  "dz", "tr", "fa", "sq", "ur", "hi", "bn", "ps"
-];
-
-// Gemini is used ONLY for Badini.
-// Azure handles the other configured languages.
-const AZURE_LANGUAGES = {
-  ku: "ku",
-  it: "it",
+const MYMEMORY_LANGUAGES = {
   en: "en",
-  km: "kmr",
   ar: "ar",
   ma: "ar",
   tn: "ar",
@@ -62,67 +88,54 @@ const AZURE_LANGUAGES = {
   ps: "ps"
 };
 
-function decodeEntities(value = "") {
-  return String(value)
+const GOOGLE_RSS = "https://news.google.com/rss/search?q=";
+
+const LANG_TARGETS = [
+  "ku", "it", "en", "bad", "km", "ar", "ma", "tn",
+  "dz", "tr", "fa", "sq", "ur", "hi", "bn", "ps"
+];
+
+function decodeEntities(str = "") {
+  return String(str)
     .replace(/&nbsp;/gi, " ")
     .replace(/&amp;/gi, "&")
     .replace(/&quot;/gi, '"')
     .replace(/&#39;|&apos;/gi, "'")
     .replace(/&lt;/gi, "<")
     .replace(/&gt;/gi, ">")
-    .replace(/&#(\d+);/g, (_, n) =>
-      String.fromCharCode(Number(n))
-    )
-    .replace(/&#x([0-9a-f]+);/gi, (_, h) =>
-      String.fromCharCode(parseInt(h, 16))
-    );
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCharCode(parseInt(h, 16)));
 }
 
 function clean(value = "") {
-  return decodeEntities(
-    String(value).replace(/<[^>]*>/g, " ")
-  )
+  return decodeEntities(String(value).replace(/<[^>]*>/g, " "))
     .replace(/\s+/g, " ")
     .trim();
 }
 
 function host(domain = "") {
-  return String(domain)
-    .split("/")[0]
-    .replace(/^www\./, "");
+  return String(domain).split("/")[0].replace(/^www\./, "");
 }
 
 function queryFor(source) {
-  const query =
-    source.query ||
-    `site:${host(source.domain)} ${source.regionName}`;
-
-  return `${query} when:7d`;
+  const q = source.query || `site:${host(source.domain)} ${source.regionName}`;
+  return `${q} when:7d`;
 }
 
-function googleFeed(query) {
-  return (
-    GOOGLE_RSS +
-    encodeURIComponent(query) +
-    "&hl=it&gl=IT&ceid=IT:it"
-  );
+function googleFeed(q) {
+  return `${GOOGLE_RSS}${encodeURIComponent(q)}&hl=it&gl=IT&ceid=IT:it`;
 }
 
 function dateISO(value) {
   const date = new Date(value || Date.now());
-
-  return Number.isNaN(date.getTime())
-    ? new Date().toISOString()
-    : date.toISOString();
+  return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
 }
 
 function originalLanguageMap(value) {
-  return Object.fromEntries(
-    LANG_TARGETS.map(language => [language, value])
-  );
+  return Object.fromEntries(LANG_TARGETS.map((lang) => [lang, value]));
 }
 
-function emptyTranslations(record) {
+function emptyTranslationRecord(record) {
   return {
     title: originalLanguageMap(record.title),
     summary: originalLanguageMap(record.summary),
@@ -130,92 +143,101 @@ function emptyTranslations(record) {
   };
 }
 
-// Supports old news.json files that did not save sourceRecord.
-function getOriginalRecord(item) {
-  if (
-    item.sourceRecord &&
-    item.sourceRecord.title &&
-    item.sourceRecord.summary &&
-    item.sourceRecord.content
-  ) {
-    return item.sourceRecord;
+function splitUtf8(text, maxBytes = MYMEMORY_MAX_BYTES) {
+  const chunks = [];
+  let current = "";
+
+  for (const char of String(text || "")) {
+    if (Buffer.byteLength(current + char, "utf8") > maxBytes && current) {
+      chunks.push(current);
+      current = "";
+    }
+    current += char;
   }
 
-  const getOriginal = (field) => {
-    const value = item[field];
-
-    if (typeof value === "string") return value;
-
-    if (value && typeof value.it === "string") {
-      return value.it;
-    }
-
-    if (value && typeof value.en === "string") {
-      return value.en;
-    }
-
-    if (value && typeof value.ku === "string") {
-      return value.ku;
-    }
-
-    return "";
-  };
-
-  const title = getOriginal("title");
-  const summary = getOriginal("summary") || title;
-  const content = getOriginal("content") || summary;
-
-  if (!title && !summary && !content) return null;
-
-  return {
-    title,
-    summary,
-    content: content.slice(0, MAX_TRANSLATE_CONTENT_CHARS)
-  };
+  if (current) chunks.push(current);
+  return chunks;
 }
 
-function hasBadiniTranslation(item) {
-  if (item.translationStatus?.badini === true) {
-    return true;
+async function myMemoryTranslateText(text, targetCode) {
+  const original = String(text || "");
+  if (!original.trim()) return original;
+
+  const chunks = splitUtf8(original);
+  const translatedChunks = [];
+
+  for (const chunk of chunks) {
+    const bytes = Buffer.byteLength(chunk, "utf8");
+
+    if (myMemoryCharsUsed + bytes > MYMEMORY_DAILY_LIMIT) {
+      const error = new Error(
+        "MyMemory daily character limit reached; remaining translations stay queued."
+      );
+      error.code = "MYMEMORY_DAILY_LIMIT";
+      throw error;
+    }
+
+    const url = new URL("https://api.mymemory.translated.net/get");
+    url.searchParams.set("q", chunk);
+    url.searchParams.set("langpair", `it|${targetCode}`);
+    url.searchParams.set("mt", "1");
+
+    if (process.env.MYMEMORY_EMAIL) {
+      url.searchParams.set("de", process.env.MYMEMORY_EMAIL);
+    }
+
+    const response = await fetch(url, {
+      headers: { "User-Agent": "NOZHDAR-NewsBot/1.0" }
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || Number(data.responseStatus) !== 200) {
+      throw new Error(
+        `MyMemory ${response.status || data.responseStatus}: ${data.responseDetails || "translation failed"}`
+      );
+    }
+
+    const translated = data?.responseData?.translatedText;
+
+    if (typeof translated !== "string" || !translated.trim()) {
+      throw new Error("MyMemory returned an empty translation.");
+    }
+
+    translatedChunks.push(decodeEntities(translated));
+    myMemoryCharsUsed += bytes;
+
+    await new Promise((resolve) => setTimeout(resolve, 250));
   }
 
-  const original = getOriginalRecord(item);
-  if (!original) return false;
-
-  const badiniTitle = item.title?.bad;
-
-  return (
-    typeof badiniTitle === "string" &&
-    badiniTitle.trim() !== "" &&
-    badiniTitle.trim() !== original.title.trim()
-  );
+  return translatedChunks.join(" ");
 }
 
-function parseModelJson(raw) {
-  const text = String(raw || "")
-    .replace(/^```(?:json)?\s*/i, "")
-    .replace(/\s*```$/i, "")
-    .trim();
+async function translateWithMyMemory(item, languageKey) {
+  const targetCode = MYMEMORY_LANGUAGES[languageKey];
 
-  try {
-    return JSON.parse(text);
-  } catch {
-    const match = text.match(/\[[\s\S]*\]/);
-
-    if (match) return JSON.parse(match[0]);
-
-    throw new Error("Gemini returned invalid JSON.");
+  if (!targetCode) {
+    throw new Error(`No MyMemory language mapping for ${languageKey}`);
   }
+
+  for (const field of ["title", "summary", "content"]) {
+    item[field][languageKey] = await myMemoryTranslateText(
+      item.sourceRecord[field],
+      targetCode
+    );
+  }
+
+  item.translationStatus.mymemory[languageKey] = true;
 }
 
-function isQuotaError(error) {
+function isGeminiQuotaError(error) {
   return /429|RESOURCE_EXHAUSTED|quota|rate.?limit/i.test(
     String(error?.message || error)
   );
 }
 
-function retryDelayMs(message) {
-  const match = String(message || "").match(
+function retryDelayMs(errorMessage) {
+  const match = String(errorMessage || "").match(
     /retry in\s+(?:(\d+)h)?\s*(?:(\d+)m)?\s*(?:(\d+(?:\.\d+)?)s)?/i
   );
 
@@ -224,195 +246,163 @@ function retryDelayMs(message) {
   const hours = Number(match[1] || 0);
   const minutes = Number(match[2] || 0);
   const seconds = Number(match[3] || 0);
-
-  const total =
-    ((hours * 60 + minutes) * 60 + seconds) * 1000;
+  const total = ((hours * 60 + minutes) * 60 + seconds) * 1000;
 
   return total > 0 ? total : null;
 }
 
-let previousData = {
-  items: [],
-  updatedAt: null,
-  badiniQuotaResetAt: null
-};
+function parseJsonFromModel(rawText) {
+  const cleaned = String(rawText || "")
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/i, "")
+    .trim();
 
-try {
-  previousData = JSON.parse(
-    await fs.readFile(NEWS_FILE, "utf8")
-  );
-} catch {
-  console.log("No previous news.json found. Starting fresh.");
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    const match = cleaned.match(/\[[\s\S]*\]/);
+    if (match) return JSON.parse(match[0]);
+    throw new Error("Gemini returned invalid JSON.");
+  }
 }
 
-const previousItems = Array.isArray(previousData.items)
-  ? previousData.items
-  : [];
+async function translateBadiniBatch(items, startIndex) {
+  const key = process.env.GEMINI_API_KEY;
 
-const previousById = new Map(
-  previousItems.map(item => [item.id, item])
-);
+  if (!key) {
+    throw new Error("Missing GEMINI_API_KEY GitHub secret.");
+  }
 
-const previousByLink = new Map(
-  previousItems
-    .filter(item => item.link)
-    .map(item => [item.link, item])
-);
+  const input = items.map((item, index) => ({
+    index: startIndex + index,
+    title: item.sourceRecord.title,
+    summary: item.sourceRecord.summary,
+    content: item.sourceRecord.content.slice(0, GEMINI_CONTENT_CHARS)
+  }));
 
-// Save data regularly so successful translations are not lost.
-async function saveNews(items, extra = {}) {
-  await fs.mkdir(
-    new URL("../public/data/", import.meta.url),
-    { recursive: true }
-  );
+  const prompt = [
+    "Translate these Italian news items into Badini Kurdish only.",
+    "Use natural Badini Kurdish in Arabic-based Kurdish script, not Sorani and not Kurmanji.",
+    "Preserve all names, places, dates, numbers, legal terms and facts. Do not invent information.",
+    "The summary should be concise and informative. Keep the content faithful to the source.",
+    "Return ONLY valid JSON: an array with one object per input item.",
+    "Each object must contain index (number), title (string), summary (string), content (string).",
+    "INPUT:",
+    JSON.stringify(input)
+  ].join("\n");
 
-  await fs.writeFile(
-    NEWS_FILE,
-    JSON.stringify(
-      {
-        ...previousData,
-        ...extra,
-        updatedAt: new Date().toISOString(),
-        items
-      },
-      null,
-      2
-    )
-  );
+  const url =
+    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(GEMINI_MODEL)}:generateContent?key=${encodeURIComponent(key)}`;
 
-  previousData.items = items;
-  previousData = {
-    ...previousData,
-    ...extra,
-    updatedAt: new Date().toISOString()
-  };
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.1,
+        responseMimeType: "application/json"
+      }
+    })
+  });
+
+  if (!response.ok) {
+    const details = await response.text().catch(() => "");
+    throw new Error(`Gemini API ${response.status}: ${details.slice(0, 700)}`);
+  }
+
+  const data = await response.json();
+  const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || "[]";
+  const parsed = parseJsonFromModel(raw);
+
+  if (!Array.isArray(parsed)) {
+    throw new Error("Gemini response was not an array.");
+  }
+
+  for (let index = 0; index < items.length; index++) {
+    const wantedIndex = startIndex + index;
+    const found =
+      parsed.find((entry) => Number(entry?.index) === wantedIndex) || parsed[index];
+
+    if (
+      !found ||
+      typeof found.title !== "string" || !found.title.trim() ||
+      typeof found.summary !== "string" || !found.summary.trim() ||
+      typeof found.content !== "string" || !found.content.trim()
+    ) {
+      throw new Error(
+        `Gemini omitted one or more Badini fields for story ${wantedIndex}.`
+      );
+    }
+
+    items[index].title.bad = clean(found.title);
+    items[index].summary.bad = clean(found.summary);
+    items[index].content.bad = clean(found.content);
+  }
 }
-
-// ------------------------------
-// 1. FETCH ALL NEWS
-// ------------------------------
 
 const collected = [];
-const seenLinks = new Set();
-const seenTitles = new Set();
+const seen = new Set();
 
 for (const source of sources) {
   try {
-    console.log(`Fetching: ${source.name}`);
+    const feed = await parser.parseURL(googleFeed(queryFor(source)));
 
-    const feed = await parser.parseURL(
-      googleFeed(queryFor(source))
-    );
-
-    for (
-      const item of (feed.items || []).slice(0, MAX_PER_SOURCE)
-    ) {
+    for (const item of (feed.items || []).slice(0, MAX_PER_SOURCE)) {
       const title = clean(item.title);
       const link = String(item.link || "").trim();
 
       if (!title || !link) continue;
 
-      const titleKey = title.toLowerCase().slice(0, 150);
-      const linkKey = link.toLowerCase();
+      const dedupeKey = title.toLowerCase().slice(0, 150);
 
-      if (
-        seenLinks.has(linkKey) ||
-        seenTitles.has(titleKey)
-      ) {
-        continue;
-      }
+      if (seen.has(dedupeKey)) continue;
+      seen.add(dedupeKey);
 
-      seenLinks.add(linkKey);
-      seenTitles.add(titleKey);
-
-      let content = clean(
-        item.contentSnippet ||
-        item.content ||
-        item.summary ||
-        ""
-      );
-
-      let image = String(
-        item.enclosure?.url || ""
-      ).trim();
-
+      let content = clean(item.contentSnippet || item.content || item.summary || "");
+      let image = String(item.enclosure?.url || "").trim();
       let resolvedLink = link;
 
       try {
         const article = await extract(link, {
-          headers: {
-            "User-Agent": "Mozilla/5.0 NOZHDAR-NewsBot"
-          }
+          headers: { "User-Agent": "Mozilla/5.0 NOZHDAR-NewsBot" }
         });
 
         if (article) {
           resolvedLink = article.url || link;
-
-          const extracted = clean(
-            article.content ||
-            article.description ||
-            ""
-          );
+          const extracted = clean(article.content || article.description || "");
 
           if (extracted) {
             content = extracted.slice(0, MAX_ARTICLE_CHARS);
           }
 
-          image = String(
-            article.image ||
-            article.images?.[0] ||
-            image
-          ).trim();
+          image = String(article.image || article.images?.[0] || image).trim();
         }
       } catch {
-        // Keep RSS content if article extraction fails.
+        // Keep RSS text if the publisher blocks article extraction.
       }
 
       if (!content) content = title;
 
-      const summary = clean(
-        item.contentSnippet || content
-      ).slice(0, 420);
-
-      const publishedAt = dateISO(
-        item.isoDate || item.pubDate
-      );
-
-      const special =
-        source.region === "italia-immigrazione";
-
-      const id =
-        `${source.region}-` +
-        Buffer.from(titleKey)
-          .toString("base64url")
-          .slice(0, 18);
+      const summary = clean(item.contentSnippet || content).slice(0, 420);
+      const publishedAt = dateISO(item.isoDate || item.pubDate);
+      const special = source.region === "italia-immigrazione";
 
       collected.push({
-        id,
+        id: `${source.region}-${Buffer.from(dedupeKey).toString("base64url").slice(0, 18)}`,
         region: source.region,
         regionName: source.regionName,
-        category: special
-          ? "immigration-law"
-          : "local",
-        section: special
-          ? "italia-immigrazione"
-          : "regional",
+        category: special ? "immigration-law" : "local",
+        section: special ? "italia-immigrazione" : "regional",
         source: source.name,
         sourceDomain: source.domain,
         sourceType: source.type,
-        official:
-          source.type === "official" ||
-          (
-            source.type === "tv" &&
-            String(source.domain).includes("rainews.it")
-          ),
+        official: source.type === "official" ||
+          (source.type === "tv" && String(source.domain).includes("rainews.it")),
         sourceRecord: {
           title,
           summary,
-          content: content.slice(
-            0,
-            MAX_TRANSLATE_CONTENT_CHARS
-          )
+          content: content.slice(0, MAX_TRANSLATE_CONTENT_CHARS)
         },
         image,
         link: resolvedLink,
@@ -422,35 +412,22 @@ for (const source of sources) {
     }
   } catch (error) {
     console.warn(
-      `Source skipped: ${source.name}: ${error.message}`
+      `Source skipped: ${source.name} (${source.domain}): ${error.message}`
     );
   }
 }
 
-// ------------------------------
-// 2. MERGE OLD AND NEW NEWS
-// ------------------------------
+const output = collected.map((entry) => {
+  const previous = previousById.get(entry.id);
+  const baseTranslations = emptyTranslationRecord(entry.sourceRecord);
 
-const outputMap = new Map();
-
-for (const entry of collected) {
-  const previous =
-    previousById.get(entry.id) ||
-    previousByLink.get(entry.link);
-
-  const original = entry.sourceRecord;
-  const base = emptyTranslations(original);
-
-  const copyLanguageMap = (field) => {
-    const map = { ...base[field] };
+  const copyPreviousLanguageMap = (field) => {
+    const map = { ...baseTranslations[field] };
 
     for (const language of LANG_TARGETS) {
       const oldValue = previous?.[field]?.[language];
 
-      if (
-        typeof oldValue === "string" &&
-        oldValue.trim()
-      ) {
+      if (typeof oldValue === "string" && oldValue.trim()) {
         map[language] = oldValue;
       }
     }
@@ -458,431 +435,219 @@ for (const entry of collected) {
     return map;
   };
 
-  const item = {
-    ...entry,
-    title: copyLanguageMap("title"),
-    summary: copyLanguageMap("summary"),
-    content: copyLanguageMap("content"),
+  return {
+    id: entry.id,
+    region: entry.region,
+    regionName: entry.regionName,
+    category: entry.category,
+    section: entry.section,
+    source: entry.source,
+    sourceDomain: entry.sourceDomain,
+    sourceType: entry.sourceType,
+    official: entry.official,
+    title: copyPreviousLanguageMap("title"),
+    summary: copyPreviousLanguageMap("summary"),
+    content: copyPreviousLanguageMap("content"),
     image: entry.image || previous?.image || "",
-    sourceRecord: original,
+    link: entry.link,
+    date: entry.date,
+    pubDate: entry.pubDate,
+    sourceRecord: entry.sourceRecord,
     translationStatus: {
-      azure: {
-        ...(previous?.translationStatus?.azure || {})
+      mymemory: {
+        ...(previous?.translationStatus?.mymemory || {}),
+        it: true
       },
-      badini: hasBadiniTranslation(previous || {})
+      badini: previous?.translationStatus?.badini === true
     }
   };
+});
 
-  outputMap.set(item.id, item);
-}
+// Keep already-saved stories even if they are older than seven days
+// whenever any translation is still pending.
+const fetchedIds = new Set(output.map((item) => item.id));
+const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
 
-// Keep old stories even if a source temporarily removes them.
-// Do not delete pending Badini translations.
-const fetchedIds = new Set(
-  [...outputMap.values()].map(item => item.id)
-);
+for (const previous of previousItems) {
+  if (fetchedIds.has(previous.id)) continue;
 
-const sevenDaysAgo =
-  Date.now() - 7 * 24 * 60 * 60 * 1000;
-
-for (const oldItem of previousItems) {
-  if (fetchedIds.has(oldItem.id)) continue;
-
-  const oldDate = new Date(
-    oldItem.date || oldItem.pubDate || 0
+  const previousDate = new Date(
+    previous.date || previous.pubDate || 0
   ).getTime();
 
-  const original = getOriginalRecord(oldItem);
-
-  const isPendingBadini =
-    original && !hasBadiniTranslation(oldItem);
+  const stillPending =
+    previous.translationStatus?.badini !== true ||
+    Object.keys(MYMEMORY_LANGUAGES).some(
+      (lang) => previous.translationStatus?.mymemory?.[lang] !== true
+    );
 
   if (
-    (!Number.isFinite(oldDate) || oldDate < sevenDaysAgo) &&
-    !isPendingBadini
+    (!Number.isFinite(previousDate) || previousDate < sevenDaysAgo) &&
+    !stillPending
   ) {
     continue;
   }
 
-  const migrated = {
-    ...oldItem,
-    sourceRecord: original || oldItem.sourceRecord || null,
-    translationStatus: {
-      azure: {
-        ...(oldItem.translationStatus?.azure || {})
-      },
-      badini: hasBadiniTranslation(oldItem)
-    }
-  };
-
-  outputMap.set(migrated.id, migrated);
+  output.push(previous);
 }
 
-const output = [...outputMap.values()];
+const translatableItems = output.filter((item) => item.sourceRecord);
 
-output.sort(
-  (a, b) => new Date(b.date) - new Date(a.date)
-);
+// MyMemory handles non-Badini languages without an Azure account or bank card.
+const todayUtc = new Date().toISOString().slice(0, 10);
 
-console.log(`Collected and retained ${output.length} stories.`);
+if (myMemoryUsageDate !== todayUtc) {
+  myMemoryUsageDate = todayUtc;
+  myMemoryCharsUsed = 0;
+}
 
-// Save the original news before starting translation.
-await saveNews(output);
+let myMemoryCompleted = 0;
+let myMemoryStoppedAtLimit = false;
 
-// ------------------------------
-// 3. MICROSOFT AZURE TRANSLATION
-// ------------------------------
-
-async function azureTranslateBatch(texts, targetCode) {
-  const key = process.env.AZURE_TRANSLATOR_KEY;
-  const region = process.env.AZURE_TRANSLATOR_REGION;
-
-  if (!key || !region) {
-    throw new Error(
-      "Azure Translator key or region is missing."
-    );
-  }
-
-  const endpoint =
-    process.env.AZURE_TRANSLATOR_ENDPOINT ||
-    "https://api.cognitive.microsofttranslator.com";
-
-  const url = new URL(
-    `${endpoint.replace(/\/$/, "")}/translate`
+for (const languageKey of Object.keys(MYMEMORY_LANGUAGES)) {
+  const pending = translatableItems.filter(
+    (item) => item.translationStatus?.mymemory?.[languageKey] !== true
   );
 
-  url.searchParams.set("api-version", "3.0");
-  url.searchParams.set("from", "it");
-  url.searchParams.set("to", targetCode);
+  for (const item of pending) {
+    try {
+      await translateWithMyMemory(item, languageKey);
+      myMemoryCompleted++;
 
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Ocp-Apim-Subscription-Key": key,
-      "Ocp-Apim-Subscription-Region": region,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(
-      texts.map(Text => ({ Text }))
-    )
-  });
-
-  if (!response.ok) {
-    const details = await response.text();
-
-    throw new Error(
-      `Azure ${response.status}: ${details.slice(0, 500)}`
-    );
-  }
-
-  const data = await response.json();
-
-  if (!Array.isArray(data) || data.length !== texts.length) {
-    throw new Error("Azure returned an incomplete translation batch.");
-  }
-
-  return data.map((item, index) => {
-    const translated = clean(
-      item?.translations?.[0]?.text || ""
-    );
-
-    if (!translated) {
-      throw new Error("Azure returned an empty translation.");
-    }
-
-    return translated;
-  });
-}
-
-async function translateWithAzure(items, languageKey) {
-  const targetCode = AZURE_LANGUAGES[languageKey];
-
-  if (!targetCode) return;
-
-  const slots = [];
-
-  for (const item of items) {
-    for (const field of ["title", "summary", "content"]) {
-      slots.push({
-        item,
-        field,
-        text: item.sourceRecord[field]
-      });
-    }
-  }
-
-  // Azure accepts batches of text objects.
-  const BATCH_SIZE = 80;
-
-  for (
-    let start = 0;
-    start < slots.length;
-    start += BATCH_SIZE
-  ) {
-    const batch = slots.slice(
-      start,
-      start + BATCH_SIZE
-    );
-
-    const translated = await azureTranslateBatch(
-      batch.map(slot => slot.text),
-      targetCode
-    );
-
-    for (let i = 0; i < batch.length; i++) {
-      batch[i].item[batch[i].field][languageKey] =
-        translated[i];
-    }
-  }
-}
-
-for (const languageKey of Object.keys(AZURE_LANGUAGES)) {
-  const pending = output.filter(item =>
-    item.sourceRecord &&
-    item.translationStatus?.azure?.[languageKey] !== true
-  );
-
-  if (!pending.length) continue;
-
-  try {
-    console.log(
-      `Azure ${languageKey}: ${pending.length} stories pending.`
-    );
-
-    await translateWithAzure(pending, languageKey);
-
-    for (const item of pending) {
-      item.translationStatus.azure[languageKey] = true;
-    }
-
-    await saveNews(output);
-
-    console.log(`Azure completed: ${languageKey}`);
-  } catch (error) {
-    console.warn(
-      `Azure ${languageKey} failed: ${error.message}`
-    );
-  }
-}
-
-// ------------------------------
-// 4. GEMINI BADINI TRANSLATION
-// ------------------------------
-
-async function translateBadiniBatch(items) {
-  const key = process.env.GEMINI_API_KEY;
-
-  if (!key) {
-    throw new Error("GEMINI_API_KEY is missing.");
-  }
-
-  const input = items.map((item, index) => ({
-    index,
-    title: item.sourceRecord.title,
-    summary: item.sourceRecord.summary,
-    content: item.sourceRecord.content.slice(
-      0,
-      GEMINI_CONTENT_CHARS
-    )
-  }));
-
-  const prompt = [
-    "You are a professional Badini Kurdish news translator.",
-    "Translate every supplied news item from Italian into Badini Kurdish.",
-    "Use natural Badini dialect spoken in Duhok and the Badinan region.",
-    "Write in Kurdish Arabic-based script.",
-    "Do NOT use Sorani dialect.",
-    "Do NOT use standard Kurmanji Latin script.",
-    "Keep the original meaning and all factual details.",
-    "Preserve names, places, dates, numbers and legal terminology.",
-    "Never invent facts or add information.",
-    "Return ONLY valid JSON.",
-    "Return one object for every input item.",
-    "Each object must contain index, title, summary and content.",
-    "All four fields must be strings.",
-    "INPUT:",
-    JSON.stringify(input)
-  ].join("\n");
-
-  const url =
-    `https://generativelanguage.googleapis.com/v1beta/models/` +
-    `${encodeURIComponent(GEMINI_MODEL)}:generateContent`;
-
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-goog-api-key": key
-    },
-    body: JSON.stringify({
-      contents: [
-        {
-          parts: [{ text: prompt }]
-        }
-      ],
-      generationConfig: {
-        temperature: 0.1,
-        responseMimeType: "application/json"
-      }
-    })
-  });
-
-  if (!response.ok) {
-    const details = await response.text();
-
-    throw new Error(
-      `Gemini API ${response.status}: ${details.slice(0, 900)}`
-    );
-  }
-
-  const data = await response.json();
-
-  const raw =
-    data?.candidates?.[0]?.content?.parts
-      ?.map(part => part.text || "")
-      .join("") || "";
-
-  const parsed = parseModelJson(raw);
-
-  if (!Array.isArray(parsed)) {
-    throw new Error("Gemini response is not an array.");
-  }
-
-  const translatedByIndex = new Map(
-    parsed.map(item => [Number(item.index), item])
-  );
-
-  for (let index = 0; index < items.length; index++) {
-    const translated = translatedByIndex.get(index);
-
-    if (
-      !translated ||
-      typeof translated.title !== "string" ||
-      !translated.title.trim() ||
-      typeof translated.summary !== "string" ||
-      !translated.summary.trim() ||
-      typeof translated.content !== "string" ||
-      !translated.content.trim()
-    ) {
-      throw new Error(
-        `Gemini did not translate all fields for item ${index + 1}.`
+      // Save after each story so a timeout cannot discard completed work.
+      await fs.mkdir(
+        new URL("../public/data/", import.meta.url),
+        { recursive: true }
       );
-    }
 
-    items[index].title.bad = clean(translated.title);
-    items[index].summary.bad = clean(translated.summary);
-    items[index].content.bad = clean(translated.content);
+      await fs.writeFile(
+        NEWS_FILE,
+        JSON.stringify({
+          updatedAt: new Date().toISOString(),
+          badiniRequestTimestamps,
+          badiniQuotaResetAt,
+          myMemoryUsageDate,
+          myMemoryCharsUsed,
+          items: output
+        }, null, 2)
+      );
+    } catch (error) {
+      console.warn(`MyMemory paused for ${languageKey}: ${error.message}`);
+
+      if (error.code === "MYMEMORY_DAILY_LIMIT") {
+        myMemoryStoppedAtLimit = true;
+      }
+
+      break;
+    }
   }
+
+  if (myMemoryStoppedAtLimit) break;
 }
 
-// All stories without a completed Badini translation.
-const pendingBadini = output.filter(item =>
-  item.sourceRecord &&
-  !hasBadiniTranslation(item)
+// Gemini is used only for Badini.
+const pendingBadini = translatableItems.filter(
+  (item) => item.translationStatus?.badini !== true && item.sourceRecord
 );
 
-let badiniTranslated = 0;
-let badiniStoppedByQuota = false;
+let badiniSuccess = 0;
+let badiniRequestsThisRun = 0;
+const now = Date.now();
 
-const savedResetTime = previousData.badiniQuotaResetAt
-  ? new Date(previousData.badiniQuotaResetAt).getTime()
+let recentBadiniRequests = badiniRequestTimestamps.filter(
+  (timestamp) =>
+    timestamp > now - GEMINI_REQUEST_WINDOW_MS && timestamp <= now
+);
+
+const savedResetTime = badiniQuotaResetAt
+  ? new Date(badiniQuotaResetAt).getTime()
   : 0;
 
-if (savedResetTime > Date.now()) {
+if (savedResetTime > now) {
   console.log(
-    `Gemini is paused until ${new Date(savedResetTime).toISOString()}`
+    `Gemini Badini is paused until ${new Date(savedResetTime).toISOString()} after a quota response.`
   );
 } else {
+  badiniQuotaResetAt = null;
+
   for (
     let start = 0;
     start < pendingBadini.length;
     start += GEMINI_BATCH_SIZE
   ) {
-    const batch = pendingBadini.slice(
-      start,
-      start + GEMINI_BATCH_SIZE
-    );
+    if (recentBadiniRequests.length >= GEMINI_MAX_REQUESTS_24H) {
+      console.log(
+        `Gemini safety limit reached: ${recentBadiniRequests.length}/${GEMINI_MAX_REQUESTS_24H}. Remaining Badini stories stay pending.`
+      );
+      break;
+    }
+
+    const batch = pendingBadini.slice(start, start + GEMINI_BATCH_SIZE);
+
+    recentBadiniRequests.push(Date.now());
+    badiniRequestsThisRun++;
 
     try {
-      console.log(
-        `Gemini Badini: ${start + 1}-${start + batch.length} ` +
-        `of ${pendingBadini.length}`
-      );
-
-      await translateBadiniBatch(batch);
+      await translateBadiniBatch(batch, start);
 
       for (const item of batch) {
         item.translationStatus.badini = true;
       }
 
-      badiniTranslated += batch.length;
-
-      // Save after EVERY successful batch.
-      await saveNews(output, {
-        badiniQuotaResetAt: null
-      });
+      badiniSuccess += batch.length;
 
       console.log(
-        `Badini completed: ${badiniTranslated}/${pendingBadini.length}`
+        `Gemini Badini translated: ${Math.min(start + batch.length, pendingBadini.length)}/${pendingBadini.length}`
       );
     } catch (error) {
       console.warn(
-        `Badini batch failed: ${error.message}`
+        `Badini batch ${start + 1}-${start + batch.length} skipped: ${error.message}`
       );
 
-      if (isQuotaError(error)) {
+      if (isGeminiQuotaError(error)) {
         const delay =
-          retryDelayMs(error.message) ||
-          6 * 60 * 60 * 1000;
+          retryDelayMs(error.message) || 12 * 60 * 60 * 1000;
 
-        const resetAt = new Date(
-          Date.now() + delay
-        ).toISOString();
-
-        await saveNews(output, {
-          badiniQuotaResetAt: resetAt
-        });
+        badiniQuotaResetAt = new Date(Date.now() + delay).toISOString();
 
         console.warn(
-          `Gemini quota reached. Pending stories are saved. ` +
-          `Retry after ${resetAt}.`
+          `Gemini quota reached. Pausing until ${badiniQuotaResetAt}; remaining stories will be retried later.`
         );
 
-        badiniStoppedByQuota = true;
         break;
       }
-
-      // If one batch fails, stop here.
-      // The failed and remaining stories stay pending for the next run.
-      break;
     }
   }
 }
 
-// ------------------------------
-// 5. FINAL SAVE
-// ------------------------------
+output.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-output.sort(
-  (a, b) => new Date(b.date) - new Date(a.date)
+await fs.mkdir(
+  new URL("../public/data/", import.meta.url),
+  { recursive: true }
 );
 
-await saveNews(output);
+await fs.writeFile(
+  NEWS_FILE,
+  JSON.stringify({
+    updatedAt: new Date().toISOString(),
+    badiniRequestTimestamps: recentBadiniRequests,
+    badiniQuotaResetAt,
+    myMemoryUsageDate,
+    myMemoryCharsUsed,
+    items: output
+  }, null, 2)
+);
 
 await fs.writeFile(
-  REGIONS_FILE,
+  new URL("../public/data/regions.json", import.meta.url),
   JSON.stringify(regions, null, 2)
 );
 
-const remainingBadini = output.filter(item =>
-  item.sourceRecord &&
-  !hasBadiniTranslation(item)
-).length;
-
-console.log("----------------------------------");
-console.log("NOZHDAR NEWS UPDATE COMPLETED");
-console.log(`Total saved stories: ${output.length}`);
-console.log(`Badini translated this run: ${badiniTranslated}`);
-console.log(`Badini still pending: ${remainingBadini}`);
-console.log(`Stopped by Gemini quota: ${badiniStoppedByQuota}`);
-console.log("----------------------------------");
+console.log(
+  `Saved ${output.length} stories. MyMemory languages: ${Object.keys(MYMEMORY_LANGUAGES).length}; ` +
+  `MyMemory stories translated this run: ${myMemoryCompleted}; daily characters: ${myMemoryCharsUsed}/${MYMEMORY_DAILY_LIMIT}; ` +
+  `Badini translated this run: ${badiniSuccess}/${pendingBadini.length} pending; ` +
+  `Gemini requests this run: ${badiniRequestsThisRun}; ` +
+  `rolling 24h requests: ${recentBadiniRequests.length}/${GEMINI_MAX_REQUESTS_24H}.`
+);
