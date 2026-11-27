@@ -9,10 +9,14 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: nozhdar-news-update-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   update-news:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
 
     steps:
       - name: Checkout repository
@@ -25,24 +29,30 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Install dependencies
-        run: npm install rss-parser
+      - name: Install news dependencies
+        run: npm install rss-parser @extractus/article-extractor
 
-      - name: Fetch and translate news
+      - name: Fetch and save original news
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODELS: gemini-3.8-flash,gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite
-          MAX_NEW_TRANSLATIONS: '9'
+          NEWS_MODE: fetch
           MAX_ITEMS_PER_FEED: '6'
+        run: node scripts/fetch-news.js
+
+      - name: Translate saved news (optional)
+        env:
+          NEWS_MODE: translate
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODELS: gemini-3.8-flash,gemini-3.6-flash
+          MAX_NEW_TRANSLATIONS: '9'
         run: node scripts/fetch-news.js
 
       - name: Commit and push updated news
         run: |
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          git add public/data/news.json
+          git add public/data/news.json public/data/regions.json
           if git diff --staged --quiet; then
-            echo "No changes to public/data/news.json"
+            echo "No news data changes to commit"
           else
             git commit -m "Update news"
             git push
