@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-27T23:48:50.705Z",
+  "updatedAt": "2026-11-27T23:58:36.931Z",
   "badiniRequestTimestamps": [],
   "badiniQuotaResetAt": "2026-11-28T08:00:00.011Z",
   "myMemoryUsageDate": "2026-11-27",
@@ -317,86 +317,6 @@
         "title": "Weekend a Genova e dintorni: Mercatino di San Nicola, Fiera di Natale, Pirati dei Caruggi, Anna Oxa, Fiera del Libro e altro - GenovaToday",
         "summary": "Weekend a Genova e dintorni: Mercatino di San Nicola, Fiera di Natale, Pirati dei Caruggi, Anna Oxa, Fiera del Libro e altro GenovaToday",
         "content": "Weekend a Genova e dintorni: Mercatino di San Nicola, Fiera di Natale, Pirati dei Caruggi, Anna Oxa, Fiera del Libro e altro GenovaToday"
-      },
-      "translationStatus": {
-        "mymemory": {
-          "it": true
-        },
-        "badini": false
-      }
-    },
-    {
-      "id": "lombardia-cmlzdWx0YXRpIGRlbG",
-      "region": "lombardia",
-      "regionName": "Lombardia",
-      "category": "local",
-      "section": "regional",
-      "source": "TGR Lombardia",
-      "sourceDomain": "rainews.it/tgr/lombardia",
-      "sourceType": "tv",
-      "official": true,
-      "title": {
-        "ku": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
-        "it": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
-        "en": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
-        "bad": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
-        "km": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
-        "ar": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
-        "ma": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
-        "tn": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
-        "dz": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
-        "tr": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
-        "fa": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
-        "sq": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
-        "ur": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
-        "hi": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
-        "bn": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
-        "ps": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews"
-      },
-      "summary": {
-        "ku": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "it": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "en": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "bad": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "km": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "ar": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "ma": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "tn": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "dz": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "tr": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "fa": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "sq": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "ur": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "hi": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "bn": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "ps": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews"
-      },
-      "content": {
-        "ku": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "it": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "en": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "bad": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "km": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "ar": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "ma": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "tn": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "dz": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "tr": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "fa": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "sq": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "ur": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "hi": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "bn": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "ps": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews"
-      },
-      "image": "",
-      "link": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxOX19KZDNpZVFoVTFEeGJ1SkFkenh4Y0VpektCb1ZwTW1BLUNudFFPZ1ZjcjYwSkl1NldfQmJhZnQ0Zy1adFpOZW9ENHIyVVp4TlBpc0gwY2d3blZBbEpFVlhZRnJ4aHNqU3d6c1ZMZm5lNGE1YXNsY3hIb015d24tNXUteUJVczhfamhQRTkxaXdweFNiQ3d2RTBPSWNaTmd2VFp6eF9LRG1LQQ?oc=5",
-      "date": "2026-11-27T21:22:11.000Z",
-      "pubDate": "2026-11-27T21:22:11.000Z",
-      "sourceRecord": {
-        "title": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
-        "summary": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
-        "content": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews"
       },
       "translationStatus": {
         "mymemory": {
@@ -3341,6 +3261,86 @@
         "ps": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale"
       },
       "image": "",
+      "link": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxNN203S1RPREt2b1RQck5nb1RqRndkR3d2NV93NjFJVHJRYWJBSWltWFJuSE5WZ09uc0RUNlItNUUtT1VvbFJEamJUUlBYT3U0bWdONHhWUXkwNmFOaDVySjY1X1ZPMFF2YkY3OG9qVlNRRHFqWXhJOTliWENHalNKeHVSSXNJcU8zbWhCa1ZKLXpkRjdUbDBJWHB1RnFNOU5RLXQ2THhLUC02VHgxOWNqYlBLbVo3eWVUVEpUaGU4OS1uZWY0YjBTM2FfZlRVc2NFd0Fqc3V4UFk2TGhKM1JERktRMWtTZEF2a0s3dXl30gHuAUFVX3lxTE03bTdLVE9ES3ZvVFByTmdvVGpGd2RHd3Y1X3c2MUlUclFhYkFJaW1YUm5ITlZnT25zRFQ2Ui01RS1PVW9sUkRqYlRSUFhPdTRtZ040eFZReTA2YU5oNXJKNjVfVk8wUXZiRjc4b2pWU1FEcWpZeEk5OWJYQ0dqU0p4dVJJc0lxTzNtaEJrVkotemRGN1RsMElYcHVGcU05TlEtdDZMeEtQLTZUeDE5Y2piUEttWjd5ZVRUSlRoZTg5LW5lZjRiMFMzYV9mVFVzY0V3QWpzdXhQWTZMaEozUkRGS1Exa1NkQXZrSzd1eXc?oc=5",
+      "date": "2026-11-27T17:47:52.000Z",
+      "pubDate": "2026-11-27T17:47:52.000Z",
+      "sourceRecord": {
+        "title": "Sanità ligure, confronto Bucci-sindacati: Fp Cgil e Uil Fp confermano lo sciopero per il 4 dicembre - Primocanale",
+        "summary": "Sanità ligure, confronto Bucci-sindacati: Fp Cgil e Uil Fp confermano lo sciopero per il 4 dicembre Primocanale",
+        "content": "Sanità ligure, confronto Bucci-sindacati: Fp Cgil e Uil Fp confermano lo sciopero per il 4 dicembre Primocanale"
+      },
+      "translationStatus": {
+        "mymemory": {
+          "it": true
+        },
+        "badini": false
+      }
+    },
+    {
+      "id": "liguria-c2FuaXTDoCBsaWd1cm",
+      "region": "liguria",
+      "regionName": "Liguria",
+      "category": "local",
+      "section": "regional",
+      "source": "Primocanale",
+      "sourceDomain": "primocanale.it",
+      "sourceType": "tv",
+      "official": false,
+      "title": {
+        "ku": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre - Primocanale",
+        "it": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre - Primocanale",
+        "en": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre - Primocanale",
+        "bad": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre - Primocanale",
+        "km": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre - Primocanale",
+        "ar": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre - Primocanale",
+        "ma": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre - Primocanale",
+        "tn": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre - Primocanale",
+        "dz": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre - Primocanale",
+        "tr": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre - Primocanale",
+        "fa": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre - Primocanale",
+        "sq": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre - Primocanale",
+        "ur": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre - Primocanale",
+        "hi": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre - Primocanale",
+        "bn": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre - Primocanale",
+        "ps": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre - Primocanale"
+      },
+      "summary": {
+        "ku": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "it": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "en": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "bad": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "km": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "ar": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "ma": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "tn": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "dz": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "tr": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "fa": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "sq": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "ur": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "hi": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "bn": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "ps": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale"
+      },
+      "content": {
+        "ku": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "it": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "en": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "bad": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "km": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "ar": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "ma": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "tn": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "dz": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "tr": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "fa": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "sq": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "ur": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "hi": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "bn": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale",
+        "ps": "Sanità ligure, confronto Bucci-sindacati su fondi e personale: presidio Cisl il 2 dicembre Primocanale"
+      },
+      "image": "",
       "link": "https://news.google.com/rss/articles/CBMi3AFBVV95cUxNUFc2LUZNNU9uT0RTUmtwXy0ya2ItMGlGR0NIOFhiZVhqVUhnQzVxbmlqQXZmaTVlVXZhVjJmV1llQWtYVHlJQnNvVl9laE9mY2h3dzVFcU5OSW1nQ2xpOVU2MUVoYWNKbUthazhmc1FPQVN3djdCTHo3b3Y1aXpBWWVsTFdURkdYSzJKX0pHbkp6ZEZfVVFCYjlWdkpyekl5ZWROZGk4REtscXRCc25RZ2djekh4YnowYjR6R3BQMUZIaTNZWWVMc2p6a3FrVDUycHlIb1dZYkFYM2FQ0gHiAUFVX3lxTE4yVWdYdXAyR2Z6YXczaTI0LV9xUWFhRXBONDB1cUp0bUdzY0JzVmtVdGwtRm1TbFNJLTQ0NEJ4RlpIRXlQWVpCRW42cnFWVGNldGF3TkFyQTdVUlhKeDYzMjF5c0ZSRGFCZmZROXVuMUV2NzM5eW9zSWVvb242RDFGd084aVRVaVQ2azBKTE9BcDRIcmgyMmk4MmtYOU9GNDJ3UUt4V1Z0YWpFcmF6eFh3UVJDc3RsSGpmRnp4TkM5RkNtNDVHSU9TUUpZVE9ZZTdOZXlCOUJhbFBxbHR5RFFrUHc?oc=5",
       "date": "2026-11-27T17:40:40.000Z",
       "pubDate": "2026-11-27T17:40:40.000Z",
@@ -5516,6 +5516,86 @@
       }
     },
     {
+      "id": "lombardia-cmlzdWx0YXRpIGRlbG",
+      "region": "lombardia",
+      "regionName": "Lombardia",
+      "category": "local",
+      "section": "regional",
+      "source": "TGR Lombardia",
+      "sourceDomain": "rainews.it/tgr/lombardia",
+      "sourceType": "tv",
+      "official": true,
+      "title": {
+        "ku": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
+        "it": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
+        "en": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
+        "bad": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
+        "km": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
+        "ar": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
+        "ma": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
+        "tn": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
+        "dz": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
+        "tr": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
+        "fa": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
+        "sq": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
+        "ur": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
+        "hi": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
+        "bn": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
+        "ps": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews"
+      },
+      "summary": {
+        "ku": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "it": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "en": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "bad": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "km": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "ar": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "ma": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "tn": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "dz": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "tr": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "fa": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "sq": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "ur": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "hi": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "bn": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "ps": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews"
+      },
+      "content": {
+        "ku": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "it": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "en": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "bad": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "km": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "ar": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "ma": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "tn": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "dz": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "tr": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "fa": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "sq": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "ur": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "hi": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "bn": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "ps": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews"
+      },
+      "image": "",
+      "link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOU2JPX0F6SkxfQ0h5eXdaQmtxcFpJdEdRYVI3S1pacmVIbmh6VGdkdEpEZWRFYTUzTHFDUWRsYlczajJ4OU9sb0lRYTRnUHYxNC10aUR5MmZWZ090Z3lmUDRjLTNzUTNhMEdPYk1mZFVGc05rb2NhbHRaWG1jbFpCMmZid1VpLUYtZXNpc2NqS05aeWk3RVdtNm0wUUpCeWs4dVhlejlPVQ?oc=5",
+      "date": "2026-11-27T15:03:48.000Z",
+      "pubDate": "2026-11-27T15:03:48.000Z",
+      "sourceRecord": {
+        "title": "Risultati della Ricerca per Tag - TGR Lombardia - RaiNews",
+        "summary": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews",
+        "content": "Risultati della Ricerca per Tag - TGR Lombardia RaiNews"
+      },
+      "translationStatus": {
+        "mymemory": {
+          "it": true
+        },
+        "badini": false
+      }
+    },
+    {
       "id": "puglia-cHJvZ2V0dGkgZGkgdm",
       "region": "puglia",
       "regionName": "Puglia",
@@ -6945,6 +7025,86 @@
         "title": "Il notiziario di Tgs, edizione del 27 novembre – ore 13.50 - Giornale di Sicilia",
         "summary": "Il notiziario di Tgs, edizione del 27 novembre – ore 13.50 Giornale di Sicilia",
         "content": "Il notiziario di Tgs, edizione del 27 novembre – ore 13.50 Giornale di Sicilia"
+      },
+      "translationStatus": {
+        "mymemory": {
+          "it": true
+        },
+        "badini": false
+      }
+    },
+    {
+      "id": "calabria-YW50b25pbyBtYW5nYW",
+      "region": "calabria",
+      "regionName": "Calabria",
+      "category": "local",
+      "section": "regional",
+      "source": "Gazzetta del Sud",
+      "sourceDomain": "gazzettadelsud.it",
+      "sourceType": "newspaper",
+      "official": false,
+      "title": {
+        "ku": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria - Gazzetta del Sud",
+        "it": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria - Gazzetta del Sud",
+        "en": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria - Gazzetta del Sud",
+        "bad": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria - Gazzetta del Sud",
+        "km": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria - Gazzetta del Sud",
+        "ar": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria - Gazzetta del Sud",
+        "ma": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria - Gazzetta del Sud",
+        "tn": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria - Gazzetta del Sud",
+        "dz": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria - Gazzetta del Sud",
+        "tr": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria - Gazzetta del Sud",
+        "fa": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria - Gazzetta del Sud",
+        "sq": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria - Gazzetta del Sud",
+        "ur": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria - Gazzetta del Sud",
+        "hi": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria - Gazzetta del Sud",
+        "bn": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria - Gazzetta del Sud",
+        "ps": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria - Gazzetta del Sud"
+      },
+      "summary": {
+        "ku": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "it": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "en": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "bad": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "km": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "ar": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "ma": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "tn": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "dz": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "tr": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "fa": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "sq": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "ur": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "hi": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "bn": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "ps": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud"
+      },
+      "content": {
+        "ku": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "it": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "en": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "bad": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "km": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "ar": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "ma": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "tn": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "dz": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "tr": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "fa": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "sq": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "ur": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "hi": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "bn": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "ps": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud"
+      },
+      "image": "",
+      "link": "https://news.google.com/rss/articles/CBMi9wFBVV95cUxPRlVkcWg4b1ZuZF9WN3FNSjhKVzhrbENLVU9kazluUWxUSXNkanNJY1k5c2k1NzFValh2OFhQU1lKWmxZcExaekJzMmRkNXUyUE0xUXdvbXJqM0tZTlZERUNiNDdBRjdDUWZhNVF6RjAtOWJpS2RRa1pzYlVubjhGQkRySHR0bDFwRWNTblZDTkc1X3BfWWZDN2t1b2NucVBja0JaWFM3ZW1sVk5XcHNjdGxDanBLaFNjeEYzU2UyalBQNm9tQVZmVmxXUmxMU2NadnRhTjBHSFVSZ3FIbUdlM3dNd0luQmNLZG9mS3hyVmpDeUJDRDRv?oc=5",
+      "date": "2026-11-27T14:04:12.000Z",
+      "pubDate": "2026-11-27T14:04:12.000Z",
+      "sourceRecord": {
+        "title": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria - Gazzetta del Sud",
+        "summary": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud",
+        "content": "Antonio Mangano nuovo segretario generale Filctem Cgil Calabria Gazzetta del Sud"
       },
       "translationStatus": {
         "mymemory": {
@@ -9893,8 +10053,8 @@
       },
       "image": "",
       "link": "https://news.google.com/rss/articles/CBMioAJBVV95cUxQdGlYX2dpLThCYVpsZy1JZzF5Ti1nLWkxd2NtbHE4VlNnUXdmaGF6N0hCWkpxZFFpVERBdHdodG1zTUFweENRNGdYSHdJVmtCWm50aDc3SEZNQlNDcEgzWmxELU9EMHVabHpGU285czR0V1lmRzRwSVM1SWJfMlEwNDhfc0NhMDRpVkExR3dOcnR5NldWQmxycTBJaWhXRmFfWWZ1RVRKT1ZjeWZkcUxfNXh6dzNUa3o5bjJPbjdPOHg4Y1E4ek1VOXlMSWFBOGVDaDA2UkFnM3ZuZlNHTE0tQmZpbG9hTTRBNURlVThrZlRkWko4clpNd0dEaWY1TmhHQU01YWxPQ2tzSzdRbThqTFJwUEYyQTRha09mR0NnclA?oc=5",
-      "date": "2026-11-27T11:45:24.000Z",
-      "pubDate": "2026-11-27T11:45:24.000Z",
+      "date": "2026-11-27T11:45:25.000Z",
+      "pubDate": "2026-11-27T11:45:25.000Z",
       "sourceRecord": {
         "title": "Disabilità, dalla Giunta 8 milioni di fondi europei. Proietti: “Più risorse per garantire autonomia, domiciliarità e sostegno alle famiglie - Corriere dell’Umbria",
         "summary": "Disabilità, dalla Giunta 8 milioni di fondi europei. Proietti: “Più risorse per garantire autonomia, domiciliarità e sostegno alle famiglie Corriere dell’Umbria",
@@ -10059,86 +10219,6 @@
         "title": "Campania, nuovo bando per la cultura: 602mila euro per i progetti, contributi fino a 60mila euro - Il Mattino",
         "summary": "Campania, nuovo bando per la cultura: 602mila euro per i progetti, contributi fino a 60mila euro Il Mattino",
         "content": "Campania, nuovo bando per la cultura: 602mila euro per i progetti, contributi fino a 60mila euro Il Mattino"
-      },
-      "translationStatus": {
-        "mymemory": {
-          "it": true
-        },
-        "badini": false
-      }
-    },
-    {
-      "id": "marche-bWlub3JpLCBkaXNhYm",
-      "region": "marche",
-      "regionName": "Marche",
-      "category": "local",
-      "section": "regional",
-      "source": "Corriere Adriatico",
-      "sourceDomain": "corriereadriatico.it",
-      "sourceType": "newspaper",
-      "official": false,
-      "title": {
-        "ku": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
-        "it": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
-        "en": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
-        "bad": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
-        "km": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
-        "ar": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
-        "ma": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
-        "tn": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
-        "dz": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
-        "tr": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
-        "fa": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
-        "sq": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
-        "ur": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
-        "hi": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
-        "bn": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
-        "ps": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico"
-      },
-      "summary": {
-        "ku": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "it": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "en": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "bad": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "km": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "ar": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "ma": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "tn": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "dz": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "tr": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "fa": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "sq": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "ur": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "hi": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "bn": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "ps": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico"
-      },
-      "content": {
-        "ku": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "it": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "en": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "bad": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "km": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "ar": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "ma": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "tn": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "dz": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "tr": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "fa": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "sq": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "ur": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "hi": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "bn": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "ps": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico"
-      },
-      "image": "",
-      "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOZnlJUEtoRThfeTZWMFJsZDlmOTd5alhaZGRKSFFoUWVEQ2RyTk9hZHI2a05Ia2pWX2lQY3pLYUVBUV80S2IwT3dac3Q1OUxEaTZjZi10c0xEWi1tQTZjcGlSWldHQWc2UlAtQjAweVduWFBua1FLa1NQWVN2c3N5UWZCUmY5MlJZcTl0QzgtSzdVaENxRzhleW5jdVd1eW1kekh0OU1FTHR2U1hpRlV6ZFNaM2ZqR2lnTjFocg?oc=5",
-      "date": "2026-11-27T11:29:53.000Z",
-      "pubDate": "2026-11-27T11:29:53.000Z",
-      "sourceRecord": {
-        "title": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
-        "summary": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
-        "content": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico"
       },
       "translationStatus": {
         "mymemory": {
@@ -12375,6 +12455,86 @@
         "title": "Legacoop Emilia-Romagna, il ricambio: Raffaella Curioni candidata a presidente - Il Resto del Carlino",
         "summary": "Legacoop Emilia-Romagna, il ricambio: Raffaella Curioni candidata a presidente Il Resto del Carlino",
         "content": "Legacoop Emilia-Romagna, il ricambio: Raffaella Curioni candidata a presidente Il Resto del Carlino"
+      },
+      "translationStatus": {
+        "mymemory": {
+          "it": true
+        },
+        "badini": false
+      }
+    },
+    {
+      "id": "toscana-bGF2b3JvLCBpbXByZX",
+      "region": "toscana",
+      "regionName": "Toscana",
+      "category": "local",
+      "section": "regional",
+      "source": "FirenzeToday",
+      "sourceDomain": "firenzetoday.it",
+      "sourceType": "digital",
+      "official": false,
+      "title": {
+        "ku": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina - FirenzeToday",
+        "it": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina - FirenzeToday",
+        "en": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina - FirenzeToday",
+        "bad": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina - FirenzeToday",
+        "km": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina - FirenzeToday",
+        "ar": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina - FirenzeToday",
+        "ma": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina - FirenzeToday",
+        "tn": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina - FirenzeToday",
+        "dz": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina - FirenzeToday",
+        "tr": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina - FirenzeToday",
+        "fa": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina - FirenzeToday",
+        "sq": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina - FirenzeToday",
+        "ur": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina - FirenzeToday",
+        "hi": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina - FirenzeToday",
+        "bn": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina - FirenzeToday",
+        "ps": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina - FirenzeToday"
+      },
+      "summary": {
+        "ku": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "it": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "en": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "bad": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "km": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "ar": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "ma": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "tn": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "dz": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "tr": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "fa": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "sq": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "ur": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "hi": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "bn": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "ps": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday"
+      },
+      "content": {
+        "ku": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "it": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "en": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "bad": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "km": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "ar": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "ma": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "tn": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "dz": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "tr": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "fa": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "sq": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "ur": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "hi": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "bn": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "ps": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday"
+      },
+      "image": "",
+      "link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQNENtVjFTUDdEaUdlNFk5cFVyN1lQYlp6ZVZuSWVneHZFMmMwWUtnUm9OUjNzaUhFeDFNM2lrejlFU2VQSmhOZHpQbnpqMk9vZXhWN2wwMDZHM0ZCSjBZNEk1aXNIc2lsQVBTRkhqZG90VTVIdTBNWm1XS09hVFBfZw?oc=5",
+      "date": "2026-11-27T09:00:00.000Z",
+      "pubDate": "2026-11-27T09:00:00.000Z",
+      "sourceRecord": {
+        "title": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina - FirenzeToday",
+        "summary": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday",
+        "content": "Lavoro, imprese e spazi verdi: cosa prevede il progetto aeroportuale per la Piana fiorentina FirenzeToday"
       },
       "translationStatus": {
         "mymemory": {
@@ -15345,6 +15505,86 @@
       }
     },
     {
+      "id": "marche-bWlub3JpLCBkaXNhYm",
+      "region": "marche",
+      "regionName": "Marche",
+      "category": "local",
+      "section": "regional",
+      "source": "Corriere Adriatico",
+      "sourceDomain": "corriereadriatico.it",
+      "sourceType": "newspaper",
+      "official": false,
+      "title": {
+        "ku": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
+        "it": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
+        "en": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
+        "bad": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
+        "km": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
+        "ar": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
+        "ma": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
+        "tn": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
+        "dz": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
+        "tr": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
+        "fa": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
+        "sq": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
+        "ur": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
+        "hi": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
+        "bn": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
+        "ps": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico"
+      },
+      "summary": {
+        "ku": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "it": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "en": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "bad": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "km": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "ar": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "ma": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "tn": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "dz": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "tr": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "fa": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "sq": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "ur": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "hi": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "bn": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "ps": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico"
+      },
+      "content": {
+        "ku": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "it": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "en": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "bad": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "km": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "ar": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "ma": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "tn": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "dz": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "tr": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "fa": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "sq": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "ur": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "hi": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "bn": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "ps": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico"
+      },
+      "image": "",
+      "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOZnlJUEtoRThfeTZWMFJsZDlmOTd5alhaZGRKSFFoUWVEQ2RyTk9hZHI2a05Ia2pWX2lQY3pLYUVBUV80S2IwT3dac3Q1OUxEaTZjZi10c0xEWi1tQTZjcGlSWldHQWc2UlAtQjAweVduWFBua1FLa1NQWVN2c3N5UWZCUmY5MlJZcTl0QzgtSzdVaENxRzhleW5jdVd1eW1kekh0OU1FTHR2U1hpRlV6ZFNaM2ZqR2lnTjFoctIBwgFBVV95cUxNMjdIVWFXNHNNZUVadkY3MkJlWU1UeUlZOVIyb29mR0FZRHBqRHcxbXZZR1I0S2hTRXlGdFZLaTNGOGo5NTU1T05WWW9ZQWVQQUlKMUpUc0YxeG5mbVd6YjNBXzRQNjFScW9YNGNaQ3BsMTd0dDdkUUl5d0NKTzVQWGVPdmxyd3JYb01ZUnpRTVZrXzB1Rm5WMFVxQ1RUM2g0WDdnVmVYNHBNNnNKdlduM1Q5ODZDWW5qNEZFT2RTX04yUQ?oc=5",
+      "date": "2026-11-27T03:05:03.000Z",
+      "pubDate": "2026-11-27T03:05:03.000Z",
+      "sourceRecord": {
+        "title": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili - Corriere Adriatico",
+        "summary": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico",
+        "content": "Minori, disabili e anziani: dalla Regione un pacchetto da 122 milioni a sostegno dei più fragili Corriere Adriatico"
+      },
+      "translationStatus": {
+        "mymemory": {
+          "it": true
+        },
+        "badini": false
+      }
+    },
+    {
       "id": "marche-cHJvdGVzdGUgZSBwaW",
       "region": "marche",
       "regionName": "Marche",
@@ -15416,6 +15656,86 @@
         "title": "Proteste e piazza da chiudere, il governatore Acquaroli sposta l’evento FdI “A testa alta” - Corriere Adriatico",
         "summary": "Proteste e piazza da chiudere, il governatore Acquaroli sposta l’evento FdI “A testa alta” Corriere Adriatico",
         "content": "Proteste e piazza da chiudere, il governatore Acquaroli sposta l’evento FdI “A testa alta” Corriere Adriatico"
+      },
+      "translationStatus": {
+        "mymemory": {
+          "it": true
+        },
+        "badini": false
+      }
+    },
+    {
+      "id": "calabria-Y2FsYWJyaWEsIG51b3",
+      "region": "calabria",
+      "regionName": "Calabria",
+      "category": "local",
+      "section": "regional",
+      "source": "Gazzetta del Sud",
+      "sourceDomain": "gazzettadelsud.it",
+      "sourceType": "newspaper",
+      "official": false,
+      "title": {
+        "ku": "Calabria, nuova proposta di legge “salva graduatorie” in Regione - Gazzetta del Sud",
+        "it": "Calabria, nuova proposta di legge “salva graduatorie” in Regione - Gazzetta del Sud",
+        "en": "Calabria, nuova proposta di legge “salva graduatorie” in Regione - Gazzetta del Sud",
+        "bad": "Calabria, nuova proposta di legge “salva graduatorie” in Regione - Gazzetta del Sud",
+        "km": "Calabria, nuova proposta di legge “salva graduatorie” in Regione - Gazzetta del Sud",
+        "ar": "Calabria, nuova proposta di legge “salva graduatorie” in Regione - Gazzetta del Sud",
+        "ma": "Calabria, nuova proposta di legge “salva graduatorie” in Regione - Gazzetta del Sud",
+        "tn": "Calabria, nuova proposta di legge “salva graduatorie” in Regione - Gazzetta del Sud",
+        "dz": "Calabria, nuova proposta di legge “salva graduatorie” in Regione - Gazzetta del Sud",
+        "tr": "Calabria, nuova proposta di legge “salva graduatorie” in Regione - Gazzetta del Sud",
+        "fa": "Calabria, nuova proposta di legge “salva graduatorie” in Regione - Gazzetta del Sud",
+        "sq": "Calabria, nuova proposta di legge “salva graduatorie” in Regione - Gazzetta del Sud",
+        "ur": "Calabria, nuova proposta di legge “salva graduatorie” in Regione - Gazzetta del Sud",
+        "hi": "Calabria, nuova proposta di legge “salva graduatorie” in Regione - Gazzetta del Sud",
+        "bn": "Calabria, nuova proposta di legge “salva graduatorie” in Regione - Gazzetta del Sud",
+        "ps": "Calabria, nuova proposta di legge “salva graduatorie” in Regione - Gazzetta del Sud"
+      },
+      "summary": {
+        "ku": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "it": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "en": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "bad": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "km": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "ar": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "ma": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "tn": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "dz": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "tr": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "fa": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "sq": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "ur": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "hi": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "bn": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "ps": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud"
+      },
+      "content": {
+        "ku": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "it": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "en": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "bad": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "km": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "ar": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "ma": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "tn": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "dz": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "tr": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "fa": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "sq": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "ur": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "hi": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "bn": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "ps": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud"
+      },
+      "image": "",
+      "link": "https://news.google.com/rss/articles/CBMi9gFBVV95cUxPa1p1WjM0Q1N1YzNYUkNzWGYyT1FpeFZvTnJRUlBDcHZWY2VxUDgzUVhCVUh3cHZ1c1p3UDZRaGU2LWxDeVJjZE40VzM1c3RxaVJWWUY3SFNTd1F3WWNER2FLcGZ2OGJkUmVCZ1Z4ZE45ZlB1d3dlNC0zSnVrWUVHdHZNTWhsYURWa0kyb2RXMm1WUHA5OE5mblVZOWpYN0RPMTl5N2ZXTmlVX0Z0RVFBRmcwY09iRFh6T1dJZnZDTlBESzFuLVZZRTF1SG0tQmNQbjZKRktUdXBVdGw3LWFBWVFVMHJvV3pmME5RM2xfWWViS3diUFE?oc=5",
+      "date": "2026-11-27T02:29:30.000Z",
+      "pubDate": "2026-11-27T02:29:30.000Z",
+      "sourceRecord": {
+        "title": "Calabria, nuova proposta di legge “salva graduatorie” in Regione - Gazzetta del Sud",
+        "summary": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud",
+        "content": "Calabria, nuova proposta di legge “salva graduatorie” in Regione Gazzetta del Sud"
       },
       "translationStatus": {
         "mymemory": {
