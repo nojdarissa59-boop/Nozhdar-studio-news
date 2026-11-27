@@ -1,8 +1,9 @@
+
 name: Auto Fetch & Translate News
 
 on:
   schedule:
-    - cron: '15 */3 * * *'
+    - cron: '7 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -10,12 +11,12 @@ permissions:
 
 concurrency:
   group: nozhdar-news-update-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   update-news:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
 
     steps:
       - name: Checkout repository
@@ -27,10 +28,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
 
       - name: Install news dependencies
-        run: npm ci --no-audit --no-fund || npm install --no-audit --no-fund rss-parser @extractus/article-extractor
+        run: npm install rss-parser @extractus/article-extractor
 
       - name: Fetch and save original news
         env:
@@ -39,13 +39,11 @@ jobs:
         run: node scripts/fetch-news.js
 
       - name: Translate saved news (optional)
-        if: env.GEMINI_API_KEY != ''
-        continue-on-error: true
         env:
           NEWS_MODE: translate
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODELS: gemini-2.5-flash
-          MAX_NEW_TRANSLATIONS: '15'
+          GEMINI_MODELS: gemini-3.8-flash,gemini-3.6-flash
+          MAX_NEW_TRANSLATIONS: '9'
         run: node scripts/fetch-news.js
 
       - name: Commit and push updated news
@@ -57,6 +55,5 @@ jobs:
             echo "No news data changes to commit"
           else
             git commit -m "Update news"
-            git pull --rebase origin main || true
             git push
           fi
